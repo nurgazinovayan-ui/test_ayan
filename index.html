@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Арт-директор — Портфолио</title>
+    <meta
+      name="description"
+      content="Портфолио арт-директора: бренд-системы, рекламные кампании и digital-проекты."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="gradient-orb orb-1"></div>
+    <div class="gradient-orb orb-2"></div>
+
+    <header class="header container">
+      <a class="logo" href="#top" aria-label="На главную">Андрей Ковалёв</a>
+      <nav>
+        <ul class="nav-list">
+          <li><a href="#works">Проекты</a></li>
+          <li><a href="#about">Обо мне</a></li>
+          <li><a href="#services">Услуги</a></li>
+          <li><a href="#contact">Контакты</a></li>
+        </ul>
+      </nav>
+      <button class="theme-toggle" id="themeToggle" aria-label="Сменить тему">
+        ☾
+      </button>
+    </header>
+
+    <main id="top">
+      <section class="hero container">
+        <p class="eyebrow">Art Direction / Branding / Digital</p>
+        <h1>
+          Создаю визуальные системы, которые
+          <span>продают идеи и формируют стиль бренда.</span>
+        </h1>
+        <p class="hero-text">
+          10+ лет в креативной индустрии: от запусков fashion-брендов до
+          performance-кампаний для tech-продуктов.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#works">Смотреть кейсы</a>
+          <a class="btn btn-ghost" href="#contact">Обсудить проект</a>
+        </div>
+      </section>
+
+      <section class="stats container">
+        <article>
+          <h2>120+</h2>
+          <p>реализованных проектов</p>
+        </article>
+        <article>
+          <h2>36</h2>
+          <p>международных наград</p>
+        </article>
+        <article>
+          <h2>18</h2>
+          <p>брендов с глобальным запуском</p>
+        </article>
+      </section>
+
+      <section class="works container" id="works">
+        <div class="section-head">
+          <p class="eyebrow">Избранные проекты</p>
+          <h2>Работы, где стратегия встречается с эстетикой</h2>
+        </div>
+
+        <div class="work-grid">
+          <article class="work-card">
+            <div class="work-image image-a"></div>
+            <div class="work-content">
+              <h3>NOCTA Beauty</h3>
+              <p>Ребрендинг косметической линейки и арт-направление digital-съёмки.</p>
+              <span>Brand Identity / Campaign / E-commerce</span>
+            </div>
+          </article>
+          <article class="work-card">
+            <div class="work-image image-b"></div>
+            <div class="work-content">
+              <h3>Frame Tech Conference</h3>
+              <p>Креативная концепция, сценография и визуальные материалы ивента.</p>
+              <span>Event Art Direction / Motion / Social</span>
+            </div>
+          </article>
+          <article class="work-card">
+            <div class="work-image image-c"></div>
+            <div class="work-content">
+              <h3>Maison Voltaire</h3>
+              <p>Обновление визуального языка бренда одежды для выхода на рынок США.</p>
+              <span>Fashion / Repositioning / Retail</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="about container" id="about">
+        <div>
+          <p class="eyebrow">Обо мне</p>
+          <h2>Арт-директор, который мыслит брендом, а не только визуалом</h2>
+        </div>
+        <p>
+          Работаю на стыке дизайна, маркетинга и культуры. Помогаю компаниям
+          формировать узнаваемый визуальный голос через системный подход:
+          исследование, концепт, production и контроль внедрения.
+        </p>
+      </section>
+
+      <section class="services container" id="services">
+        <p class="eyebrow">Что я делаю</p>
+        <div class="service-grid">
+          <article>
+            <h3>Арт-направление кампаний</h3>
+            <p>От идеи и мудборда до контроля съёмок, постпродакшна и финальной подачи.</p>
+          </article>
+          <article>
+            <h3>Бренд-системы</h3>
+            <p>Создание гибкой визуальной системы для digital, офлайна и продуктовых интерфейсов.</p>
+          </article>
+          <article>
+            <h3>Креатив для запуска</h3>
+            <p>Комплексные концепции для запусков новых продуктов и выхода на новые рынки.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="contact container" id="contact">
+        <div>
+          <p class="eyebrow">Контакт</p>
+          <h2>Готов обсудить проект и собрать сильную креативную команду.</h2>
+          <a href="mailto:hello@artdirector.pro">hello@artdirector.pro</a>
+        </div>
+        <form class="contact-form" onsubmit="event.preventDefault()">
+          <label>
+            Имя
+            <input type="text" placeholder="Ваше имя" required />
+          </label>
+          <label>
+            Email
+            <input type="email" placeholder="you@company.com" required />
+          </label>
+          <label>
+            О проекте
+            <textarea rows="4" placeholder="Кратко опишите задачу"></textarea>
+          </label>
+          <button class="btn btn-primary" type="submit">Отправить запрос</button>
+        </form>
+      </section>
+    </main>
+
+    <footer class="footer container">
+      <p>© 2026 Андрей Ковалёв — Art Director</p>
+      <p>Behance / Dribbble / LinkedIn</p>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
