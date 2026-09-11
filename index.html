@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ONEFLOW — Один креатив. Любой размер.</title>
+<meta name="description" content="AI-платформа для креативной работы: создавайте контент в нодах и адаптируйте макеты под любой размер — от поста до баннера.">
+<meta property="og:title" content="ONEFLOW — Один креатив. Любой размер.">
+<meta property="og:description" content="Создавайте контент в нодах и адаптируйте макеты под любой размер — от поста до баннера.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#000000">
+<link rel="stylesheet" href="assets/fonts.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23000'/%3E%3Cpath d='M5 19c3-10 5-10 8 0s5 10 8 0 5-10 6-4' stroke='%23fff' stroke-width='2.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Перейти к содержимому</a>
+
+<!-- ---------- icon sprite ---------- -->
+<svg class="sprite" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-wave" viewBox="0 0 40 20"><path d="M2 13c3.5-11 6-11 9.5 0s6 11 9.5 0 6-11 9-4" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="9" cy="10" r="1.8" fill="currentColor"/><path d="M4.5 17.5 9 13l3.5 3.2L16 12l3.8 4.4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 3.2 13.9 9 20 11l-6.1 2L12 19l-1.9-6L4 11l6.1-2L12 3.2Z" fill="currentColor"/></symbol>
+  <symbol id="i-frame" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M9 9h6v6H9z" fill="none" stroke="currentColor" stroke-width="1.4" opacity=".7"/></symbol>
+  <symbol id="i-square" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.9"/></symbol>
+  <symbol id="i-portrait" viewBox="0 0 24 24"><rect x="7.5" y="3.5" width="9" height="17" rx="2" fill="none" stroke="currentColor" stroke-width="1.9"/></symbol>
+  <symbol id="i-landscape" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.9"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 3.5h7.5L19 9v11.5H6z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M13 3.8V9h5.2M9 13h6M9 16.5h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 17.5V6.2l9-1.9v11.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="7" cy="17.6" r="2.6" fill="currentColor"/><circle cx="16" cy="15.6" r="2.6" fill="currentColor"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M5 19V11M12 19V5M19 19v-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  <symbol id="i-cube" viewBox="0 0 24 24"><path d="m12 3 8 4.4v9.2L12 21l-8-4.4V7.4L12 3Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="m4.3 7.6 7.7 4.2 7.7-4.2M12 21v-9.2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" opacity=".75"/></symbol>
+  <symbol id="i-db" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7.5" ry="3" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M4.5 6v6c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3V6M4.5 12v6c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3v-6" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M8.5 5.8 18 12l-9.5 6.2z" fill="currentColor"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4.5 12h14m-5.5-5.5L18.8 12l-5.8 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13.5 2 5 13.2h5.4L9.8 22 19 10.4h-5.6z" fill="currentColor"/></symbol>
+  <symbol id="i-cursor" viewBox="0 0 24 24"><path d="m6 3 12.5 8.2-5.6 1.2L10 19.8z" fill="currentColor"/></symbol>
+  <symbol id="i-type" viewBox="0 0 24 24"><path d="M5 6h14M12 6v13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-node" viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.6" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="18" cy="18" r="2.6" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M8 7.8c4 1.2 6.6 3.8 8 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.5" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="2.6" fill="currentColor"/></symbol>
+  <symbol id="i-crop" viewBox="0 0 24 24"><path d="M6 2.5V18h15.5M2.5 6H18v15.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3.5h7L18.5 9v11.5H6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><path d="M4 5.5h16M4 12h16M4 18.5h16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></symbol>
+  <symbol id="i-pencil" viewBox="0 0 24 24"><path d="m4 20 1-4.3L15.6 5.1a2 2 0 0 1 2.9 0l.4.4a2 2 0 0 1 0 2.9L8.3 19z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
+  <symbol id="i-export" viewBox="0 0 24 24"><path d="M12 16V4.5m-4.5 4L12 4l4.5 4.5M4.5 15v4.5h15V15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.7 4.6L19 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5.5m5.5-5.5L5 12l6 5.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-video" viewBox="0 0 24 24"><rect x="3" y="6" width="12.5" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m16.5 12.8 4.5 3V8.2l-4.5 3z" fill="currentColor"/></symbol>
+</svg>
+
+<!-- ============ HEADER ============ -->
+<header class="header" id="header">
+  <div class="container header__inner">
+    <a class="logo" href="#main" aria-label="ONEFLOW — на главную">
+      <svg class="logo__mark" aria-hidden="true"><use href="#i-wave"/></svg>
+      <span class="logo__text">ONEFLOW</span>
+    </a>
+
+    <nav class="nav" aria-label="Основная навигация">
+      <a href="#features">Возможности</a>
+      <a href="#pricing">Тарифы</a>
+      <a href="#support">Поддержка</a>
+    </nav>
+
+    <div class="header__actions">
+      <a class="link-btn" href="#start">Войти</a>
+      <a class="btn btn--primary btn--sm" href="#start">Начать</a>
+    </div>
+
+    <button class="burger" id="burger" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="mobile-menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <div class="mobile-menu" id="mobile-menu" hidden>
+    <a href="#features">Возможности</a>
+    <a href="#pricing">Тарифы</a>
+    <a href="#support">Поддержка</a>
+    <a href="#start">Войти</a>
+    <a class="btn btn--primary" href="#start">Начать</a>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="hero__glow" aria-hidden="true"></div>
+  <div class="container hero__inner">
+    <span class="pill reveal">AI-платформа для креативной работы</span>
+
+    <h1 class="hero__title reveal">
+      Один креатив.<br>
+      <span class="grad">Любой размер.</span>
+    </h1>
+
+    <p class="hero__lead reveal">
+      Создавайте контент в нодах и адаптируйте макеты<br class="br-desktop">
+      под любой размер — от поста до баннера.
+    </p>
+
+    <div class="hero__cta reveal">
+      <a class="btn btn--white" href="#start">Начать создавать <svg class="ico arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      <a class="btn btn--ghost" href="#features">Посмотреть демо</a>
+    </div>
+
+    <ul class="hero__checks reveal">
+      <li><span class="check"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></span> Экономия до 30% на токенах</li>
+      <li><span class="check"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></span> Остаток бюджета сохраняется</li>
+    </ul>
+
+    <!-- ---- app mockup ---- -->
+    <div class="app reveal" role="img" aria-label="Интерфейс ONEFLOW: нодовый редактор с адаптацией размеров под разные форматы">
+      <div class="app__bar">
+        <div class="app__dots" aria-hidden="true"><i class="r"></i><i class="y"></i><i class="g"></i></div>
+        <span class="app__brand">
+          <svg class="logo__mark sm" aria-hidden="true"><use href="#i-wave"/></svg>
+          ONEFLOW
+        </span>
+        <span class="app__crumbs">
+          <svg class="ico" aria-hidden="true"><use href="#i-back"/></svg>
+          Пример проекта <span class="muted">·</span> Ноды и адаптация
+        </span>
+        <span class="app__tools">
+          <span><svg class="ico" aria-hidden="true"><use href="#i-file"/></svg> Файл</span>
+          <span><svg class="ico" aria-hidden="true"><use href="#i-grid"/></svg> Шаблоны</span>
+          <span><svg class="ico" aria-hidden="true"><use href="#i-pencil"/></svg> Инструменты</span>
+          <em class="app__export"><svg class="ico" aria-hidden="true"><use href="#i-export"/></svg> Экспорт</em>
+        </span>
+      </div>
+
+      <div class="app__body">
+        <div class="rail" aria-hidden="true">
+          <i class="rail__i is-active"><svg class="ico"><use href="#i-cursor"/></svg></i>
+          <i class="rail__i"><svg class="ico"><use href="#i-image"/></svg></i>
+          <i class="rail__i"><svg class="ico"><use href="#i-type"/></svg></i>
+          <i class="rail__i"><svg class="ico"><use href="#i-node"/></svg></i>
+          <i class="rail__i"><svg class="ico"><use href="#i-target"/></svg></i>
+          <i class="rail__i"><svg class="ico"><use href="#i-sparkle"/></svg></i>
+          <i class="rail__i"><svg class="ico"><use href="#i-crop"/></svg></i>
+        </div>
+
+        <div class="canvas">
+          <svg class="wires" preserveAspectRatio="none" aria-hidden="true"></svg>
+
+          <article class="node node--img" id="n-img" style="--x:3%; --y:30%">
+            <header class="node__head"><span class="node__ico"><svg class="ico"><use href="#i-image"/></svg></span> Изображение <span class="node__dots" aria-hidden="true">⋮</span></header>
+            <div class="node__body">
+              <div class="thumb"><img src="assets/headphones.svg" alt="" width="240" height="240" loading="lazy"></div>
+              <p class="node__file">headphones.png</p>
+              <p class="node__meta">1920 × 1920</p>
+            </div>
+            <i class="port port--r" aria-hidden="true"></i>
+          </article>
+
+          <article class="node node--gen" id="n-gen" style="--x:27%; --y:29%">
+            <header class="node__head"><span class="node__ico"><svg class="ico"><use href="#i-sparkle"/></svg></span> Генерация креатива <span class="node__dots" aria-hidden="true">⋮</span></header>
+            <div class="node__body">
+              <div class="field field--row"><svg class="ico bolt" aria-hidden="true"><use href="#i-bolt"/></svg><b>СЛЫШАТЬ БОЛЬШЕ</b></div>
+              <label class="lbl">Модель</label>
+              <div class="field select">Nano Banana Pro <svg class="ico" aria-hidden="true"><use href="#i-chev"/></svg></div>
+              <label class="lbl">Промпт (необязательно)</label>
+              <div class="field field--area">Наушники, минималистичный стиль, премиум фото</div>
+            </div>
+            <i class="port port--l" aria-hidden="true"></i><i class="port port--r" aria-hidden="true"></i>
+          </article>
+
+          <article class="node node--size" id="n-size" style="--x:51.5%; --y:31%">
+            <header class="node__head"><span class="node__ico is-blue"><svg class="ico"><use href="#i-frame"/></svg></span> Адаптация размеров <span class="node__dots" aria-hidden="true">⋮</span></header>
+            <div class="node__body">
+              <div class="grid2">
+                <div><label class="lbl">Ширина (px)</label><div class="field">1080</div></div>
+                <div><label class="lbl">Высота (px)</label><div class="field">1080</div></div>
+              </div>
+              <label class="lbl">Соотношение сторон</label>
+              <div class="field select">Квадрат (1:1) <svg class="ico" aria-hidden="true"><use href="#i-chev"/></svg></div>
+              <button class="node__btn" type="button">Создать варианты</button>
+            </div>
+            <i class="port port--l" aria-hidden="true"></i><i class="port port--r" aria-hidden="true"></i>
+          </article>
+
+          <div class="outs">
+<article class="node node--out" id="n-o1">
+            <header class="node__head"><span class="node__ico is-blue"><svg class="ico"><use href="#i-square"/></svg></span> <span>Квадрат (1:1)</span> <span class="node__dots" aria-hidden="true">⋮</span></header>
+            <div class="node__body">
+              <div class="creative creative--light ratio-1x1">
+                <img src="assets/headphones.svg" alt="" loading="lazy">
+                <p class="creative__title">СЛЫШАТЬ<br>БОЛЬШЕ</p>
+              </div>
+            </div>
+            <i class="port port--l" aria-hidden="true"></i>
+          </article>
+
+          <article class="node node--out" id="n-o2">
+            <header class="node__head"><span class="node__ico is-blue"><svg class="ico"><use href="#i-portrait"/></svg></span> <span>Портрет (9:16)</span> <span class="node__dots" aria-hidden="true">⋮</span></header>
+            <div class="node__body">
+              <div class="creative creative--light ratio-9x16">
+                <img src="assets/headphones.svg" alt="" loading="lazy">
+                <p class="creative__title">СЛЫШАТЬ<br>БОЛЬШЕ</p>
+              </div>
+            </div>
+            <i class="port port--l" aria-hidden="true"></i>
+          </article>
+
+          <article class="node node--out" id="n-o3">
+            <header class="node__head"><span class="node__ico is-blue"><svg class="ico"><use href="#i-landscape"/></svg></span> <span>Альбомная (16:9)</span> <span class="node__dots" aria-hidden="true">⋮</span></header>
+            <div class="node__body">
+              <div class="creative creative--light ratio-16x9 is-full is-compact">
+                <p class="creative__title tl">СЛЫШАТЬ<br>БОЛЬШЕ</p>
+                <img src="assets/headphones.svg" alt="" loading="lazy">
+              </div>
+            </div>
+            <i class="port port--l" aria-hidden="true"></i>
+          </article>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ФОРМАТЫ ============ -->
+<section class="section section--center" id="features">
+  <div class="container">
+    <span class="pill pill--up reveal">Ноды и адаптация</span>
+    <h2 class="h2 reveal">Один исходник.<br>Все ваши <i>форматы.</i></h2>
+    <p class="lead reveal">Задайте ширину и высоту. Получите версии макета для разных площадок.</p>
+
+    <div class="formats reveal">
+      <div class="formats__scroll">
+        <figure class="fcard fcard--src">
+          <header class="node__head"><span class="node__ico"><svg class="ico"><use href="#i-image"/></svg></span> Исходник</header>
+          <div class="node__body">
+            <div class="creative creative--light ratio-3x4">
+              <img src="assets/headphones.svg" alt="" loading="lazy">
+              <p class="creative__title">СЛЫШАТЬ<br>БОЛЬШЕ</p>
+            </div>
+          </div>
+          <i class="port port--r" aria-hidden="true"></i>
+        </figure>
+
+        <span class="fline" aria-hidden="true"></span>
+
+        <figure class="fcard">
+          <figcaption class="fcard__cap">Пост (1:1)</figcaption>
+          <div class="creative creative--light ratio-1x1 is-full">
+            <p class="creative__title tl">СЛЫШАТЬ<br>БОЛЬШЕ</p>
+            <img src="assets/headphones.svg" alt="" loading="lazy">
+            <p class="creative__sub">ПРЕМИАЛЬНЫЙ ЗВУК В ЛЮБОМ ФОРМАТЕ</p>
+          </div>
+        </figure>
+
+        <span class="fline" aria-hidden="true"></span>
+
+        <figure class="fcard fcard--tall">
+          <figcaption class="fcard__cap">История (9:16)</figcaption>
+          <div class="creative creative--light ratio-9x16 is-full">
+            <p class="creative__title tl">СЛЫШАТЬ<br>БОЛЬШЕ</p>
+            <img src="assets/headphones.svg" alt="" loading="lazy">
+            <p class="creative__sub">ПРЕМИАЛЬНЫЙ ЗВУК В ЛЮБОМ ФОРМАТЕ</p>
+          </div>
+        </figure>
+
+        <span class="fline" aria-hidden="true"></span>
+
+        <figure class="fcard fcard--wide">
+          <figcaption class="fcard__cap">Баннер (16:9)</figcaption>
+          <div class="creative creative--light ratio-16x9 is-full">
+            <p class="creative__title tl">СЛЫШАТЬ<br>БОЛЬШЕ</p>
+            <img src="assets/headphones.svg" alt="" loading="lazy">
+            <p class="creative__sub">ПРЕМИАЛЬНЫЙ ЗВУК В ЛЮБОМ ФОРМАТЕ</p>
+          </div>
+        </figure>
+
+        <span class="fline" aria-hidden="true"></span>
+
+        <figure class="fcard fcard--tall">
+          <figcaption class="fcard__cap">Свой размер</figcaption>
+          <div class="creative creative--light ratio-3x4 is-full">
+            <p class="creative__title tl">СЛЫШАТЬ<br>БОЛЬШЕ</p>
+            <img src="assets/headphones.svg" alt="" loading="lazy">
+            <p class="creative__sub">ПРЕМИАЛЬНЫЙ ЗВУК В ЛЮБОМ ФОРМАТЕ</p>
+          </div>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ СРАВНЕНИЕ ============ -->
+<section class="section">
+  <div class="container split">
+    <div class="split__text reveal">
+      <h2 class="h2 h2--left h2--sm">Выбирайте<br>сильные <i>креативы.</i></h2>
+      <p class="lead lead--left">Креативный директор сравнит до 3 макетов, объяснит различия и порекомендует лучший.</p>
+    </div>
+
+    <div class="panel reveal">
+      <header class="panel__head"><span class="node__ico is-blue"><svg class="ico"><use href="#i-chart"/></svg></span> Пример анализа</header>
+      <div class="compare">
+        <div class="creative creative--light ratio-4x5">
+          <img src="assets/headphones.svg" alt="" loading="lazy">
+          <p class="creative__title">СЛЫШАТЬ<br>БОЛЬШЕ</p>
+        </div>
+        <div class="creative creative--dark ratio-4x5">
+          <img src="assets/headphones.svg" alt="" loading="lazy">
+          <p class="creative__title creative__title--white">СЛЫШАТЬ<br>БОЛЬШЕ</p>
+        </div>
+        <div class="creative creative--light ratio-4x5 is-best">
+          <span class="best"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg> Рекомендован</span>
+          <img src="assets/headphones.svg" alt="" loading="lazy">
+          <p class="creative__title">СЛЫШАТЬ<br>БОЛЬШЕ</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ONE LAUNCH ============ -->
+<section class="section">
+  <div class="container split split--rev">
+    <div class="launch reveal">
+      <figure class="lcard lcard--src">
+        <header class="node__head"><span class="node__ico"><svg class="ico"><use href="#i-image"/></svg></span> Исходное фото</header>
+        <div class="node__body">
+          <div class="thumb thumb--lg"><img src="assets/headphones.svg" alt="" loading="lazy"></div>
+          <div class="field">Наушники</div>
+        </div>
+      </figure>
+
+      <span class="launch__arrow" aria-hidden="true"><svg class="ico"><use href="#i-arrow"/></svg></span>
+
+      <figure class="lcard">
+        <header class="node__head"><span class="node__ico is-blue"><svg class="ico"><use href="#i-grid"/></svg></span> По шаблону</header>
+        <div class="creative creative--light ratio-9x16 is-full">
+          <p class="creative__title tl">СЛЫШАТЬ<br>БОЛЬШЕ</p>
+          <img src="assets/headphones.svg" alt="" loading="lazy">
+          <p class="creative__sub">ПРЕМИАЛЬНЫЙ ЗВУК В ЛЮБОМ ФОРМАТЕ</p>
+        </div>
+      </figure>
+
+      <figure class="lcard">
+        <header class="node__head"><span class="node__ico is-blue"><svg class="ico"><use href="#i-sparkle"/></svg></span> Уникальный дизайн</header>
+        <div class="creative creative--dark ratio-9x16 is-full">
+          <p class="creative__title creative__title--white tl">СЛЫШАТЬ<br>БОЛЬШЕ</p>
+          <img src="assets/headphones.svg" alt="" loading="lazy">
+          <p class="creative__sub creative__sub--white">ПРЕМИАЛЬНЫЙ ЗВУК В ЛЮБОМ ФОРМАТЕ</p>
+        </div>
+      </figure>
+    </div>
+
+    <div class="split__text reveal">
+      <span class="pill pill--up">One Launch</span>
+      <h2 class="h2 h2--left h2--sm">Из одного фото —<br>в карточки <i>товара.</i></h2>
+      <p class="lead lead--left">Добавьте фото и название. Получите карточки для маркетплейсов по шаблону или в уникальном дизайне, с оценкой результата.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ОСТАЛЬНЫЕ ЗАДАЧИ ============ -->
+<section class="section section--center" id="support">
+  <div class="container">
+    <h2 class="h2 reveal"><span class="grad">Остальные задачи —</span><br>в том же <i>пространстве.</i></h2>
+
+    <div class="cards">
+      <article class="card reveal">
+        <span class="card__ico"><svg class="ico"><use href="#i-image"/></svg></span>
+        <h3>Фото и видео</h3>
+        <p>Генерация по описанию или исходному изображению.</p>
+        <div class="card__demo">
+          <div class="tabs">
+            <span class="tab is-active"><svg class="ico" aria-hidden="true"><use href="#i-image"/></svg> Фото</span>
+            <span class="tab"><svg class="ico" aria-hidden="true"><use href="#i-video"/></svg> Видео</span>
+          </div>
+          <div class="input"><span>Опишите, что создать...</span><i class="send"><svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></i></div>
+        </div>
+      </article>
+
+      <article class="card reveal">
+        <span class="card__ico"><svg class="ico"><use href="#i-doc"/></svg></span>
+        <h3>Работа с текстами</h3>
+        <p>Создание, редактура и адаптация текстов.</p>
+        <div class="card__demo card__demo--chat">
+          <div class="bubble bubble--user">Напиши заголовок для баннера с наушниками.</div>
+          <div class="bubble-row">
+            <span class="bubble__ava"><svg class="ico" aria-hidden="true"><use href="#i-wave"/></svg></span>
+            <div class="bubble">Слышать больше.<br>В любом формате.</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card reveal">
+        <span class="card__ico"><svg class="ico"><use href="#i-music"/></svg></span>
+        <h3>Музыка и речь</h3>
+        <p>Музыкальные треки и озвучка для проектов.</p>
+        <div class="card__demo card__demo--audio">
+          <span class="play"><svg class="ico" aria-hidden="true"><use href="#i-play"/></svg></span>
+          <span class="wave" aria-hidden="true"></span>
+        </div>
+      </article>
+
+      <article class="card reveal">
+        <span class="card__ico"><svg class="ico"><use href="#i-chart"/></svg></span>
+        <h3>Маркетинговая стратегия</h3>
+        <p>Аудитория, позиционирование, каналы и план действий.</p>
+        <ol class="steps">
+          <li><span>1</span> Анализ аудитории</li>
+          <li><span>2</span> Позиционирование</li>
+          <li><span>3</span> Каналы продвижения</li>
+          <li><span>4</span> План действий</li>
+        </ol>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ БЮДЖЕТ / CTA ============ -->
+<section class="section section--center final" id="pricing">
+  <div class="final__glow" aria-hidden="true"></div>
+  <div class="container">
+    <h2 class="h2 reveal">Создавайте больше.<br>Сохраняйте <i>бюджет.</i></h2>
+
+    <div class="stats reveal">
+      <div class="stat">
+        <span class="stat__ico"><svg class="ico"><use href="#i-cube"/></svg></span>
+        <div>
+          <h3>До 30%</h3>
+          <p>Экономия на токенах</p>
+        </div>
+      </div>
+      <div class="stat">
+        <span class="stat__ico"><svg class="ico"><use href="#i-db"/></svg></span>
+        <div>
+          <h3>Остаток не сгорает</h3>
+          <p>Неиспользованный бюджет переносится на следующий месяц.</p>
+        </div>
+      </div>
+    </div>
+
+    <a class="btn btn--white btn--lg reveal" href="#start" id="start">Начать создавать <svg class="ico arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="container footer__inner">
+    <a class="logo" href="#main">
+      <svg class="logo__mark" aria-hidden="true"><use href="#i-wave"/></svg>
+      <span class="logo__text">ONEFLOW</span>
+    </a>
+    <nav class="footer__nav" aria-label="Дополнительные ссылки">
+      <a href="#features">Продукт</a>
+      <a href="#support">Поддержка</a>
+      <a href="#pricing">Условия</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
