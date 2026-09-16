@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #FFFFFF; }
+  body { font-family: Manrope, -apple-system, sans-serif; color: #0B0B0C; -webkit-font-smoothing: antialiased; }
+  a { color: #FF0080; text-decoration: none; }
+  a:hover { color: #0B0B0C; }
+  ::selection { background: #FFC7DF; }
+  .scrollx::-webkit-scrollbar { height: 0; }
+</style>
+</helmet>
+<div style="max-width: 1180px; margin: 0 auto; padding: 0 32px 120px; position: relative">
+  <div style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 100vw; height: 560px; background-image: radial-gradient(#DCDCE2 1.2px, transparent 1.2px); background-size: 22px 22px; -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.45) 55%, transparent 100%); mask-image: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.45) 55%, transparent 100%); pointer-events: none"></div>
+
+  <header style="position: relative; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 24px 0">
+    <a href="https://mechta.kz" target="_blank" rel="noopener" style="font-size: 13px; font-weight: 700; color: #0B0B0C; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; padding: 11px 0" style-hover="color: #FF0080">← На главную</a>
+    <div style="position: relative; display: inline-flex">
+      <button onClick="{{ onCopy }}" type="button" style="font-family: inherit; font-size: 13px; font-weight: 700; color: #FFFFFF; background: {{ headBg }}; border: 0; cursor: pointer; border-radius: 999px; padding: 11px 20px; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; transition: background 180ms ease" style-hover="background: #FF0080">{{ headLabel }}</button>
+      <span style="position: absolute; top: calc(100% + 10px); right: 0; font-size: 12px; font-weight: 700; white-space: nowrap; padding: 8px 12px; border-radius: 6px; background: #0B0B0C; color: #FFFFFF; pointer-events: none; opacity: {{ toastOpacity }}; transform: translateY({{ toastY }}); transition: opacity 200ms ease, transform 200ms ease">Адрес скопирован</span>
+    </div>
+  </header>
+
+  <section style="padding: 56px 0 72px; display: flex; flex-direction: column; align-items: center; text-align: center; position: relative">
+    <div style="display: flex; flex-direction: column; align-items: center">
+      
+      <h1 style="margin: 0; font-size: 64px; line-height: 1.02; letter-spacing: -0.035em; font-weight: 800; text-wrap: pretty; position: static; text-align: center">Маркетинговые<br>возможности Mechta.kz<br>для вендоров</h1><p style="margin: 28px auto 0; max-width: 620px; font-size: 17px; line-height: 1.6; color: #6E6E78; text-wrap: pretty; text-align: center">Полный набор инструментов — от активации first-party данных и performance до retail media в 100+ магазинах.&nbsp;</p>
+    </div>
+    <a href="#brief" style="margin-top: 32px; font-size: 14px; font-weight: 700; color: #FFFFFF; background: #FF0080; border-radius: 999px; padding: 15px 30px; display: inline-flex; align-items: center; gap: 10px; white-space: nowrap" style-hover="background: #0B0B0C; color: #FFFFFF">Заполнить бриф ↓</a>
+  </section>
+
+  <sc-if value="{{ hasSelection }}" hint-placeholder-val="{{ false }}">
+    <div style="position: sticky; top: 0; z-index: 20; background: #FFFFFF; padding: 12px 0 20px">
+      <div style="border: 1.5px solid #0B0B0C; background: #FFFFFF; padding: 22px 24px 20px; display: flex; flex-direction: column; gap: 16px">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap">
+          <div style="display: flex; align-items: center; gap: 10px">
+            <span style="font-size: 13px; font-weight: 800; letter-spacing: -0.01em">Выбранные услуги</span>
+            <span style="font-size: 11px; font-weight: 800; color: #FFFFFF; background: #FF0080; border-radius: 999px; padding: 3px 9px">{{ selectedCount }}</span>
+          </div>
+          <button onClick="{{ onClear }}" type="button" style="appearance: none; border: 0; background: none; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 700; color: #8A8A93; padding: 4px 0" style-hover="color: #0B0B0C">Очистить всё</button>
+        </div>
+        <textarea ref="{{ taRef }}" readonly="" value="{{ selectionText }}" style="width: 100%; min-height: 132px; max-height: 240px; resize: vertical; font-family: inherit; font-size: 13px; line-height: 1.7; color: #0B0B0C; background: #FAFAFB; border: 1px solid #EDEDEF; border-radius: 8px; padding: 16px 18px; outline: none"></textarea>
+        <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap">
+          <button onClick="{{ onCopyList }}" type="button" style="font-family: inherit; font-size: 13px; font-weight: 700; padding: 12px 22px; border: 0; cursor: pointer; border-radius: 999px; background: {{ listBtnBg }}; color: {{ listBtnFg }}; white-space: nowrap; transition: background 180ms ease" style-hover="background: #FF0080; color: #0B0B0C">{{ listBtnLabel }}</button><span style="font-size: 12px; color: #000000; font-weight: 700; text-align: right">*Отправьте список менеджеру — соберём медиаплан и условия</span>
+          
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <div style="display: flex; justify-content: center; padding-bottom: 8px">
+    <div style="position: relative; width: 100%; max-width: 520px">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="position: absolute; left: 20px; top: 50%; transform: translateY(-50%)"><circle cx="7" cy="7" r="5" stroke="#A8A8B0" stroke-width="1.6"></circle><path d="M11 11L14 14" stroke="#A8A8B0" stroke-width="1.6" stroke-linecap="round"></path></svg>
+      <input value="{{ query }}" onInput="{{ onQuery }}" placeholder="Поиск по инструментам — например, DMP, WhatsApp, лендинг" style="width: 100%; font-family: inherit; font-size: 15px; font-weight: 500; color: #0B0B0C; padding: 15px 20px 15px 48px; border-radius: 999px; border: 1.5px solid #E4E4E8; background: #FFFFFF; outline: none" style-focus="border-color: #0B0B0C">
+    </div>
+  </div>
+
+  <nav style="background: #FFFFFF; padding: 16px 0 20px; display: flex; flex-direction: column; gap: 16px" hint-placeholder-count="0">
+    
+    <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center">
+      <sc-for list="{{ tabs }}" as="tab" hint-placeholder-count="9">
+        <button onClick="{{ tab.onClick }}" style="flex: 0 0 auto; appearance: none; cursor: pointer; font-family: inherit; font-size: 15px; font-weight: 700; letter-spacing: -0.015em; padding: 13px 20px; border-radius: 999px; border: 1.5px solid {{ tab.line }}; background: {{ tab.bg }}; color: {{ tab.color }}; display: flex; align-items: center; gap: 8px; white-space: nowrap; transition: background 120ms ease, border-color 120ms ease" style-hover="border-color: #0B0B0C" type="button">
+          {{ tab.label }}
+          <sc-if value="{{ tab.hasCount }}" hint-placeholder-val="{{ true }}">
+            <span style="font-size: 11px; font-weight: 700; color: {{ tab.countColor }}; background: {{ tab.countBg }}; border-radius: 999px; padding: 2px 7px">{{ tab.count }}</span>
+          </sc-if>
+        </button>
+      </sc-for>
+    </div>
+  </nav>
+
+  <section style="padding: 44px 0 0; display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 32px">
+    <div style="max-width: 640px">
+      <h2 style="margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.025em">{{ activeTitle }}</h2>
+      <p style="margin: 12px 0 0; font-size: 15px; line-height: 1.6; color: #6E6E78; text-wrap: pretty">{{ activeBlurb }}</p>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 10px">
+      
+      <div style="display: flex; flex-wrap: wrap; gap: 8px">
+        <sc-for list="{{ goals }}" as="g" hint-placeholder-count="6">
+          <button onClick="{{ g.onClick }}" style="appearance: none; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 700; padding: 8px 14px; border-radius: 999px; border: 1px solid {{ g.border }}; background: {{ g.bg }}; color: {{ g.color }}" style-hover="border-color: #0B0B0C">{{ g.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <sc-if value="{{ showNote }}" hint-placeholder-val="{{ false }}">
+    
+  </sc-if>
+
+  <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
+    <div style="margin-top: 40px; border: 1px solid #EDEDEF; padding: 56px 32px; text-align: center">
+      <div style="font-size: 17px; font-weight: 700; letter-spacing: -0.02em">Ничего не найдено</div>
+      <p style="margin: 10px 0 0; font-size: 14px; color: #8A8A93">Попробуйте другой запрос или сбросьте фильтр по задаче.</p>
+    </div>
+  </sc-if>
+
+  <section style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; background: #FFFFFF; margin-top: 40px">
+    <sc-for list="{{ items }}" as="it" hint-placeholder-count="6">
+      <article style="background: #FFFFFF; border: 1px solid #EDEDEF; padding: 32px 30px 30px; display: flex; flex-direction: column; gap: 16px; transition: border-color 150ms ease" style-hover="border-color: #0B0B0C">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px">
+          <h3 style="margin: 0; font-size: 18px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.3; text-wrap: pretty">{{ it.name }}</h3>
+          <span style="flex: 0 0 auto; font-size: 11px; font-weight: 700; color: #A8A8B0; letter-spacing: 0.04em">{{ it.catShort }}</span>
+        </div>
+        <p style="margin: 0; font-size: 14px; line-height: 1.65; color: #55555F; flex: 1; text-wrap: pretty">{{ it.what }}</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px">
+          <sc-for list="{{ it.tags }}" as="t" hint-placeholder-count="1">
+            <span style="font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: 4px; background: #FFEAF3; color: #C2005F">{{ t }}</span>
+          </sc-for>
+        </div>
+        <sc-if value="{{ it.hasNote }}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; gap: 10px; align-items: flex-start; background: #FFEAF3; padding: 12px 14px; border-radius: 6px">
+            <span style="flex: 0 0 auto; font-size: 10px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #C2005F; padding-top: 1px">Обязательно</span>
+            <span style="font-size: 12px; line-height: 1.5; font-weight: 600; color: #0B0B0C; text-wrap: pretty">{{ it.note }}</span>
+          </div>
+        </sc-if>
+        <div style="padding-top: 16px; border-top: 1px solid #F2F2F4; display: flex; align-items: baseline; gap: 10px">
+          <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A8A8B0">Условия</span>
+          <span style="font-size: 14px; font-weight: 700; color: {{ it.priceColor }}; letter-spacing: -0.01em">{{ it.price }}</span>
+        </div>
+        <button onClick="{{ it.onPick }}" type="button" style="width: 100%; font-family: inherit; font-size: 13px; font-weight: 700; padding: 12px 16px; cursor: pointer; border-radius: 999px; border: 1.5px solid {{ it.pickBorder }}; background: {{ it.pickBg }}; color: {{ it.pickFg }}; transition: background 150ms ease, border-color 150ms ease" style-hover="border-color: #0B0B0C">{{ it.pickLabel }}</button>
+      </article>
+    </sc-for>
+  </section>
+
+  <section id="brief" style="margin-top: 96px; border: 1.5px solid #0B0B0C; padding: 40px 44px 36px; scroll-margin-top: 24px">
+    <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 24px; flex-wrap: wrap">
+      <h2 style="margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.025em">Бриф кампании</h2>
+      <span style="font-size: 12px; font-weight: 700; color: #C2005F">Шаг: {{ stepLabel }}</span>
+    </div>
+    <div style="margin-top: 20px; height: 3px; background: #EDEDEF">
+      <div style="height: 3px; background: #FF0080; width: {{ progress }}; transition: width 220ms ease"></div>
+    </div>
+
+    <sc-if value="{{ briefOpen }}" hint-placeholder-val="{{ true }}">
+      <div style="display: flex; flex-direction: column; gap: 28px; padding-top: 32px">
+        <sc-for list="{{ fields }}" as="f" hint-placeholder-count="3">
+          <div style="display: flex; flex-direction: column; gap: 10px">
+            <label style="font-size: 16px; font-weight: 800; letter-spacing: -0.015em">{{ f.label }}</label>
+            <sc-if value="{{ f.hasHint }}" hint-placeholder-val="{{ false }}">
+              <span style="font-size: 13px; color: #8A8A93; margin-top: -6px">{{ f.hint }}</span>
+            </sc-if>
+            <sc-if value="{{ f.isInput }}" hint-placeholder-val="{{ true }}">
+              <input type="{{ f.type }}" value="{{ f.value }}" onChange="{{ f.onChange }}" placeholder="{{ f.placeholder }}" style="width: 100%; max-width: 620px; font-family: inherit; font-size: 15px; color: #0B0B0C; padding: 14px 18px; border-radius: 8px; border: 1.5px solid #E4E4E8; background: #FFFFFF; outline: none" style-focus="border-color: #0B0B0C">
+            </sc-if>
+            <sc-if value="{{ f.isRadio }}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; flex-wrap: wrap; gap: 10px 32px; max-width: 620px">
+                <sc-for list="{{ f.options }}" as="o" hint-placeholder-count="3">
+                  <button onClick="{{ o.onClick }}" type="button" style="appearance: none; border: 0; background: none; cursor: pointer; font-family: inherit; font-size: 14px; font-weight: 600; color: #0B0B0C; display: flex; align-items: center; gap: 10px; padding: 6px 0">
+                    <span style="width: 18px; height: 18px; border-radius: 50%; border: 2px solid #FF0080; display: inline-flex; align-items: center; justify-content: center">
+                      <span style="width: 8px; height: 8px; border-radius: 50%; background: {{ o.dot }}"></span>
+                    </span>
+                    {{ o.label }}
+                  </button>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="padding-top: 36px; display: flex; align-items: center; justify-content: space-between; gap: 20px">
+        <span style="font-size: 12px; font-weight: 700; color: #C2005F">Шаг: {{ stepLabel }}</span>
+        <div style="display: flex; align-items: center; gap: 18px">
+          <button onClick="{{ onBack }}" type="button" style="appearance: none; border: 0; background: none; cursor: pointer; font-family: inherit; font-size: 18px; color: {{ backColor }}; padding: 8px 10px" style-hover="color: #0B0B0C">←</button>
+          <button onClick="{{ onNext }}" type="button" style="font-family: inherit; font-size: 14px; font-weight: 700; color: #FFFFFF; background: #FF0080; border: 0; cursor: pointer; border-radius: 8px; padding: 15px 28px; display: inline-flex; align-items: center; gap: 10px; white-space: nowrap" style-hover="background: #0B0B0C">{{ nextLabel }}</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ briefDone }}" hint-placeholder-val="{{ false }}">
+      <div style="padding-top: 32px; display: flex; flex-direction: column; gap: 18px">
+        <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #55555F">Бриф собран. Скопируйте текст и отправьте менеджеру — он уже включает выбранные услуги.</p>
+        <textarea ref="{{ briefTaRef }}" readonly="" value="{{ briefText }}" style="width: 100%; min-height: 380px; resize: vertical; font-family: inherit; font-size: 13px; line-height: 1.7; color: #0B0B0C; background: #FAFAFB; border: 1px solid #EDEDEF; border-radius: 8px; padding: 18px 20px; outline: none"></textarea>
+        <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap">
+          <form ref="{{ formRef }}" class="js-form-proccess t-form" method="POST" action="" data-formactiontype="2" data-formsuccess="popup" style="display: none"></form>
+          <button onClick="{{ onSend }}" type="button" style="font-family: inherit; font-size: 13px; font-weight: 700; color: #FFFFFF; background: {{ sendBg }}; border: 0; cursor: pointer; border-radius: 999px; padding: 13px 24px; white-space: nowrap; transition: background 180ms ease" style-hover="background: #0B0B0C">{{ sendLabel }}</button>
+          <button onClick="{{ onCopyBrief }}" type="button" style="font-family: inherit; font-size: 13px; font-weight: 700; color: #FFFFFF; background: {{ briefBtnBg }}; border: 0; cursor: pointer; border-radius: 999px; padding: 13px 24px; white-space: nowrap; transition: background 180ms ease" style-hover="background: #FF0080">{{ briefBtnLabel }}</button>
+          <sc-if value="{{ hasSendError }}" hint-placeholder-val="{{ false }}">
+            <span style="font-size: 12px; font-weight: 700; color: #C2005F">{{ sendError }}</span>
+          </sc-if>
+          <button onClick="{{ onBriefEdit }}" type="button" style="appearance: none; border: 0; background: none; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 700; color: #8A8A93" style-hover="color: #0B0B0C">Вернуться к вопросам</button>
+        </div>
+      </div>
+    </sc-if>
+  </section>
+
+  <section id="contact" style="margin-top: 96px; background: #0B0B0C; color: #FFFFFF; padding: 72px 64px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 40px">
+    <div style="max-width: 560px">
+      <h2 style="margin: 0; font-size: 38px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1">Соберём медиаплан под вашу задачу</h2>
+      <p style="margin: 18px 0 0; font-size: 16px; line-height: 1.6; color: #A8A8B0; text-wrap: pretty">Присылайте цель и период — вернёмся со сплитом каналов, прогнозом и сроками. Цены указаны без НДС и действуют в течение 2026 года.</p>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 12px">
+      <div style="position: relative; display: flex; justify-content: center">
+        <button onClick="{{ onCopy }}" type="button" style="font-family: inherit; font-size: 14px; font-weight: 700; padding: 16px 28px; border: 0; cursor: pointer; border-radius: 999px; background: {{ copyBg }}; color: {{ copyFg }}; display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; transform: scale({{ copyScale }}); transition: background 180ms ease, color 180ms ease, transform 180ms cubic-bezier(0.34, 1.56, 0.64, 1); border-color: #FFFFFF" style-hover="background: #FFFFFF; color: #0B0B0C">{{ copyLabel }}</button>
+        <span style="position: absolute; bottom: calc(100% + 12px); left: 50%; font-size: 12px; font-weight: 700; white-space: nowrap; padding: 8px 12px; border-radius: 6px; background: #FFFFFF; color: #0B0B0C; pointer-events: none; opacity: {{ toastOpacity }}; transform: translate(-50%, {{ toastY }}); transition: opacity 220ms ease, transform 220ms cubic-bezier(0.34, 1.56, 0.64, 1)">Адрес скопирован</span>
+      </div>
+      <span style="font-size: 12px; color: #A8A8B0; text-align: center">Ответ в течение 2 рабочих дней</span>
+    </div>
+  </section>
+
+  <footer style="padding-top: 32px; display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; font-size: 12px; color: #A8A8B0">
+    <span>© 2026 Mechta.kz · Marketing inventory</span>
+    <span>Все условия уточняются в рамках кампании</span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;webhookUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://hook.eu1.make.com/285o3j38x0rahlrkdtrd9agza589edat&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Отправка брифа&quot;},&quot;web3formsKey&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Отправка брифа&quot;},&quot;emailTo&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;aidyn.argyn@mechta.kz&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Отправка брифа&quot;}}">
+const PINK = '#FF0080';
+
+const CATS = [
+  { id: 'audience', label: 'Audience Intelligence', short: 'Audience', blurb: 'Активация first-party данных о покупках в 80+ магазинах, на mechta.kz и в приложении: детерминированные сегменты, look-alike, ML-модель Next-Best-Offer и каскадные CDP-сценарии.' },
+  { id: 'performance', label: 'Performance / Digital', short: 'Performance', blurb: 'Закупка performance-трафика во всех основных системах с активацией DMP-сегментов и продуктовых фидов. Работаем под цели по GMV, скорости продаж и ROAS / CRR.' },
+  { id: 'kaspi', label: 'Kaspi Marketplace', short: 'Kaspi', blurb: 'Инструменты видимости и скорости продаж внутри Kaspi: приоритет карточки, баннеры, бонусные механики и внешний трафик на карточку.' },
+  { id: 'crm', label: 'CRM / CDP', short: 'CRM', blurb: 'Собственные каналы коммуникации с опт-ин базой: email, push, WhatsApp, SMS, персональные промокоды и бонусные механики программы лояльности.' },
+  { id: 'smm', label: 'Контент / SMM', short: 'SMM', blurb: 'Размещения в социальных каналах Mechta, пакеты контента, инфлюенсер-интеграции и вертикальное видео.' },
+  { id: 'creative', label: 'Креатив / Арт-дирекшн', short: 'Creative', blurb: 'Продакшн кампанийных ассетов: 3D и AR-ролики, AI-видео, лендинги, иммерсивные страницы и геймификация.' },
+  { id: 'site', label: 'Сайт mechta.kz', short: 'Website', blurb: 'Размещения на самых посещаемых страницах сайта: баннеры, брендзона и закрепление статуса лидера категории.' },
+  { id: 'pr', label: 'PR', short: 'PR', blurb: 'Публикации в digital и печатных медиа, копирайтинг материалов, брендовые события и запуски.' },
+  { id: 'retail', label: 'In-store / Retail Media', short: 'Retail', blurb: 'Офлайн-охват, который недоступен сетям с меньшим покрытием: digital-экраны и retail media в 100+ магазинах, POS-зоны и обученные консультанты.' }
+];
+
+const GOALS = ['Expand Online', 'Drive Upgrade', 'Grow Attach', 'Scale Ecosystem', 'Premium Retail'];
+
+const TOOLS = [
+  { cat: 'audience', name: 'DMP — first-party аудитории и look-alike', what: 'Активация аудиторий на основе реальных покупок в 80+ магазинах, на mechta.kz и в приложении. Строим точные детерминированные сегменты (владельцы категорий, высокочастотные и высокочековые покупатели, неконвертировавшие посетители, RFM-сегменты) и look-alike, затем активируем в programmatic и social (Byyd, Meta, Google, TikTok, Telegram, Yandex) и в CRM-рассылках. Таргетинг по фактическому поведению, а не по интересам. Только в рекламных кабинетах Mechta.', tags: ['Expand Online', 'Drive Upgrade', 'Scale Ecosystem'], price: 'Add-on к CRM / Digital — в объёме медиалинии' },
+  { cat: 'audience', name: 'NBO — собственная ML-модель Next-Best-Offer', what: 'In-house модель машинного обучения скорит каждого клиента и предсказывает следующий лучший товар или оффер: докупка аксессуаров (адаптеры, AirPods, Watch, чехлы), готовность к апгрейду и кросс-сейл устройств. Питает рекомендации в корзине, персональные бандлы и 1:1 CRM-офферы — растит attach rate и средний чек.', tags: ['Grow Attach', 'Scale Ecosystem'], price: 'Add-on — в объёме кампании' },
+  { cat: 'audience', name: 'Каскадные CDP-сценарии', what: 'Мультиканальная оркестрация в нашей CDP: последовательные отправки от самого дешёвого канала к самому дорогому (push → email → WhatsApp → SMS) с ограничением частоты и логикой исключений, по триггерам поведения и NBO-скорам. Больше охвата на контакт при контролируемой стоимости конверсии.', tags: ['Scale Ecosystem', 'Drive Upgrade'], price: 'По объёму каналов (см. тарифы CRM) + настройка оркестрации' },
+  { cat: 'audience', name: 'Предиктивные сегменты апгрейда и реактивации', what: 'Модельные сегменты владельцев Apple, которые не обновляли устройство 12+ месяцев и, по нашей модели, готовы к покупке — активируются под трейд-ин и рассрочку в CRM и programmatic. Также доступны NBO-сегменты вероятных покупателей Apple / iPhone.', tags: ['Drive Upgrade'], price: 'Add-on к CRM / Digital' },
+
+  { cat: 'performance', name: 'Google Ads 360', what: '1) Search — съём существующего спроса по моделям и характеристикам; 2) Performance Max — медийные форматы и плейсменты с продуктовыми фидами плюс DMP и look-alike сиды, не только на холодный трафик; 3) Demand Gen — охватные форматы для прогрева аудитории и сбора сегментов под ремаркетинг.', tags: ['Expand Online'], price: 'Под цели GMV, скорости продаж или ROAS / CRR' },
+  { cat: 'performance', name: 'Meta (Instagram / Facebook)', what: 'Feed, Stories и Reels; каталожные и динамические товарные объявления (DPA — можем использовать и ваши деперсонализированные аудитории); look-alike на first-party данных Mechta.', tags: ['Expand Online'], price: 'Под цели GMV, скорости продаж или ROAS / CRR' },
+  { cat: 'performance', name: 'TikTok', what: 'In-feed и Spark Ads, performance-форматы с креаторами.', tags: ['Expand Online'], price: 'Под цели GMV, скорости продаж или ROAS / CRR' },
+  { cat: 'performance', name: 'Yandex Direct', what: 'Поиск и сети Яндекса.', tags: ['Expand Online'], price: 'Под цели GMV, скорости продаж или ROAS / CRR' },
+  { cat: 'performance', name: 'Programmatic (Byyd / DSP)', what: 'Автоматизированная закупка на тысячах сайтов и в приложениях с активацией DMP-аудиторий — без переговоров по каждому плейсменту. Особенно эффективно, когда известно типичное число касаний до покупки.', tags: ['Expand Online'], price: 'Под цели GMV, скорости продаж или ROAS / CRR' },
+  { cat: 'performance', name: 'Telegram Ads', what: 'Размещения в каналах и Stories с таргетингом по DMP-сегментам.', tags: ['Expand Online'], price: 'Под цели GMV, скорости продаж или ROAS / CRR' },
+
+  { cat: 'kaspi', name: 'Приоритет карточки товара', what: 'Приоритетное ранжирование вашей карточки в Kaspi.', tags: ['Expand Online'], price: 'Под цели GMV / скорости продаж' },
+  { cat: 'kaspi', name: 'Баннерная реклама', what: 'Баннер внутри интерфейса Kaspi.', tags: ['Expand Online'], price: 'По запросу' },
+  { cat: 'kaspi', name: 'Бонус за отзыв', what: 'Кэшбэк покупателю за отзыв — социальное доказательство и скорость продаж.', tags: ['Grow Attach'], price: 'По запросу' },
+  { cat: 'kaspi', name: 'Бонус продавца', what: 'Ваш кэшбэк как дополнительный стимул к покупке.', tags: ['Drive Upgrade'], price: 'По запросу' },
+  { cat: 'kaspi', name: 'Внешний трафик на Kaspi', what: 'Платный внешний трафик на вашу карточку в Kaspi.', tags: ['Expand Online'], price: 'Под цели ROAS' },
+
+  { cat: 'crm', name: 'Email', what: 'Ваш оффер по нашей опт-ин базе подписчиков, сегментируемой через DMP.', tags: ['Scale Ecosystem'], price: 'По запросу' },
+  { cat: 'crm', name: 'Push (приложение)', what: 'Сообщение пользователям приложения Mechta.', tags: ['Scale Ecosystem'], price: 'Add-on — в объёме комплексных кампаний' },
+  { cat: 'crm', name: 'WhatsApp', what: 'До 120 символов + ссылка. По нашим тестам отклик выше, чем у SMS.', tags: ['Scale Ecosystem'], price: '40 ₸ / сообщение' },
+  { cat: 'crm', name: 'SMS', what: 'Классическая SMS до 47 символов + ссылка.', tags: ['Scale Ecosystem'], price: '20 ₸ / сообщение' },
+  { cat: 'crm', name: 'Персональные промокоды', what: 'Индивидуальные коды 1:1 для сквозного трекинга конверсии из каждой отправки.', tags: ['Drive Upgrade'], price: 'По запросу' },
+  { cat: 'crm', name: 'Бонусные механики программы лояльности', what: 'Настройка механик за счёт вендора внутри программы лояльности Mechta: начисление кэшбэка с порогами суммы покупки, сроками сгорания баллов и ограничениями на уровне бренда или SKU — направляет повторные покупки и докупку аксессуаров к вашим товарам.', tags: ['Scale Ecosystem', 'Grow Attach'], price: 'По запросу — бонусный фонд за счёт вендора, настройка под механику' },
+
+  { cat: 'smm', name: 'Пост в социальных сетях', what: 'Один брендированный пост.', tags: ['Expand Online'], price: 'По запросу' },
+  { cat: 'smm', name: 'Закреплённый пост', what: 'Пост, закреплённый в верхней части профиля.', tags: ['Expand Online'], price: '56 000 ₸' },
+  { cat: 'smm', name: 'Highlight в Instagram', what: 'Брендированный highlight в профиле.', tags: ['Expand Online'], price: '280 000 ₸' },
+  { cat: 'smm', name: 'Мини-пакет SMM', what: 'Набор постов и историй на заданный период (состав согласуется).', tags: ['Expand Online'], price: '448 000 ₸' },
+  { cat: 'smm', name: 'Большой пакет SMM', what: 'Расширенный SMM-пакет (состав согласуется).', tags: ['Expand Online'], price: '784 000 ₸' },
+  { cat: 'smm', name: 'Спецпроект', what: 'Кастомный формат под бриф.', tags: ['Scale Ecosystem'], price: 'По запросу' },
+  { cat: 'smm', name: 'Инфлюенсер-интеграции', what: 'Интеграции с проверенным пулом креаторов Mechta.', tags: ['Expand Online'], price: 'По запросу' },
+  { cat: 'smm', name: 'Видео (Reels / Shorts)', what: 'Короткое вертикальное видео.', tags: ['Expand Online'], price: '196 000 ₸' },
+
+  { cat: 'creative', name: '3D-видео', what: 'Полноценный 3D-ролик о продукте — герой запуска.', tags: ['Drive Upgrade'], price: '2 500 000 ₸' },
+  { cat: 'creative', name: 'AR-видео', what: 'Ролик с дополненной реальностью.', tags: ['Drive Upgrade'], price: '1 000 000 ₸' },
+  { cat: 'creative', name: 'AI-видео', what: 'Видео, созданное с помощью AI — быстрее и дешевле классического продакшна.', tags: ['Drive Upgrade'], price: '500 000 ₸' },
+  { cat: 'creative', name: '3D-иммерсивный лендинг', what: 'Интерактивная 3D-страница кампании.', tags: ['Expand Online'], price: '1 500 000 ₸' },
+  { cat: 'creative', name: 'Лендинг', what: 'Отдельная посадочная страница кампании.', tags: ['Expand Online'], price: '700 000 ₸' },
+  { cat: 'creative', name: 'Геймификация (web и app)', what: 'Мини-игра или интерактивная вовлекающая механика.', tags: ['Scale Ecosystem'], price: '3 000 000 ₸' },
+
+  { cat: 'site', name: 'Баннер на главной', what: 'Самая посещаемая страница сайта.', tags: ['Expand Online'], price: '600 000 ₸ / мес (400 000 / полмесяца)' },
+  { cat: 'site', name: 'Баннер в категории', what: 'Баннер на странице релевантной товарной категории.', tags: ['Expand Online'], price: '300 000 ₸ / мес (200 000 / полмесяца)' },
+  { cat: 'site', name: 'Online Brand Zone', what: 'Брендированная витрина на сайте.', tags: ['Scale Ecosystem'], price: '1 200 000 ₸ / мес (750 000 / полмесяца)' },
+  { cat: 'site', name: 'Плашка лидера категории', what: 'Статус лидера категории, закреплённый на год.', tags: ['Expand Online'], price: '2 000 000 ₸ / год' },
+
+  { cat: 'pr', name: 'Статья в digital-медиа', what: 'Размещение в онлайн-издании.', tags: ['Expand Online'], price: 'По запросу' },
+  { cat: 'pr', name: 'Статья в печатном медиа', what: 'Размещение в печатном издании.', tags: ['Expand Online'], price: 'По запросу' },
+  { cat: 'pr', name: 'Событие', what: 'Брендовое событие или активация запуска.', tags: ['Premium Retail'], price: 'По запросу' },
+  { cat: 'pr', name: 'Копирайтинг', what: 'Готовим статью под размещение.', tags: ['Expand Online'], price: 'По запросу' },
+
+  { cat: 'retail', name: 'Digital-экраны в магазинах / DOOH', what: 'Digital-экраны и retail media в 100+ магазинах по стране — физический охват, недоступный сетям с меньшим покрытием. Сочетается с POS-зонами Apple и активацией через обученных консультантов и персонал магазинов.', tags: ['Premium Retail'], price: 'По запросу — объём согласуется отдельно' }
+];
+
+const STEPS = [
+  [
+    { id: 'campaign', label: 'Кампания / повод', placeholder: 'напр. Back to School, launch iPhone' },
+    { id: 'vendor', label: 'Вендор / бренд', placeholder: 'Apple / Samsung / нет' },
+    { id: 'focus', label: 'Фокус-товары или категория', placeholder: 'SKU или категория' }
+  ],
+  [
+    { id: 'goal', label: 'Главная цель кампании', radio: ['Продажи', 'Охват', 'Трафик в магазины', 'Активация/реактивация', 'Свой вариант'] },
+    { id: 'goal_other', label: 'Своя цель', placeholder: 'опишите цель', showIf: v => v.goal === 'Свой вариант' }
+  ],
+  [
+    { id: 'date_start', label: 'Начало кампании', type: 'date' },
+    { id: 'date_end', label: 'Конец кампании', type: 'date' },
+    { id: 'dates_extra', label: 'Дополнительные даты и сроки', placeholder: '' }
+  ],
+  [
+    { id: 'budget', label: 'Бюджет кампании', placeholder: 'сумма + валюта' },
+    { id: 'margin', label: 'Фронт-маржа по товару, %', placeholder: 'если знаете' },
+    { id: 'aov', label: 'Средний чек (AOV), ₸', placeholder: 'если знаете' }
+  ],
+  [
+    { id: 'audience', label: 'Целевая аудитория', hint: 'клиентская база/новые, возраст, пол, интересы (если есть)', placeholder: '' },
+    { id: 'geo', label: 'Гео', radio: ['вся страна', 'Отдельные город/города'] },
+    { id: 'geo_cities', label: 'Какие города', placeholder: 'перечислите города', showIf: v => v.geo === 'Отдельные город/города' },
+    { id: 'segments', label: 'Сегменты', placeholder: 'RFM, свой список сегментов, если есть' }
+  ],
+  [
+    { id: 'channels', label: 'Желаемые рекламные каналы', placeholder: 'свой список или «на усмотрение маркетинга»' },
+    { id: 'content', label: 'Контент / макеты', radio: ['есть', 'будут к дате', 'нужна помощь'] },
+    { id: 'content_date', label: 'Дата готовности макетов и материалов', type: 'date' }
+  ],
+  [
+    { id: 'offer', label: 'Оффер / механика', placeholder: 'скидка / рассрочка / trade-in / бандл / подарок' },
+    { id: 'message', label: 'Ключевое сообщение / УТП', placeholder: '1 строка' },
+    { id: 'result', label: 'Ожидаемый результат', placeholder: 'продажи, шт / выручка (если есть план)' }
+  ],
+  [
+    { id: 'limits', label: 'Ограничения вендора', placeholder: 'бренд-гайды, запреты (если есть)' },
+    { id: 'owner', label: 'Ответственный', placeholder: 'имя / контакт' },
+    { id: 'comment', label: 'Комментарий', placeholder: 'дополнительные условия (если есть)' }
+  ]
+];
+
+class Component extends DCLogic {
+  state = { cat: 'audience', goal: 'all', q: '', copied: false, picked: [], listCopied: false, step: 0, brief: {}, briefDone: false, briefCopied: false, sending: false, sent: false, sendError: '' };
+
+  setField = (id, value) => {
+    this.setState(s => ({ brief: Object.assign({}, s.brief, { [id]: value }) }));
+  };
+
+  briefText() {
+    const v = this.state.brief;
+    const lines = ['БРИФ КАМПАНИИ — Mechta 2026', ''];
+    STEPS.forEach(step => {
+      step.forEach(f => {
+        if (f.showIf && !f.showIf(v)) return;
+        const val = (v[f.id] || '').trim ? (v[f.id] || '').trim() : v[f.id];
+        if (!val) return;
+        lines.push(f.label + ': ' + val);
+      });
+    });
+    const services = this.selectionText();
+    if (this.state.picked.length) {
+      lines.push('', 'ВЫБРАННЫЕ УСЛУГИ', services.split('\n').slice(2).join('\n'));
+    }
+    return lines.join('\n').trim();
+  }
+
+  scrollList() {
+    setTimeout(() => {
+      const ta = this._ta || document.querySelector('textarea');
+      if (ta) ta.scrollTop = ta.scrollHeight;
+    }, 80);
+    setTimeout(() => {
+      const ta = this._ta || document.querySelector('textarea');
+      if (ta) ta.scrollTop = ta.scrollHeight;
+    }, 260);
+  }
+
+  togglePick = (name) => {
+    this.setState(s => ({
+      picked: s.picked.indexOf(name) >= 0 ? s.picked.filter(n => n !== name) : s.picked.concat([name]),
+      listCopied: false
+    }), () => this.scrollList());
+  };
+
+  selectionText() {
+    const byCat = {};
+    this.state.picked.forEach(n => {
+      const t = TOOLS.find(x => x.name === n);
+      if (!t) return;
+      (byCat[t.cat] = byCat[t.cat] || []).push(t);
+    });
+    const lines = ['Запрос по инвентарю Mechta 2026', ''];
+    CATS.forEach(c => {
+      const list = byCat[c.id];
+      if (!list) return;
+      lines.push(c.label.toUpperCase());
+      list.forEach(t => lines.push('— ' + t.name + ' · ' + t.price));
+      lines.push('');
+    });
+    return lines.join('\n').trim();
+  }
+
+  sendBrief = () => {
+    const text = this.briefText();
+    const v = this.state.brief;
+    const to = (this.props.emailTo || 'aidyn.argyn@mechta.kz').trim();
+    const subject = this.briefSubject();
+
+    const payload = Object.assign({}, v, {
+      services: this.state.picked.join('; '),
+      brief_text: text,
+      Name: v.owner || '',
+      subject: subject,
+      formservices: 'Mechta Inventory 2026'
+    });
+
+    this.setState({ sending: true, sendError: '' });
+
+    const post = (url, body) => fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(body)
+    }).then(r => {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r;
+    });
+
+    const jobs = [];
+
+    // 1. Web3Forms — доставляет письмо на почту без своего бэкенда.
+    const key = (this.props.web3formsKey || '').trim();
+    if (key) {
+      jobs.push(
+        post('https://api.web3forms.com/submit', Object.assign({
+          access_key: key,
+          subject: subject,
+          from_name: 'Mechta Inventory 2026',
+          email: to
+        }, payload))
+        .then(r => r.json())
+        .then(d => { if (!d || d.success !== true) throw new Error((d && d.message) || 'web3forms'); })
+      );
+    }
+
+    // 2. Собственный вебхук / Make.com — если настроен.
+    const url = (this.props.webhookUrl || '').trim();
+    if (url) jobs.push(post(url, payload));
+
+    // 3. Ничего не настроено — сразу письмо через почтовый клиент.
+    if (!jobs.length) { this.openMailto(); return; }
+
+    let ok = false;
+    Promise.all(jobs.map(j => j.then(() => { ok = true; }, () => {}))).then(() => {
+      if (ok) this.setState({ sending: false, sent: true });
+      else this.setState(
+        { sending: false, sendError: 'Автоотправка не сработала — открываем письмо, текст брифа уже в буфере.' },
+        this.openMailto
+      );
+    });
+  };
+
+  openMailto = () => {
+    const full = this.briefText();
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(full);
+    } catch (e) {}
+    try { window.location.href = this.mailtoHref(); } catch (e) {}
+    this.setState({ sending: false, sent: true });
+  };
+
+  briefSubject() {
+    const c = this.state.brief.campaign;
+    return 'Бриф кампании — Mechta Inventory 2026' + (c ? ': ' + c : '');
+  }
+
+  mailtoHref() {
+    const to = (this.props.emailTo || 'aidyn.argyn@mechta.kz').trim();
+    const full = this.state.briefDone ? this.briefText() : '';
+    // mailto в Windows/Outlook обрезается примерно на 2000 символах — режем сами.
+    const body = full.length > 1600
+      ? full.slice(0, 1600) + '\n\n…(полный текст брифа скопирован в буфер обмена — вставьте его сюда)'
+      : full;
+    return 'mailto:' + to
+      + '?subject=' + encodeURIComponent(this.briefSubject())
+      + '&body=' + encodeURIComponent(body);
+  }
+
+  copyText = (text) => {
+    const done = () => {
+      this.setState({ listCopied: true });
+      clearTimeout(this._t2);
+      this._t2 = setTimeout(() => this.setState({ listCopied: false }), 2000);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, done);
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(ta);
+      done();
+    }
+  };
+
+  componentWillUnmount() { clearTimeout(this._t); }
+
+  copyEmail = () => {
+    const email = 'aidyn.argyn@mechta.kz';
+    const done = () => {
+      this.setState({ copied: true });
+      clearTimeout(this._t);
+      this._t = setTimeout(() => this.setState({ copied: false }), 2000);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(email).then(done, done);
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = email;
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(ta);
+      done();
+    }
+  };
+
+  visible(catId) {
+    const g = this.state.goal;
+    const q = this.state.q.trim().toLowerCase();
+    return TOOLS.filter(t =>
+      (catId === 'all' || t.cat === catId) &&
+      (g === 'all' || t.tags.indexOf(g) >= 0) &&
+      (!q || (t.name + ' ' + t.what + ' ' + t.tags.join(' ')).toLowerCase().indexOf(q) >= 0));
+  }
+
+  renderVals() {
+    const { cat, goal } = this.state;
+    const all = CATS;
+    const active = all.find(c => c.id === cat) || all[0];
+
+    const tabs = all.map(c => {
+      const n = this.visible(c.id).length;
+      return {
+      label: c.label,
+      count: n,
+      hasCount: n > 0,
+      color: c.id === cat ? '#FFFFFF' : (n === 0 ? '#B4B4BC' : '#0B0B0C'),
+      bg: c.id === cat ? '#0B0B0C' : '#FFFFFF',
+      line: c.id === cat ? '#0B0B0C' : (n === 0 ? '#EDEDEF' : '#D8D8DE'),
+      countBg: c.id === cat ? PINK : '#F4F4F6',
+      countColor: c.id === cat ? '#FFFFFF' : '#A8A8B0',
+      onClick: () => this.setState(s => ({
+        cat: c.id,
+        goal: TOOLS.some(t => t.cat === c.id && t.tags.indexOf(s.goal) >= 0) ? s.goal : 'all'
+      }))
+    }; });
+
+    const q0 = this.state.q.trim().toLowerCase();
+    const pool = TOOLS.filter(t =>
+      (q0 ? (t.name + ' ' + t.what + ' ' + t.tags.join(' ')).toLowerCase().indexOf(q0) >= 0 : t.cat === cat));
+    const available = GOALS.filter(g => g === goal || pool.some(t => t.tags.indexOf(g) >= 0));
+
+    const goals = [{ id: 'all', label: 'Все задачи' }].concat(available.map(g => ({ id: g, label: g }))).map(g => ({
+      label: g.label,
+      bg: g.id === goal ? '#0B0B0C' : '#FFFFFF',
+      color: g.id === goal ? '#FFFFFF' : '#55555F',
+      border: g.id === goal ? '#0B0B0C' : '#E4E4E8',
+      onClick: () => this.setState({ goal: g.id })
+    }));
+
+    const searching = this.state.q.trim().length > 0;
+    const source = searching ? this.visible('all') : this.visible(cat);
+    const items = source.map(t => ({
+      name: t.name,
+      what: t.what,
+      tags: t.tags,
+      price: t.price,
+      onPick: () => this.togglePick(t.name),
+      pickLabel: this.state.picked.indexOf(t.name) >= 0 ? 'Выбрано ✓' : 'Выбрать',
+      pickBg: this.state.picked.indexOf(t.name) >= 0 ? '#0B0B0C' : '#FFFFFF',
+      pickFg: this.state.picked.indexOf(t.name) >= 0 ? '#FFFFFF' : '#0B0B0C',
+      pickBorder: this.state.picked.indexOf(t.name) >= 0 ? '#0B0B0C' : '#D8D8DE',
+      note: t.cat === 'smm' ? 'Продвижение на минимальную сумму 100 000 ₸ на 3 дня (1 ролик).' : '',
+      hasNote: t.cat === 'smm',
+      priceColor: /\d/.test(t.price) ? '#0B0B0C' : '#C2005F',
+      catShort: (CATS.find(c => c.id === t.cat) || {}).short || ''
+    }));
+
+    return {
+      tabs, goals, items,
+      onCopy: this.copyEmail,
+      fields: STEPS[this.state.step].filter(f => !f.showIf || f.showIf(this.state.brief)).map(f => ({
+        label: f.label,
+        hint: f.hint || '',
+        hasHint: !!f.hint,
+        isInput: !f.radio,
+        isRadio: !!f.radio,
+        type: f.type || 'text',
+        placeholder: f.placeholder || '',
+        value: this.state.brief[f.id] || '',
+        onChange: e => this.setField(f.id, e.target.value),
+        options: (f.radio || []).map(o => ({
+          label: o,
+          dot: this.state.brief[f.id] === o ? '#FF0080' : 'transparent',
+          onClick: () => this.setField(f.id, o)
+        }))
+      })),
+      stepLabel: (this.state.step + 1) + '/' + STEPS.length,
+      progress: Math.round((this.state.briefDone ? STEPS.length : this.state.step + 1) / STEPS.length * 100) + '%',
+      briefOpen: !this.state.briefDone,
+      briefDone: this.state.briefDone,
+      briefText: this.state.briefDone ? this.briefText() : '',
+      backColor: this.state.step === 0 ? '#D8D8DE' : '#8A8A93',
+      nextLabel: this.state.step === STEPS.length - 1 ? 'Отправить' : 'Далее →',
+      onBack: () => this.setState(s => ({ step: Math.max(0, s.step - 1) })),
+      onNext: () => this.setState(s => s.step === STEPS.length - 1 ? { briefDone: true } : { step: s.step + 1 }),
+      onBriefEdit: () => this.setState({ briefDone: false }),
+      onCopyBrief: () => {
+        const text = this.briefText();
+        const ta = this._briefTa;
+        let ok = false;
+        if (ta) {
+          ta.removeAttribute('readonly');
+          ta.focus();
+          ta.setSelectionRange(0, ta.value.length);
+          try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+          ta.setAttribute('readonly', '');
+        }
+        if (!ok && navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).catch(() => {});
+        }
+        this.setState({ briefCopied: true });
+        clearTimeout(this._t3);
+        this._t3 = setTimeout(() => this.setState({ briefCopied: false }), 2000);
+      },
+      briefTaRef: el => { this._briefTa = el; },
+      mailtoHref: this.mailtoHref(),
+      formRef: el => { this._tildaForm = el; },
+      onSend: this.sendBrief,
+      sendLabel: this.state.sent ? 'Отправлено ✓' : (this.state.sending ? 'Отправляем…' : 'Отправить бриф'),
+      sendBg: this.state.sent ? '#0B0B0C' : '#FF0080',
+      sendError: this.state.sendError || '',
+      hasSendError: !!this.state.sendError,
+      briefBtnLabel: this.state.briefCopied ? 'Скопировано ✓' : 'Скопировать бриф',
+      briefBtnBg: this.state.briefCopied ? '#FF0080' : '#0B0B0C',
+      hasSelection: false,
+      selectedCount: this.state.picked.length,
+      selectionText: this.selectionText(),
+      taRef: el => { this._ta = el; },
+      onClear: () => this.setState({ picked: [], listCopied: false }),
+      onCopyList: () => this.copyText(this.selectionText()),
+      listBtnLabel: this.state.listCopied ? 'Скопировано ✓' : 'Скопировать список',
+      listBtnBg: this.state.listCopied ? '#FF0080' : '#0B0B0C',
+      listBtnFg: this.state.listCopied ? '#0B0B0C' : '#FFFFFF',
+      copyLabel: this.state.copied ? 'Скопировано ✓' : 'aidyn.argyn@mechta.kz',
+      copyBg: this.state.copied ? '#FFFFFF' : PINK,
+      copyFg: '#0B0B0C',
+      headLabel: this.state.copied ? 'Скопировано ✓' : 'aidyn.argyn@mechta.kz',
+      headBg: this.state.copied ? '#FF0080' : '#0B0B0C',
+      copyScale: this.state.copied ? 1.04 : 1,
+      toastOpacity: this.state.copied ? 1 : 0,
+      toastY: this.state.copied ? '0px' : '8px',
+      query: this.state.q,
+      onQuery: e => this.setState({ q: e.target.value }),
+      noResults: items.length === 0,
+      activeTitle: searching ? 'Результаты поиска' : active.label,
+      activeBlurb: searching
+        ? 'Найдено ' + items.length + ' инструментов по запросу «' + this.state.q.trim() + '» во всех категориях. Очистите поиск, чтобы вернуться к категориям.'
+        : active.blurb,
+      showNote: !searching && cat === 'smm' && items.length > 0
+    };
+  }
+}
+</script>
+</body>
+</html>

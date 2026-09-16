@@ -1,0 +1,280 @@
+New Mechta marketing inventory 2026:
+
+=== TABLE ===
+Category
+ | Tool
+ | What is it
+ | Type
+ | Price
+ | 
+Audience Intelligence
+DMP · CDP · NBO
+ | DMP - first-party audiences &amp; look-alikes
+ | Audience activation on Mechta's first-party purchase data across 80+ stores, mechta.kz and the app. We build precise, deterministic buyer segments (category owners, high-frequency / high-value buyers, non-converting browsers, RFM-segments) and direct DMP or seeded look-alikes, then activate them in programmatic and social (Byyd, Meta, Google, TikTok, Telegram, Yandex) and inside CRM sends. Targeting on real purchase behaviour - not interest-based guesswork. Only for Mechta ad cabinets.
+ | Expand Online  ·  Drive Upgrade  ·  Scale Ecosystem
+ | Add-on to CRM / Digital - scoped with the media line
+ | 
+
+ | NBO - proprietary ML Next-Best-Offer
+ | In-house machine-learning model that scores every customer and predicts the next best product / offer: accessory attach (adapters, AirPods, Watch, cases), upgrade readiness, and multi-device cross-sell. Powers smart-cart recommendations, personalised bundles and 1:1 CRM offers to lift attach rate and basket value.
+ | Grow Attach  ·  Scale Ecosystem
+ | Add-on - scoped with campaign
+ | 
+
+ | Cascading CDP journeys
+ | Multi-channel orchestration through our CDP: sequenced sends that escalate cheapest-to-richest channel (push → email → WhatsApp → SMS) with frequency capping and suppression logic, triggered on behaviour and NBO scores. More reach per contact at a controlled cost-per-conversion.
+ | Scale Ecosystem  ·  Drive Upgrade
+ | By channel volume (see CRM rates) + orchestration setup
+ | 
+
+ | Predictive upgrade / reactivation segments
+ | Model-derived segments of Apple owners who have not upgraded in 12+ months and, per our model, are ready to buy - activated for trade-in and installment messaging across CRM and programmatic. Potential NBO-based (next buy) Apple/Iphone buyers
+ | Drive Upgrade
+ | Add-on to CRM / Digital
+ | 
+Performance / Digital
+ | Google Ads - 360
+ | 1) Search - capturing existing demand (by models &amp; specs);  
+2) Performance Max - media formats &amp; placements with product feeds, plus DMP and look-alike seeds, not only for cold traffic;  
+3) Demand Gen - reach formats to warm the target audience and collect segments for remarketing.
+ | Expand Online
+ | By GMV, velocity or ROAS / CRR targets
+ | 
+
+ | Meta (Instagram / Facebook)
+ | Feed, Stories &amp; Reels; catalogue and dynamic product ads (DPA. *Also we can use your depersonalized audiences); look-alikes built on Mechta first-party data.
+ | Expand Online
+ | By GMV, velocity or ROAS / CRR targets
+ | 
+
+ | TikTok
+ | In-feed and Spark ads, creator-led performance formats.
+ | Expand Online
+ | By GMV, velocity or ROAS / CRR targets
+ | 
+
+ | Yandex Direct
+ | Search and display across the Yandex network.
+ | Expand Online
+ | By GMV, velocity or ROAS / CRR targets
+ | 
+
+ | Programmatic (Byyd / DSP)
+ | Automated buying across thousands of sites and apps with DMP-audience activation - no per-placement negotiation.
+*especially if the standard number of touchpoints prior to purchase is known
+ | Expand Online
+ | By GMV, velocity or ROAS / CRR targets
+ | 
+
+ | Telegram Ads
+ | Channels &amp; Stories placements with DMP-segment targeting.
+ | Expand Online
+ | By GMV, velocity or ROAS / CRR targets
+ | 
+Kaspi Marketplace
+ | Product-card priority placement
+ | Priority ranking of your product card in Kaspi.
+ | Expand Online
+ | By GMV / velocity targets
+ | 
+
+ | Banner ads
+ | Banner inside the Kaspi interface.
+ | Expand Online
+ | On request
+ | 
+
+ | Review bonus
+ | Cashback to the buyer for a review - social proof and velocity.
+ | Grow Attach
+ | On request
+ | 
+
+ | Seller bonus
+ | Your cashback as an extra purchase incentive.
+ | Drive Upgrade
+ | On request
+ | 
+
+ | External traffic to Kaspi
+ | Paid external traffic routed to your Kaspi card.
+ | Expand Online
+ | By ROAS targets
+ | 
+CRM/CDP - owned channels
+ | Email
+ | Your offer to our opted-in subscriber base, segmentable via DMP.
+ | Scale Ecosystem
+ | On request
+ | 
+
+ | Push (app)
+ | In-app message to Mechta app users.
+ | Scale Ecosystem
+ | Add-on - scoped with complex campaigns
+ | 
+
+ | WhatsApp
+ | Up to 120 chars + link. Our tests show higher response than SMS.
+ | Scale Ecosystem
+ | 40 KZT / message
+ | 
+
+ | SMS
+ | Classic SMS up to 47 chars + link.
+ | Scale Ecosystem
+ | 20 KZT / message
+ | 
+
+ | Personalised promo codes
+ | 1:1 codes for closed-loop conversion tracking from every send.
+ | Drive Upgrade
+ | On request
+ | 
+
+ | Loyalty-program bonus mechanics 
+ | Configure vendor-funded bonus mechanics inside Mechta's loyalty programme: cashback accrual with definable spend thresholds, point-expiry windows, and brand- or SKU-level restrictions on where points can be redeemed - steering repeat purchases and accessory attach toward your products. 
+ | Scale Ecosystem · Grow Attach 
+ | On request - bonus fund vendor-funded, setup scoped per mechanic 
+ | 
+Content / SMM 
+ | Social post
+ | One branded post.
+ | Expand Online
+ | On request
+ | 
+
+ | Pinned post
+ | Post held pinned at the top of the profile.
+ | Expand Online
+ | 56,000 KZT
+ | 
+
+ | Instagram highlight
+ | Branded highlight.
+ | Expand Online
+ | 280,000 KZT
+ | 
+
+ | Mini SMM package
+ | Bundle of posts / stories over a set period (composition to confirm).
+ | Expand Online
+ | 448,000 KZT
+ | 
+
+ | Large SMM package
+ | Extended SMM bundle (composition to confirm).
+ | Expand Online
+ | 784,000 KZT
+ | 
+
+ | Special project
+ | Custom format built to the brief.
+ | Scale Ecosystem
+ | On request
+ | 
+
+ | Influencer integrations
+ | Integrations with Mechta's vetted creator pool.
+ | Expand Online
+ | On request
+ | 
+
+ | Video (Reels / Shorts)
+ | Short-form vertical video.
+ | Expand Online
+ | 196,000 KZT
+ | 
+Creative / Art Direction
+ | 3D video
+ | Full 3D product film - hero launch asset.
+ | Drive Upgrade
+ | 2,500,000 KZT
+ | 
+
+ | AR video
+ | Augmented-reality product film.
+ | Drive Upgrade
+ | 1,000,000 KZT
+ | 
+
+ | AI video
+ | AI-generated video - faster and cheaper than classic production.
+ | Drive Upgrade
+ | 400,000 KZT
+ | 
+
+ | 3D immersive landing
+ | Interactive 3D campaign page.
+ | Expand Online
+ | 1,500,000 KZT
+ | 
+
+ | Landing page
+ | Dedicated campaign landing page.
+ | Expand Online
+ | 700,000 KZT
+ | 
+
+ | Gamification (web &amp; app)
+ | Mini-game / interactive engagement mechanic.
+ | Scale Ecosystem
+ | 3,000,000 KZT
+ | 
+Website - mechta.kz
+ | Homepage banner
+ | The highest-traffic page on the site.
+ | Expand Online
+ | 600,000 KZT / mo  (400,000 / half-month)
+ | 
+
+ | Category banner
+ | Banner on the relevant product-category page.
+ | Expand Online
+ | 300,000 KZT / mo  (200,000 / half-month)
+ | 
+
+ | Online Brand Zone
+ | Branded storefront on the site.
+ | Scale Ecosystem
+ | 1,200,000 KZT / mo  (750,000 / half-month)
+ | 
+
+ | Category leader plaque
+ | Locked as category leader for a year.
+ | Expand Online
+ | 2,000,000 KZT / year
+ | 
+PR
+ | Digital media article
+ | Placement in an online outlet.
+ | Expand Online
+ | On request
+ | 
+
+ | Print media article
+ | Placement in a print outlet.
+ | Expand Online
+ | On request
+ | 
+
+ | Event
+ | Brand event / launch activation.
+ | Premium Retail
+ | On request
+ | 
+
+ | Copywriting
+ | We write the article for placement.
+ | Expand Online
+ | On request
+ | 
+In-store / Retail Media
+ | In-store digital screens / DOOH
+ | Digital screens and retail-media across 100+ stores nationwide - physical reach no smaller-footprint competitor can match. Pairs with Apple-zone POS and trained-consultant / store-team activation.
+ | Premium Retail
+ | On request  (to scope with Dmitry)
+ | 
+
+=== END TABLE ===
+
