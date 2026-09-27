@@ -8,7 +8,7 @@ Images are CSS custom properties (one url each), so the single-file build stores
 import os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-APP, REG = 'https://oneflow.art/', '?auth=register'
+APP, REG = 'https://app.oneflow.art/', '?auth=register'
 MARK = ('<svg viewBox="0 0 76 52" aria-hidden="true"><path fill="currentColor" d="M17 0C18.66 0 20 1.34 20 3V14C20 15.1 20.9 16 22 16H32C33.66 16 35 17.34 35 19V30C35 31.1 35.9 32 37 32H38C39.1 32 40 31.1 40 30V19C40 17.34 41.34 16 43 16H57C58.66 16 60 17.34 60 19V30C60 31.1 60.9 32 62 32H73C74.66 32 76 33.34 76 35V49C76 50.66 74.66 52 73 52H59C57.34 52 56 50.66 56 49V38C56 36.9 55.1 36 54 36H51C49.9 36 49 36.9 49 38V49C49 50.66 47.66 52 46 52H32C30.34 52 29 50.66 29 49V38C29 36.9 28.1 36 27 36H24C22.9 36 22 36.9 22 38V49C22 50.66 20.66 52 19 52H5C3.34 52 2 50.66 2 49V35C2 33.34 3.34 32 5 32H13C14.1 32 15 31.1 15 30V22C15 20.9 14.1 20 13 20H3C1.34 20 0 18.66 0 17V3C0 1.34 1.34 0 3 0H17Z"/></svg>')
 IMGS = ['bunny', 'pajama', 'coffee', 'body', 'blender', 'pyramid', 'airbuds', 'hoodie', 'watch', 'speaker', 'robot', 'airfryer', 'powerbank', 'toothbrush']
 ALT = {'bunny': 'Мягкий зайка', 'pajama': 'Пижама детская', 'coffee': 'Кофемашина Aroma One', 'body': 'Боди для малыша', 'blender': 'Блендер Mix Pro 1200', 'pyramid': 'Деревянная пирамидка',
@@ -320,6 +320,7 @@ def build(docs=''):
             '<meta name="description" content="30+ нейросетей в одном окне: фото, видео и тексты для рекламы. Адаптация под любой размер и пресеты Kaspi, РСЯ, Google, BYYD. Генерация до 50% дешевле, бюджет не сгорает в конце месяца.">\n'
             '<meta name="theme-color" content="#f7f7fa">\n<meta property="og:type" content="website">\n<meta property="og:site_name" content="ONEFLOW">\n<meta property="og:locale" content="ru_RU">\n'
             '<meta property="og:title" content="ONEFLOW — больше контента, до 50% дешевле">\n'
+            '<link rel="canonical" href="https://oneflow.art/">\n<meta property="og:url" content="https://oneflow.art/">\n'
             "<script>document.documentElement.classList.add('js')</script>\n<link rel=\"stylesheet\" href=\"fonts.css\">\n"
             f'<style>{CSS.replace("IMGVARS", imgvars)}.sr {{ position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }}</style>\n</head>\n'
             f'<body id="top">\n{SYM}\n{nav}\n<main id="main">{hero}{why}{steps}{mods}{business}{horeca}{assistant}{gal}{pricing}{faq}{end}</main>\n{footer}\n{JS}</body>\n</html>\n')
