@@ -64,7 +64,7 @@ def build4():
         html = html.replace(f'assets/ol/{n}.webp', uri(os.path.join(HERE, 'assets', 'ol', f'{n}.webp'), 'image/webp'))
     html = html.replace('<meta name="theme-color"', f'<link rel="icon" href="{uri(os.path.join(APPREPO, "public", "favicon.svg"), "image/svg+xml")}" type="image/svg+xml">\n<meta name="theme-color"', 1)
     assert 'assets/' not in html and 'fonts/' not in html
-    bad = r'(?<![\w-])(?:src|href)="(?!data:|#|https://oneflow\.kz/)'
+    bad = r'(?<![\w-])(?:src|href)="(?!data:|#|https://oneflow\.art/)'
     assert not re.search(bad, html), re.findall(r'.{40}' + bad + r'.{30}', html)[:3]
     d = os.path.join(HERE, 'site', '4-porcelain'); os.makedirs(d, exist_ok=True)
     open(os.path.join(d, 'index.html'), 'w', encoding='utf-8').write(html)

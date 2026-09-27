@@ -11,7 +11,7 @@ and badge that re-lay themselves out with container queries for each cabinet's a
 import os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-APP = 'https://oneflow.kz/'
+APP = 'https://oneflow.art/'
 REG = '?auth=register'
 
 SUB = ('Креативы для всех рекламных кабинетов в пару кликов: ассистент готовит — вы запускаете. '
