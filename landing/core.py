@@ -11,7 +11,7 @@ and badge that re-lay themselves out with container queries for each cabinet's a
 import os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-APP = 'https://app.oneflow.art/'
+APP = '/app'  # app is served by the same Vercel project at oneflow.art/app
 REG = '?auth=register'
 
 SUB = ('Креативы для всех рекламных кабинетов в пару кликов: ассистент готовит — вы запускаете. '
