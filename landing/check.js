@@ -8,7 +8,7 @@ const { chromium } = require('/opt/node22/lib/node_modules/playwright'); const p
       await p.goto('file://' + file, { waitUntil: 'load' }); await p.evaluate(() => document.fonts.ready); await p.waitForTimeout(500);
       const sw = await p.evaluate(() => document.documentElement.scrollWidth);
       let extra = '';
-      if (w === 1440) { const calc = await p.evaluate(() => { const i = document.getElementById('budget'); i.value = 500; i.dispatchEvent(new Event('input')); return document.getElementById('sv').textContent.replace(/\s+/g, ''); });
+      if (w === 1440) { const calc = await p.evaluate(() => { const i = document.getElementById('budget'); if (!i) return 'none'; i.value = 500; i.dispatchEvent(new Event('input')); return document.getElementById('sv').textContent.replace(/\s+/g, ''); });
         await p.click('#py'); const y = await p.$eval('[data-y]', (e) => e.textContent); extra = ` calc=${calc} yearly=${y}`; }
       if (w === 390) { await p.click('.burger'); const o = await p.isVisible('#mnav'); await p.click('#mnav a[href="#pricing"]'); await p.waitForTimeout(150); extra = ` menu=${o && await p.isHidden('#mnav')}`; }
       res.push(`${w}:${sw === w ? 'ok' : 'SCROLL ' + sw}${extra}${errs.length ? ' ERR ' + errs.join(';').slice(0, 160) : ''}${ext.length ? ' EXT ' + ext.join(',') : ''}`);
