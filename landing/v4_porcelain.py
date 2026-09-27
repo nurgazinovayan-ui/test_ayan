@@ -282,7 +282,6 @@ def build(docs=''):
            f'<nav class="mnav" id="mnav" aria-label="Меню" hidden>{links}<div class="row"><a class="in2" data-app="login" href="{APP}">Войти</a>{reg("Регистрация")}</div></nav>')
     fm = lambda c, lb: f'<div class="fm {c}"><i class="ft"></i><span class="lb">{lb}</span></div>'
     hero = (f'<section class="hero"><div class="wrap">'
-            '<a class="pill" href="#business"><b>Новое</b>Шаблоны студийных фото для ресторанов, риелторов и автодилеров →</a>'
             '<h1>Больше контента.<br><span>До 50% дешевле.</span></h1>'
             '<p class="sub">Фото, видео и тексты на 30+ нейросетях — и адаптация под любой размер в один клик. Неиспользованный бюджет остаётся с вами.</p>'
             f'<div class="acts">{reg("Начать бесплатно →")}<a class="btn g" href="#how">Как это работает</a></div>'
