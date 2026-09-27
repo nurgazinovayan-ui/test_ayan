@@ -73,6 +73,17 @@ FAQ = [('Есть ли шаблоны для моей ниши?', 'Да, в ра
        ('Почему генерация до 50% дешевле?', 'Вы платите за генерации по ценам моделей — без наценок посредников и без подписки на каждый сервис. Итог зависит от моделей и объёма.'),
        ('Какие размеры поддерживает адаптация?', 'Любые — от сторис 9:16 до баннера 728×90, плюс пресеты Kaspi, GDN, Discovery, Яндекс РСЯ и BYYD.'),
        ('Можно ли работать командой?', 'Да — пригласите соавтора по почте и общайтесь во встроенном мессенджере.')]
+WAVE = ''.join(f'<i style="height:{h}%"></i>' for h in (30, 55, 80, 45, 95, 60, 35, 70, 100, 50, 25, 65, 85, 40, 75, 55, 90, 30, 60, 80, 45, 70, 35, 55))
+EX = {  # examples revealed when a module card is opened
+    'Нодовый холст': '<div class="flow"><span>Фото товара</span><i>→</i><span>Новый фон</span><i>→</i><span>Видео 5 с</span><i>→</i><span>9:16 · 1:1 · 1200×628</span></div><p class="exn">«Запустить пайплайн» проходит всю цепочку сам — все форматы разом.</p>',
+    'One Launch': '<div class="th"><span style="background-image:var(--img-coffee)"></span><span style="background-image:var(--img-blender)"></span><span style="background-image:var(--img-bunny)"></span></div><p class="exn">Фото товара → карточка маркетплейса или баннер по шаблону.</p>',
+    'Copywrite engine': '<ul class="li"><li><b>Описание товара для Kaspi</b><em>DOCX</em></li><li><b>Контент-план на месяц</b><em>XLSX</em></li><li><b>Презентация для клиента</b><em>PPTX</em></li></ul>',
+    'TRENDSWATCHING': '<ul class="li"><li><b>TikTok · распаковка за 7 секунд</b><small>хук в первую секунду, товар крупно</small></li><li><b>Instagram · «до/после» в Reels</b><small>контраст и быстрый монтаж</small></li><li><b>Threads · опрос «какой цвет выбрать»</b><small>вовлечение через комментарии</small></li></ul>',
+    'Creative Predictor': '<div class="sc"><span>Креатив A</span><i style="--w:72%"></i><b>72</b></div><div class="sc"><span>Креатив B</span><i style="--w:58%"></i><b>58</b></div><p class="exn">A сильнее: товар крупнее, кнопка контрастнее.</p>',
+    'Музыка и голос': '<ul class="li"><li><b>«Лёгкий лоу-фай для кофейни, 30 с»</b><small>трек по описанию стиля</small></li><li><b>«Скидка 20% до воскресенья»</b><small>озвучка выбранным голосом</small></li></ul><div class="wave" aria-hidden="true">' + WAVE + '</div>',
+    'Стратегия': '<div class="fn"><span>Охват</span><i style="--w:100%"></i><b>40%</b></div><div class="fn"><span>Интерес</span><i style="--w:80%"></i><b>35%</b></div><div class="fn"><span>Покупка</span><i style="--w:58%"></i><b>25%</b></div><p class="exn">Бюджет по этапам воронки и план на 4 недели.</p>',
+    'Соавторы': '<div class="inv"><span>colleague@company.kz</span><b>Пригласить</b></div><div class="msg"><b>Коллега</b>Сторис готовы — глянешь 9:16?</div>',
+}
 NAV = [('#why', 'Преимущества'), ('#business', 'Для бизнеса'), ('#assistant', 'Ассистент'), ('#pricing', 'Цены'), ('#faq', 'Вопросы')]
 MODELS = ['GPT Image', 'Nano Banana Pro', 'Seedream', 'Veo 3.1', 'Kling', 'Seedance', 'Hailuo', 'Recraft', 'Flux', '+ ещё 20']
 
@@ -103,6 +114,12 @@ main { overflow-x: clip; } a { color: inherit; text-decoration: none; } img, svg
 /* hero */
 .hero { position: relative; padding: 70px 0 0; text-align: center; } .blob { position: absolute; z-index: -1; border-radius: 50%; filter: blur(70px); opacity: .75; pointer-events: none; }
 .blob.a { width: 520px; height: 420px; left: -8%; top: 40px; background: #dccfff; } .blob.b { width: 520px; height: 440px; right: -8%; top: 120px; background: #c9f2de; } .blob.c { width: 560px; height: 380px; left: 30%; top: 560px; background: #ffe3cf; }
+.bgfx { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+.bgfx i { position: absolute; border-radius: 50%; filter: blur(80px); opacity: .62; will-change: transform; animation: drift var(--t) ease-in-out infinite alternate; }
+.bgfx .a { --t: 22s; width: 46vw; height: 40vw; left: -12vw; top: -8vw; background: #dccfff; } .bgfx .b { --t: 28s; width: 44vw; height: 42vw; right: -12vw; top: 12vh; background: #c9f2de; animation-delay: -9s; }
+.bgfx .c { --t: 25s; width: 48vw; height: 36vw; left: 24vw; bottom: -16vw; background: #ffe3cf; animation-delay: -15s; } .bgfx .d { --t: 32s; width: 30vw; height: 30vw; left: 38vw; top: 26vh; background: #d7e6ff; opacity: .45; animation-delay: -4s; }
+@keyframes drift { 0% { transform: translate(0, 0) scale(1); } 33% { transform: translate(7vw, 6vh) scale(1.1); } 66% { transform: translate(-5vw, 10vh) scale(.92); } 100% { transform: translate(4vw, -6vh) scale(1.06); } }
+@media (max-width: 760px) { .bgfx i { filter: blur(60px); } .bgfx .a { width: 80vw; height: 70vw; } .bgfx .b { width: 80vw; height: 76vw; } .bgfx .c { width: 90vw; height: 70vw; } .bgfx .d { width: 60vw; height: 60vw; } }
 .pill { display: inline-flex; align-items: center; gap: 10px; padding: 5px 14px 5px 5px; border-radius: 99px; background: rgba(255,255,255,.75); box-shadow: inset 0 0 0 1px var(--line); font-size: 13.5px; color: var(--ink2); }
 .pill b { padding: 3px 9px; border-radius: 99px; background: var(--ink); color: #fff; font-size: 11.5px; font-weight: 600; } .pill:hover { box-shadow: inset 0 0 0 1px rgba(17,17,20,.2); }
 .hero h1 { margin-top: 26px; font: 700 clamp(44px, 6.6vw, 92px)/1 var(--d); letter-spacing: -.05em; } .hero h1 span { background: linear-gradient(95deg, #111114 30%, #3e6d63 70%, #5c5f9a); -webkit-background-clip: text; background-clip: text; color: transparent; }
@@ -129,7 +146,7 @@ main { overflow-x: clip; } a { color: inherit; text-decoration: none; } img, svg
 .models span { margin-right: 52px; font: 700 21px var(--d); letter-spacing: -.02em; color: #26262e; white-space: nowrap; }
 @media (max-width: 640px) { .models span { margin-right: 36px; font-size: 17px; } .models { -webkit-mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent); mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent); } }
 /* sections */
-.sec { padding-top: 130px; } .sh { max-width: 900px; margin: 0 auto; text-align: center; } .sh p { max-width: 640px; margin-left: auto; margin-right: auto; } .sh .k { font: 500 11.5px var(--m); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.sec { padding-top: 130px; } .sh { max-width: 900px; margin: 0 auto; text-align: center; } .sh p { max-width: 640px; margin-left: auto; margin-right: auto; } .sh .k { font: 700 11.5px var(--d); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
 .sh h2 { margin-top: 12px; font: 700 clamp(32px, 4vw, 48px)/1.08 var(--d); letter-spacing: -.04em; } .sh p { margin-top: 14px; color: var(--ink2); font-size: 16.5px; }
 .card { background: var(--card); border-radius: 24px; box-shadow: var(--sh); }
 .three { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 48px; } .three .card { position: relative; overflow: hidden; display: flex; flex-direction: column; padding: 28px; }
@@ -148,7 +165,24 @@ main { overflow-x: clip; } a { color: inherit; text-decoration: none; } img, svg
 .steps h3 { margin-top: 18px; font: 600 17px var(--d); } .steps p { max-width: 280px; margin: 8px auto 0; font-size: 14.5px; color: var(--muted); }
 .mods { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 48px; } .mods .card { padding: 22px; transition: transform .3s var(--e), box-shadow .3s; } .mods .card:hover { transform: translateY(-3px); box-shadow: var(--sh2); }
 .mods .ic { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 12px; background: color-mix(in srgb, var(--c) 13%, #fff); color: var(--c); } .mods .ic svg { width: 19px; height: 19px; }
-.mods h3 { margin-top: 16px; font: 600 16px var(--d); } .mods p { margin-top: 6px; font-size: 14px; color: var(--muted); }
+.mods { align-items: start; } .mod { padding: 0 !important; } .mod.open { box-shadow: var(--sh2); } .mods .card.open:hover { transform: none; }
+.mod .mh { display: block; width: 100%; padding: 22px; border: 0; border-radius: 24px; background: none; text-align: left; cursor: pointer; }
+.mod .t { display: block; margin-top: 16px; font: 600 16px var(--d); } .mod .d { display: block; margin-top: 6px; font-size: 14px; color: var(--muted); }
+.mod .more { display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; font: 600 12.5px var(--d); color: var(--c); } .mod .more i { font-style: normal; font-size: 15px; transition: transform .3s var(--e); } .mod.open .more i { transform: rotate(45deg); }
+.mx { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .45s var(--e); } .mod.open .mx { grid-template-rows: 1fr; }
+.mxi { min-height: 0; overflow: hidden; visibility: hidden; transition: visibility 0s .45s; } .mod.open .mxi { visibility: visible; transition-delay: 0s; }
+.exs { display: grid; gap: 8px; margin: 0 22px 22px; padding-top: 14px; border-top: 1px dashed #e3e3ea; font-size: 13px; }
+.flow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; } .flow span { padding: 5px 9px; border-radius: 8px; background: color-mix(in srgb, var(--c) 10%, #fff); font-size: 12.5px; font-weight: 500; } .flow i { color: var(--muted); font-style: normal; }
+.exn { color: var(--muted); font-size: 12.5px; line-height: 1.45; } .exl { justify-self: end; font: 500 10.5px var(--m); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.th { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; } .th span { aspect-ratio: 3 / 4; border-radius: 8px; background: center / cover; box-shadow: var(--sh); }
+.li { list-style: none; display: grid; gap: 6px; } .li li { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 2px 8px; padding: 8px 10px; border-radius: 10px; background: var(--bg); }
+.li b { font-size: 12.5px; font-weight: 600; } .li small { width: 100%; font-size: 11.5px; color: var(--muted); } .li em { padding: 2px 6px; border-radius: 6px; background: color-mix(in srgb, var(--c) 12%, #fff); color: var(--c); font: 500 10.5px var(--m); font-style: normal; }
+.sc, .fn { display: grid; grid-template-columns: 64px minmax(0, 1fr) 30px; align-items: center; gap: 8px; font-size: 12.5px; } .sc i, .fn i { position: relative; height: 8px; overflow: hidden; border-radius: 99px; background: #ececf1; }
+.sc i::after, .fn i::after { content: ''; position: absolute; inset: 0 auto 0 0; width: 0; border-radius: 99px; background: var(--c); transition: width .9s var(--e) .2s; } .mod.open .sc i::after, .mod.open .fn i::after { width: var(--w); } .sc b, .fn b { text-align: right; font-weight: 600; }
+.wave { display: flex; align-items: center; gap: 3px; height: 34px; } .wave i { flex: 1; border-radius: 2px; background: var(--c); opacity: .7; }
+.inv { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 6px 6px 6px 12px; border-radius: 12px; background: var(--bg); font-size: 12.5px; color: var(--muted); }
+.inv b { padding: 6px 10px; border-radius: 8px; background: var(--ink); color: #fff; font-size: 12px; font-weight: 600; } .msg { justify-self: start; padding: 8px 12px; border-radius: 12px 12px 12px 4px; background: color-mix(in srgb, var(--c) 10%, #fff); font-size: 12.5px; } .msg b { display: block; font-size: 11.5px; color: var(--c); }
+@media (max-width: 760px) { .mod.open { grid-column: 1 / -1; } }
 /* business */
 .tpl { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 48px; } .tpl .card { overflow: hidden; padding: 10px; }
 .ba { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; } .ba figure { position: relative; overflow: hidden; border-radius: 14px; aspect-ratio: 4 / 5; }
@@ -210,7 +244,7 @@ dialog.doc .x { position: sticky; top: 0; float: right; width: 40px; height: 40p
 @media (max-width: 760px) { .panel { display: flex; flex-direction: column; padding: 20px; border-radius: 24px; } .chip.c3 { order: 2; position: static; align-self: center; translate: none; margin-top: 18px; } .fm .lb small { display: none; } .pg { grid-template-columns: minmax(0, 1fr); } .src { width: min(240px, 100%); margin: 0 auto; } .arr i { rotate: 90deg; margin: 18px 0; }
   .chip.c1 { left: 8px; } .chip.c2 { right: 8px; } .chip { padding: 7px 10px 7px 7px; } .chip b { font-size: 12.5px; } .chip i { width: 26px; height: 26px; }
   .three, .steps, .plans, .how3, .who3 { grid-template-columns: minmax(0, 1fr); } .steps::before { display: none; } .plan.hot { order: -1; } .end { padding: 64px 22px; } .sec { padding-top: 100px; } .vs th, .vs td { padding: 11px 10px; font-size: 13px; } }
-@media (max-width: 460px) { .tpl { grid-template-columns: minmax(0, 1fr); } .mods .card { padding: 16px; } .mods h3 { font-size: 15px; } .mods p { font-size: 13px; } .as4 { grid-template-columns: minmax(0, 1fr); } .chip.c2 { display: none; } .hero .sub { font-size: 16.5px; } }
+@media (max-width: 460px) { .tpl { grid-template-columns: minmax(0, 1fr); } .mod .mh { padding: 16px; } .mod .t { font-size: 15px; } .mod .d { font-size: 13px; } .exs { margin: 0 16px 16px; } .as4 { grid-template-columns: minmax(0, 1fr); } .chip.c2 { display: none; } .hero .sub { font-size: 16.5px; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; } .js .rv { opacity: 1; transform: none; } }
 """
 
@@ -226,6 +260,9 @@ JS = """<script>
   const open = (o) => { m.hidden = !o; b.setAttribute('aria-expanded', o); b.setAttribute('aria-label', o ? 'Закрыть меню' : 'Открыть меню'); };
   b.addEventListener('click', () => open(m.hidden)); m.addEventListener('click', (e) => { if (e.target.closest('a')) open(false); });
   addEventListener('keydown', (e) => { if (e.key === 'Escape' && !m.hidden) { open(false); b.focus(); } }); addEventListener('resize', () => { if (getComputedStyle(b).display === 'none') open(false); });
+  document.querySelectorAll('.mod .mh').forEach((btn) => btn.addEventListener('click', () => { const card = btn.closest('.mod'), open = !card.classList.contains('open');
+    document.querySelectorAll('.mod.open').forEach((x) => { if (x !== card) { x.classList.remove('open'); x.querySelector('.mh').setAttribute('aria-expanded', 'false'); } });
+    card.classList.toggle('open', open); btn.setAttribute('aria-expanded', open); }));
   document.querySelectorAll('[data-doc]').forEach((x) => x.addEventListener('click', () => { const d = document.getElementById('doc-' + x.dataset.doc); if (d && d.showModal) d.showModal(); }));
   document.querySelectorAll('dialog.doc').forEach((d) => { d.querySelector('.x').addEventListener('click', () => d.close()); d.addEventListener('click', (e) => { if (e.target === d) d.close(); }); });
   const els = document.querySelectorAll('.rv');
@@ -244,11 +281,11 @@ def build(docs=''):
            '<button class="burger" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="mnav"><i></i><i></i></button></div></header>'
            f'<nav class="mnav" id="mnav" aria-label="Меню" hidden>{links}<div class="row"><a class="in2" data-app="login" href="{APP}">Войти</a>{reg("Регистрация")}</div></nav>')
     fm = lambda c, lb: f'<div class="fm {c}"><i class="ft"></i><span class="lb">{lb}</span></div>'
-    hero = (f'<section class="hero"><span class="blob a"></span><span class="blob b"></span><span class="blob c"></span><div class="wrap">'
+    hero = (f'<section class="hero"><div class="wrap">'
             '<a class="pill" href="#business"><b>Новое</b>Шаблоны студийных фото для ресторанов, риелторов и автодилеров →</a>'
             '<h1>Больше контента.<br><span>До 50% дешевле.</span></h1>'
             '<p class="sub">Фото, видео и тексты на 30+ нейросетях — и адаптация под любой размер в один клик. Неиспользованный бюджет остаётся с вами.</p>'
-            f'<div class="acts">{reg("Начать бесплатно →")}<a class="btn g" href="#how">Как это работает</a></div><p class="tiny">Без карты · бесплатный тариф навсегда · бюджет не сгорает</p>'
+            f'<div class="acts">{reg("Начать бесплатно →")}<a class="btn g" href="#how">Как это работает</a></div>'
             '<div class="panel" role="img" aria-label="Карточка «Мягкий зайка» адаптирована под Stories 9:16, Google Discovery, Яндекс РСЯ и Kaspi — пример">'
             '<span class="chip c1"><i>↺</i><span><small>Перенесено на октябрь</small><b>+$112 бюджета</b></span></span>'
             '<span class="chip c2"><i>⤢</i><span><small>Адаптация</small><b>1 фото → 4 формата</b></span></span>'
@@ -271,7 +308,9 @@ def build(docs=''):
              '<div class="rv"><span class="n">01</span><h3>Загрузите фото или идею</h3><p>Товар, референс или пара строк — этого достаточно.</p></div>'
              '<div class="rv"><span class="n">02</span><h3>Ассистент соберёт цепочку</h3><p>Разберёт нишу, подготовит промпты и схему нод — вы проверяете и запускаете.</p></div>'
              '<div class="rv"><span class="n">03</span><h3>Получите все форматы</h3><p>Kaspi, Яндекс РСЯ, Google, BYYD и сторис — одним запуском.</p></div></div></div></section>')
-    mods = ''.join(f'<article class="card rv" style="--c:{c}"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{ic}</svg></span><h3>{t}</h3><p>{d}</p></article>' for t, d, c, ic in MODS)
+    mods = ''.join(f'<article class="card mod rv" style="--c:{c}"><button type="button" class="mh" aria-expanded="false" aria-controls="mx{i}"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{ic}</svg></span>'
+                   f'<span class="t">{t}</span><span class="d">{d}</span><span class="more">Примеры<i aria-hidden="true">+</i></span></button>'
+                   f'<div class="mx" id="mx{i}" role="region" aria-label="Примеры: {t}"><div class="mxi"><div class="exs">{EX[t]}<span class="exl">пример</span></div></div></div></article>' for i, (t, d, c, ic) in enumerate(MODS))
     mods = f'<section class="sec" id="modules"><div class="wrap"><div class="sh rv"><span class="k">Возможности</span><h2>Всё для контента — в одном окне</h2></div><div class="mods">{mods}</div></div></section>'
     tpl = ''.join(f'<article class="card rv" aria-label="Шаблон «{tn}»: {t}">{ba(k, after=tn)}<div class="tx"><span class="tn">{w}</span><h3>{t}</h3><p>{d}</p></div></article>' for k, w, t, d, tn in TPL)
     how3 = ''.join(f'<div class="card rv"><span class="n">{i}</span><span><b>{a}</b><small>{b_}</small></span></div>' for i, (a, b_) in enumerate(
@@ -326,7 +365,7 @@ def build(docs=''):
             '<link rel="canonical" href="https://oneflow.art/">\n<meta property="og:url" content="https://oneflow.art/">\n'
             "<script>document.documentElement.classList.add('js')</script>\n<link rel=\"stylesheet\" href=\"fonts.css\">\n"
             f'<style>{CSS.replace("IMGVARS", imgvars)}.sr {{ position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }}</style>\n</head>\n'
-            f'<body id="top">\n{SYM}\n{nav}\n<main id="main">{hero}{why}{steps}{mods}{business}{horeca}{assistant}{gal}{pricing}{faq}{end}</main>\n{footer}\n{JS}</body>\n</html>\n')
+            f'<body id="top">\n<div class="bgfx" aria-hidden="true"><i class="a"></i><i class="b"></i><i class="c"></i><i class="d"></i></div>\n{SYM}\n{nav}\n<main id="main">{hero}{why}{steps}{mods}{business}{horeca}{assistant}{gal}{pricing}{faq}{end}</main>\n{footer}\n{JS}</body>\n</html>\n')
 
 
 if __name__ == '__main__':
