@@ -120,8 +120,12 @@ main { overflow-x: clip; } a { color: inherit; text-decoration: none; } img, svg
 .bgfx .c { --t: 25s; width: 48vw; height: 36vw; left: 24vw; bottom: -16vw; background: #ffe3cf; animation-delay: -15s; } .bgfx .d { --t: 32s; width: 30vw; height: 30vw; left: 38vw; top: 26vh; background: #d7e6ff; opacity: .45; animation-delay: -4s; }
 @keyframes drift { 0% { transform: translate(0, 0) scale(1); } 33% { transform: translate(7vw, 6vh) scale(1.1); } 66% { transform: translate(-5vw, 10vh) scale(.92); } 100% { transform: translate(4vw, -6vh) scale(1.06); } }
 @media (max-width: 760px) { .bgfx i { filter: blur(60px); } .bgfx .a { width: 80vw; height: 70vw; } .bgfx .b { width: 80vw; height: 76vw; } .bgfx .c { width: 90vw; height: 70vw; } .bgfx .d { width: 60vw; height: 60vw; } }
-.pill { display: inline-flex; align-items: center; gap: 10px; padding: 5px 14px 5px 5px; border-radius: 99px; background: rgba(255,255,255,.75); box-shadow: inset 0 0 0 1px var(--line); font-size: 13.5px; color: var(--ink2); }
-.pill b { padding: 3px 9px; border-radius: 99px; background: var(--ink); color: #fff; font-size: 11.5px; font-weight: 600; } .pill:hover { box-shadow: inset 0 0 0 1px rgba(17,17,20,.2); }
+.pill { display: inline-flex; align-items: center; gap: 12px; max-width: 100%; padding: 5px 5px 5px 5px; border-radius: 99px; background: linear-gradient(180deg, rgba(255,255,255,.78), rgba(255,255,255,.5)); backdrop-filter: blur(14px) saturate(160%); -webkit-backdrop-filter: blur(14px) saturate(160%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.95), 0 12px 30px -14px rgba(80,60,160,.32), 0 2px 6px -2px rgba(17,17,20,.06); font-size: 13.5px; color: var(--ink2); text-align: left; transition: box-shadow .3s var(--e), transform .3s var(--e); }
+.pill b { flex: none; padding: 5px 11px; border-radius: 99px; background: linear-gradient(100deg, #7c5cff, #4fb8ff 55%, #37c99b); color: #fff; font-size: 11.5px; font-weight: 600; letter-spacing: .02em; box-shadow: 0 6px 14px -6px rgba(92,80,255,.6); }
+.pill i { flex: none; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--ink); color: #fff; font-style: normal; font-size: 13px; transition: transform .3s var(--e); }
+.pill:hover { transform: translateY(-1px); box-shadow: inset 0 1px 0 rgba(255,255,255,.95), 0 16px 36px -14px rgba(80,60,160,.42), 0 2px 6px -2px rgba(17,17,20,.08); } .pill:hover i { transform: translateX(3px); }
+@media (max-width: 560px) { .pill { gap: 10px; font-size: 12.5px; line-height: 1.3; } .pill i { width: 26px; height: 26px; } }
 .hero h1 { margin-top: 26px; font: 700 clamp(44px, 6.6vw, 92px)/1 var(--d); letter-spacing: -.05em; } .hero h1 span { background: linear-gradient(95deg, #111114 30%, #3e6d63 70%, #5c5f9a); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .hero .sub { max-width: 560px; margin: 24px auto 0; font-size: 18px; color: var(--ink2); } .acts { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 32px; }
 .tiny { margin-top: 16px; font: 400 12.5px var(--m); color: var(--muted); }
@@ -282,7 +286,7 @@ def build(docs=''):
            f'<nav class="mnav" id="mnav" aria-label="Меню" hidden>{links}<div class="row"><a class="in2" data-app="login" href="{APP}">Войти</a>{reg("Регистрация")}</div></nav>')
     fm = lambda c, lb: f'<div class="fm {c}"><i class="ft"></i><span class="lb">{lb}</span></div>'
     hero = (f'<section class="hero"><div class="wrap">'
-            '<a class="pill" href="#business"><b>Новое</b>Шаблоны студийных фото для ресторанов, риелторов и автодилеров →</a>'
+            '<a class="pill" href="#business"><b>Новое</b><span>Шаблоны студийных фото для ресторанов, риелторов и автодилеров</span><i aria-hidden="true">→</i></a>'
             '<h1>Больше контента.<br><span>До 50% дешевле.</span></h1>'
             '<p class="sub">Фото, видео и тексты на 30+ нейросетях — и адаптация под любой размер в один клик. Неиспользованный бюджет остаётся с вами.</p>'
             f'<div class="acts">{reg("Начать бесплатно →")}<a class="btn g" href="#how">Как это работает</a></div>'
