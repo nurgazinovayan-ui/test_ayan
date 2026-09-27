@@ -124,7 +124,10 @@ main { overflow-x: clip; } a { color: inherit; text-decoration: none; } img, svg
 .chip i { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 10px; font-style: normal; font-size: 14px; } .chip small { display: block; font-size: 11px; color: var(--muted); } .chip b { font: 700 14px var(--d); }
 .chip.c1 { left: -20px; top: -26px; } .chip.c1 i { background: var(--mint); color: var(--green); } .chip.c2 { right: -20px; top: -26px; animation-delay: -1.6s; } .chip.c2 i { background: #efeaff; color: #7c5cff; }
 .chip.c3 { left: 50%; bottom: -26px; translate: -50% 0; animation-delay: -3s; } .chip.c3 i { background: #fff0e6; color: #ff7a45; } @keyframes flo { 50% { transform: translateY(-6px); } }
-.models { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 34px; margin-top: 64px; font: 500 14px var(--d); color: var(--muted); }
+.models { margin-top: 64px; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 20%, #000 80%, transparent); mask-image: linear-gradient(90deg, transparent, #000 20%, #000 80%, transparent); }
+.models .t { display: flex; width: max-content; animation: mq 32s linear infinite; } .models:hover .t { animation-play-state: paused; }
+.models span { margin-right: 52px; font: 700 21px var(--d); letter-spacing: -.02em; color: #26262e; white-space: nowrap; }
+@media (max-width: 640px) { .models span { margin-right: 36px; font-size: 17px; } .models { -webkit-mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent); mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent); } }
 /* sections */
 .sec { padding-top: 130px; } .sh { max-width: 900px; margin: 0 auto; text-align: center; } .sh p { max-width: 640px; margin-left: auto; margin-right: auto; } .sh .k { font: 500 11.5px var(--m); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
 .sh h2 { margin-top: 12px; font: 700 clamp(32px, 4vw, 48px)/1.08 var(--d); letter-spacing: -.04em; } .sh p { margin-top: 14px; color: var(--ink2); font-size: 16.5px; }
@@ -253,7 +256,7 @@ def build(docs=''):
             '<div class="pg"><figure class="src"><img src="assets/ol/bunny.webp" alt="" width="600" height="800"><figcaption><span>Исходник</span><span>3:4</span></figcaption></figure>'
             '<div class="arr" aria-hidden="true"><i></i>адаптация</div>'
             f'<div class="fmts">{fm("f916", "9:16")}{fm("fdis", "1200×628<small> · Discovery</small>")}{fm("frsy", "1080×450<small> · РСЯ</small>")}{fm("fksp", "1125×330<small> · Kaspi</small>")}</div></div></div>'
-            f'<div class="models" aria-label="Модели">{"".join(f"<span>{m}</span>" for m in MODELS)}</div></div></section>')
+            f'<div class="models" role="img" aria-label="Модели: {", ".join(MODELS)}"><div class="t">{"".join(f"<span>{m}</span>" for m in MODELS) * 2}</div></div></div></section>')
     frames = ''.join(f'<span style="width:{w}px;height:{h}px">{t}</span>' for t, w, h in (('9:16', 30, 54), ('4:5', 40, 50), ('1:1', 46, 46), ('16:9', 62, 35), ('3:1', 72, 24)))
     why = ('<section class="sec" id="why"><div class="wrap"><div class="sh rv"><span class="k">Почему ONEFLOW</span><h2>Три вещи, которые меняют бюджет</h2>'
            '<p>Один баланс на все модели, форматы под каждую площадку и деньги, которые не пропадают.</p></div><div class="three">'
@@ -261,7 +264,7 @@ def build(docs=''):
            '<div class="viz"><div class="ring" aria-hidden="true"><span>$112<small>перенесено</small></span></div></div><p class="cap">пример · сентябрь → октябрь</p></article>'
            '<article class="card rv" style="--tint:#f0edff"><div class="big">−50%</div><h3>к цене генерации*</h3><p>Те же модели — без наценок посредников и без подписки на каждый сервис.</p>'
            '<div class="viz"><div class="cmp" aria-hidden="true"><div><span>Отдельные сервисы</span><b>$300</b></div><i class="bx"></i><div><span>ONEFLOW</span><b>от $150</b></div><i class="by"></i></div></div><p class="cap">пример · $300 в месяц</p></article>'
-           f'<article class="card rv" style="--tint:#fff1e8"><div class="big">∞</div><h3>форматов из одного визуала</h3><p>ИИ дорисовывает фон и перестраивает кадр — от сторис 9:16 до баннера 728×90.</p>'
+           f'<article class="card rv" style="--tint:#fff1e8"><div class="big">∞</div><h3>любой размер — ресайз делает ONEFLOW</h3><p>Задайте любой размер, и ONEFLOW сам сделает ресайз. Никаких трат времени на адаптацию визуала под разные форматы.</p>'
            f'<div class="viz"><div class="frames" aria-hidden="true">{frames}</div></div><p class="cap">Kaspi · GDN · РСЯ · BYYD · Discovery</p></article></div>'
            '<p class="note">* До 50% — в сравнении с оплатой тех же моделей в отдельных сервисах; итог зависит от моделей и объёма.</p></div></section>')
     steps = ('<section class="sec" id="how"><div class="wrap"><div class="sh rv"><span class="k">Как это работает</span><h2>Три шага от фото до кампании</h2></div><div class="steps">'
