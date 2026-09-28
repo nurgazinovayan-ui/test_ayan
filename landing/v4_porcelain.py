@@ -260,6 +260,8 @@ JS = """<script>
   const open = (o) => { m.hidden = !o; b.setAttribute('aria-expanded', o); b.setAttribute('aria-label', o ? 'Закрыть меню' : 'Открыть меню'); };
   b.addEventListener('click', () => open(m.hidden)); m.addEventListener('click', (e) => { if (e.target.closest('a')) open(false); });
   addEventListener('keydown', (e) => { if (e.key === 'Escape' && !m.hidden) { open(false); b.focus(); } }); addEventListener('resize', () => { if (getComputedStyle(b).display === 'none') open(false); });
+  const f3 = document.getElementById('f3d');
+  if (f3 && !reduce) addEventListener('pointermove', (e) => { f3.style.setProperty('--px', (e.clientX / innerWidth - .5).toFixed(3)); f3.style.setProperty('--py', (e.clientY / innerHeight - .5).toFixed(3)); });
   document.querySelectorAll('.mod .mh').forEach((btn) => btn.addEventListener('click', () => { const card = btn.closest('.mod'), open = !card.classList.contains('open');
     document.querySelectorAll('.mod.open').forEach((x) => { if (x !== card) { x.classList.remove('open'); x.querySelector('.mh').setAttribute('aria-expanded', 'false'); } });
     card.classList.toggle('open', open); btn.setAttribute('aria-expanded', open); }));
@@ -301,6 +303,28 @@ html { color-scheme: dark; } .skip { background: #f3f3f6; color: #0b0b10; }
 .plan.hot .btn { background: #0b0b10; color: #fff; } .plan .pop { background: rgba(124,92,255,.2); color: #b3a6ff; } .plan.hot .pop { background: #e3dcff; color: #5b3fd6; }
 .faq details, .end { background: var(--card); } .gal .t > div { box-shadow: 0 18px 44px -22px rgba(0,0,0,.9); }
 dialog.doc { background: #15151c; } dialog.doc .x { background: rgba(255,255,255,.08); color: var(--ink); } dialog.doc::backdrop { background: rgba(0,0,0,.6); }
+/* smaller corner radii */
+.nav .in, .mnav { border-radius: 12px; } .btn { border-radius: 10px; } .nav .btn { border-radius: 9px; } .mnav .row .in2 { border-radius: 10px; } .panel { border-radius: 18px; } .src { border-radius: 10px; }
+.fm { border-radius: 8px; } .fm .lb, .ba figcaption, .food2 figcaption { border-radius: 5px; } .chip { border-radius: 10px; } .chip i { border-radius: 7px; } .card, .mod .mh { border-radius: 14px; }
+.ba figure { border-radius: 8px; } .how3 .card, .who3 .card, .as4 .card, .food2 figure, .faq details { border-radius: 12px; } .chat .me { border-radius: 10px 10px 3px 10px; } .chat .pr, .chat .run, .li li, .inv { border-radius: 8px; }
+.chat .nodes span, .flow span, .inv b, .th span, .plan .pop { border-radius: 6px; } .gal .t > div { border-radius: 10px; } .per div { border-radius: 10px; } .per button { border-radius: 7px; } .per em { border-radius: 5px; }
+.plan { border-radius: 16px; } .end { border-radius: 20px; } dialog.doc { border-radius: 14px; } dialog.doc .x { border-radius: 9px; } .mods .ic { border-radius: 9px; } .frames span { border-radius: 4px; }
+/* floating 3D objects above the headline */
+.hero { padding-top: 150px; } .hero .wrap { position: relative; } .f3d { position: absolute; left: 0; right: 0; top: -132px; height: 132px; pointer-events: none; }
+.o3 { position: absolute; transform: translate(calc(var(--px, 0) * var(--dp) * 1px), calc(var(--py, 0) * var(--dp) * 1px)); transition: transform .8s cubic-bezier(.2,.8,.2,1); }
+.o3 > * { animation: bob var(--bt, 6s) ease-in-out infinite; } @keyframes bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -12px; } }
+.o3.cube { --dp: 18; left: calc(50% - 330px); top: 34px; width: 78px; height: 78px; perspective: 700px; } .cb { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; animation: bob 6s ease-in-out infinite, spin3 18s linear infinite; }
+.cb i { position: absolute; inset: 0; border-radius: 12px; background: linear-gradient(140deg, rgba(179,166,255,.55), rgba(156,232,203,.2) 60%, rgba(255,179,138,.25)); box-shadow: inset 0 0 0 1px rgba(255,255,255,.4), inset 0 0 26px rgba(255,255,255,.14); }
+.cb .f1 { transform: translateZ(39px); } .cb .f2 { transform: rotateY(180deg) translateZ(39px); } .cb .f3 { transform: rotateY(90deg) translateZ(39px); } .cb .f4 { transform: rotateY(-90deg) translateZ(39px); } .cb .f5 { transform: rotateX(90deg) translateZ(39px); } .cb .f6 { transform: rotateX(-90deg) translateZ(39px); }
+@keyframes spin3 { from { transform: rotateX(-24deg) rotateY(0deg) rotateZ(8deg); } to { transform: rotateX(-24deg) rotateY(360deg) rotateZ(8deg); } }
+.o3.orb { --dp: -26; --bt: 7s; left: calc(50% + 220px); top: 10px; } .orb span { display: block; width: 94px; height: 94px; border-radius: 50%;
+  background: radial-gradient(circle at 32% 26%, #fff 0 5%, #e7e1ff 12%, #9b86ff 34%, #4b35b8 62%, #140f33 100%); box-shadow: 0 34px 60px -22px rgba(124,92,255,.75), inset -10px -14px 26px rgba(0,0,0,.4), inset 6px 8px 18px rgba(156,232,203,.35); }
+.orb span::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(from 200deg, transparent, rgba(156,232,203,.35), transparent 40%, rgba(255,179,138,.25), transparent 70%); mix-blend-mode: screen; animation: spin2 9s linear infinite; }
+.orb span { position: relative; } @keyframes spin2 { to { rotate: 360deg; } }
+.o3.tor { --dp: 12; --bt: 5.5s; left: calc(50% - 56px); top: -22px; perspective: 500px; } .ring3 { width: 104px; height: 104px; border-radius: 50%; transform: rotateX(64deg) rotateY(-14deg);
+  background: conic-gradient(from 0deg, #9ce8cb, #b3a6ff, #ffb38a, #9ce8cb); -webkit-mask: radial-gradient(circle, transparent 40%, #000 41%); mask: radial-gradient(circle, transparent 40%, #000 41%); filter: drop-shadow(0 0 14px rgba(179,166,255,.5)); animation: bob 5.5s ease-in-out infinite, tilt 8s ease-in-out infinite alternate; }
+@keyframes tilt { from { transform: rotateX(64deg) rotateY(-14deg) rotateZ(0deg); } to { transform: rotateX(52deg) rotateY(10deg) rotateZ(180deg); } }
+@media (max-width: 760px) { .hero { padding-top: 120px; } .f3d { top: -104px; height: 104px; } .o3.cube { left: calc(50% - 150px); top: 30px; scale: .7; } .o3.orb { left: calc(50% + 70px); top: 6px; scale: .72; } .o3.tor { left: calc(50% - 38px); top: -16px; scale: .7; } }
 """
 
 
@@ -312,7 +336,9 @@ def build(docs='', theme='light'):
            '<button class="burger" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="mnav"><i></i><i></i></button></div></header>'
            f'<nav class="mnav" id="mnav" aria-label="Меню" hidden>{links}<div class="row"><a class="in2" data-app="login" href="{APP}">Войти</a>{reg("Регистрация")}</div></nav>')
     fm = lambda c, lb: f'<div class="fm {c}"><i class="ft"></i><span class="lb">{lb}</span></div>'
-    hero = (f'<section class="hero"><div class="wrap">'
+    f3d = ('<div class="f3d" id="f3d" aria-hidden="true"><div class="o3 cube"><div class="cb"><i class="f1"></i><i class="f2"></i><i class="f3"></i><i class="f4"></i><i class="f5"></i><i class="f6"></i></div></div>'
+           '<div class="o3 tor"><div class="ring3"></div></div><div class="o3 orb"><span></span></div></div>') if theme == 'dark' else ''
+    hero = (f'<section class="hero"><div class="wrap">{f3d}'
             '<h1>Больше контента.<br><span>До 50% дешевле.</span></h1>'
             '<p class="sub">Фото, видео и тексты на 30+ нейросетях — и адаптация под любой размер в один клик. Неиспользованный бюджет остаётся с вами.</p>'
             f'<div class="acts">{reg("Начать бесплатно →")}<a class="btn g" href="#how">Как это работает</a></div>'
