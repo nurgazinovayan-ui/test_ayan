@@ -178,24 +178,31 @@ CARDS = [  # (key, title, description, accent, icon, builder, span)
     ('pd', 'Creative Predictor', 'Сравнение креативов до запуска рекламы.', '#0ea5a4', 'pd', ui_predictor, ''),
     ('mu', 'Музыка и голос', 'Трек по описанию или озвучка нужным голосом.', '#a855f7', 'mu', ui_music, ''),
     ('st', 'Стратегия', 'Воронка, бюджет и план под вашу нишу.', '#ef4444', 'st', ui_strategy, ''),
-    ('ms', 'Соавторы', 'Пригласите коллегу по почте и работайте вместе во встроенном мессенджере.', '#2563eb', 'ms', ui_messenger, 's3'),
+    ('ms', 'Соавторы', 'Пригласите коллегу по почте и работайте вместе.', '#2563eb', 'ms', ui_messenger, 's3'),
 ]
 
 
 def section():
-    cards = ''.join(f'<article class="card pro rv {sp}" style="--c:{c}"><div class="pro-h"><span class="ic">{ico(i, "")}</span><div><h3>{t}</h3><p>{d}</p></div></div>{b()}</article>'
+    cards = ''.join(f'<article class="card pro rv {sp}" style="--c:{c}"><button type="button" class="pro-h" aria-expanded="false" aria-controls="pb-{k}"><span class="ic">{ico(i, "")}</span>'
+                    f'<span class="pro-t"><b>{t}</b><span>{d}</span></span><span class="more">Попробовать<i aria-hidden="true">+</i></span></button>'
+                    f'<div class="pro-b" id="pb-{k}" role="region" aria-label="Демо: {t}" hidden>{b()}</div></article>'
                     for k, t, d, c, i, b, sp in CARDS)
     return ('<section class="sec" id="modules"><div class="wrap"><div class="sh rv"><span class="k">Возможности</span><h2>Всё для контента — в одном окне</h2>'
-            '<p>Мини-версии инструментов ONEFLOW прямо здесь — нажимайте, переключайте, запускайте.</p></div>'
+            '<p>Нажмите на инструмент — откроется его мини-версия: можно нажимать, переключать, запускать.</p></div>'
             f'<div class="pros">{cards}</div><p class="note">Демо на странице: результаты — примеры. Настоящая генерация — в приложении.</p></div></section>')
 
 
 CSS = """
 /* ---------- mini prototypes (module cards) ---------- */
-.pros { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-flow: row dense; gap: 14px; margin-top: 48px; }
-.pro { display: flex; flex-direction: column; gap: 14px; padding: 16px; } .pro.s2 { grid-column: span 2; } .pro.s3 { grid-column: 1 / -1; }
-.pro-h { display: flex; align-items: flex-start; gap: 12px; padding: 2px 2px 0; } .pro-h .ic { display: grid; place-items: center; flex: none; width: 38px; height: 38px; border-radius: 11px; background: color-mix(in srgb, var(--c) 12%, #fff); color: var(--c); }
-.pro-h .ic svg { width: 20px; height: 20px; } .pro-h h3 { font: 600 17px/1.25 var(--d); } .pro-h p { margin-top: 3px; font-size: 13.5px; line-height: 1.45; color: var(--muted); }
+.pros { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-flow: row dense; gap: 14px; margin-top: 48px; align-items: start; }
+.pro { display: flex; flex-direction: column; padding: 0; overflow: hidden; } .pro.open { grid-column: span 2; } .pro.s2.open, .pro.s3.open { grid-column: 1 / -1; }
+.pro-h { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: 1fr auto; gap: 12px 12px; width: 100%; min-height: 156px; padding: 20px; border: 0; background: none; text-align: left; cursor: pointer; }
+.pro-h .ic { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 11px; background: color-mix(in srgb, var(--c) 12%, #fff); color: var(--c); } .pro-h .ic svg { width: 20px; height: 20px; }
+.pro-t b { display: block; font: 600 16px/1.25 var(--d); } .pro-t span { display: block; margin-top: 4px; font-size: 13.5px; line-height: 1.45; color: var(--muted); }
+.pro-h .more { grid-column: 1 / -1; display: inline-flex; align-items: center; gap: 8px; font: 500 12px var(--m); color: var(--c); }
+.pro-h .more i { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: color-mix(in srgb, var(--c) 14%, transparent); font-style: normal; font-size: 14px; transition: rotate .3s var(--e); }
+.pro.open .pro-h .more i { rotate: 45deg; } .pro-h:hover .more i { background: color-mix(in srgb, var(--c) 24%, transparent); } .pro.open { box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--c) 45%, transparent), var(--sh); }
+.pro-b { display: flex; flex-direction: column; padding: 0 16px 16px; animation: uin .4s var(--e) both; } .pro-b[hidden] { display: none; }
 .ui { --ub: #0f0f12; --up: #1b1b20; --up2: #24242a; --ul: rgba(255,255,255,.08); --ut: #ececf1; --um: #8e8e99; --ug: #3ddc97;
   position: relative; flex: 1; display: flex; flex-direction: column; gap: 8px; min-height: 300px; padding: 12px; overflow: hidden; border-radius: 14px; background: var(--ub); color: var(--ut);
   font: 400 12.5px/1.4 'Inter', var(--d); box-shadow: inset 0 0 0 1px rgba(255,255,255,.06); -webkit-font-smoothing: antialiased; text-align: left; }
@@ -301,17 +308,24 @@ CSS = """
 .u-ml { flex: 1; display: flex; flex-direction: column; gap: 6px; max-height: 170px; overflow-y: auto; scrollbar-width: thin; } .u-m { align-self: flex-start; display: flex; align-items: flex-end; gap: 6px; max-width: 80%; animation: uin .3s both; }
 .u-m p { padding: 7px 10px; border-radius: 11px 11px 11px 3px; background: var(--up2); font-size: 12px; } .u-m.me { align-self: flex-end; } .u-m.me p { border-radius: 11px 11px 3px 11px; background: #ececf1; color: #111; }
 .u-att { width: 30px; height: 52px; flex: none; border-radius: 5px; background: #fff center / cover; } .u-send2 { display: flex; gap: 6px; } .u-send2 .u-btn { width: 34px; padding: 0; }
-@media (max-width: 1000px) { .pros { grid-template-columns: repeat(2, minmax(0, 1fr)); } .pro.s3 { grid-column: 1 / -1; } }
-@media (max-width: 680px) { .pros { grid-template-columns: minmax(0, 1fr); } .pro.s2, .pro.s3 { grid-column: auto; } .u-tr { grid-template-columns: minmax(0, 1fr); } .u-trh { grid-column: auto; } .u-ms { grid-template-columns: minmax(0, 1fr); } .u-ct { order: 2; } .u-tip { display: none; } .pro { padding: 12px; } .ui { padding: 10px; } }
+@media (max-width: 1000px) { .pros { grid-template-columns: repeat(2, minmax(0, 1fr)); } .pro.open { grid-column: 1 / -1; } }
+@media (max-width: 680px) { .pros { grid-template-columns: minmax(0, 1fr); } .pro.open { grid-column: auto; } .pro-h { min-height: 0; padding: 16px; } .pro-b { padding: 0 10px 10px; } .u-tr { grid-template-columns: minmax(0, 1fr); } .u-trh { grid-column: auto; } .u-ms { grid-template-columns: minmax(0, 1fr); } .u-ct { order: 2; } .u-tip { display: none; } .pro { padding: 12px; } .ui { padding: 10px; } }
 """
 
 DARK = """
-.pro-h .ic { background: color-mix(in srgb, var(--c) 22%, #14141b); filter: brightness(1.25); } .ui { box-shadow: inset 0 0 0 1px rgba(255,255,255,.08); }
+.pro-h .ic { background: color-mix(in srgb, var(--c) 22%, #14141b); filter: brightness(1.25); } .pro-h .more { filter: brightness(1.3); } .ui { box-shadow: inset 0 0 0 1px rgba(255,255,255,.08); }
 .pro-h .ic { border-radius: 9px; } .ui { border-radius: 10px; }
 """
 
 JS = r"""
   const W8 = (ms) => (reduce ? 0 : ms);
+  // feature cards: closed by default, one open at a time; the open card widens to fit its demo
+  const pros = [...document.querySelectorAll('.pro')];
+  pros.forEach((c) => { const h = c.querySelector('.pro-h'), b = c.querySelector('.pro-b');
+    h.addEventListener('click', () => { const open = !c.classList.contains('open');
+      pros.forEach((x) => { if (x !== c && x.classList.contains('open')) { x.classList.remove('open'); x.querySelector('.pro-h').setAttribute('aria-expanded', 'false'); x.querySelector('.pro-b').hidden = true; } });
+      c.classList.toggle('open', open); h.setAttribute('aria-expanded', open); b.hidden = !open;
+      if (open) requestAnimationFrame(() => { const r = c.getBoundingClientRect(); if (r.top < 70 || r.bottom > innerHeight) c.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: r.height > innerHeight - 90 ? 'start' : 'nearest' }); }); }); });
   // 1 · node canvas: drag nodes, toggle / add formats, run «Сгенерировать»
   document.querySelectorAll('.u-cv').forEach((cv) => {
     const N = { img: cv.querySelector('[data-n=img]'), ad: cv.querySelector('[data-n=ad]'), out: cv.querySelector('[data-n=out]') }, e1 = cv.querySelector('.e1'), e2 = cv.querySelector('.e2');

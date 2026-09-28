@@ -84,7 +84,9 @@ main { overflow-x: clip; } a { color: inherit; text-decoration: none; } img, svg
 .btn.p { background: var(--ink); color: #fff; box-shadow: 0 10px 24px -10px rgba(17,17,20,.55); } .btn.g { background: rgba(255,255,255,.75); box-shadow: inset 0 0 0 1px var(--line), 0 6px 18px -10px rgba(17,17,20,.25); backdrop-filter: blur(10px); }
 .btn:hover { transform: translateY(-1px); }
 /* nav */
-.nav { position: sticky; top: 12px; z-index: 50; margin-top: 12px; } .nav .in { display: flex; align-items: center; gap: 26px; height: 60px; padding: 0 10px 0 22px; border-radius: 20px; background: transparent; }
+.nav { position: sticky; top: 12px; z-index: 50; margin-top: 12px; transition: opacity .35s var(--e), translate .35s var(--e), visibility .35s; } .nav.gone { opacity: 0; translate: 0 -14px; visibility: hidden; pointer-events: none; }
+.totop { position: fixed; right: 20px; bottom: 20px; z-index: 55; display: grid; place-items: center; width: 48px; height: 48px; border: 0; border-radius: 50%; background: var(--ink); color: #fff; font-size: 20px; cursor: pointer; box-shadow: 0 12px 30px -10px rgba(17,17,20,.55); opacity: 0; translate: 0 12px; visibility: hidden; transition: opacity .3s var(--e), translate .3s var(--e), visibility .3s; } .totop.on { opacity: 1; translate: 0 0; visibility: visible; } .totop:hover { translate: 0 -2px; }
+@media (max-width: 640px) { .totop { right: 16px; bottom: 16px; width: 44px; height: 44px; } } .nav .in { display: flex; align-items: center; gap: 26px; height: 60px; padding: 0 10px 0 22px; border-radius: 20px; background: transparent; }
 .logo { display: flex; align-items: center; gap: 9px; font: 700 16px var(--d); letter-spacing: -.01em; } .logo svg { width: 22px; height: 16px; }
 .nav nav { display: flex; gap: 24px; font-size: 14px; color: var(--muted); } .nav nav a:hover { color: var(--ink); } .nav .sp { flex: 1; }
 .nav .lg { font-size: 14px; font-weight: 500; } .nav .btn { height: 40px; padding: 0 18px; font-size: 14px; }
@@ -240,9 +242,13 @@ JS = """<script>
   const set = (k) => { pm.classList.toggle('on', k === 'm'); py.classList.toggle('on', k === 'y'); pm.setAttribute('aria-pressed', k === 'm'); py.setAttribute('aria-pressed', k === 'y');
     document.querySelectorAll('[data-m]').forEach((e) => { e.textContent = '$' + e.dataset[k]; }); }; pm.onclick = () => set('m'); py.onclick = () => set('y');
   const b = document.querySelector('.burger'), m = document.getElementById('mnav');
+  const nav = document.querySelector('.nav'), top = document.getElementById('totop'); let ticking = false;
+  const onScroll = () => { ticking = false; const y = scrollY; nav.classList.toggle('gone', y > 80); top.classList.toggle('on', y > 600); if (y > 80 && !m.hidden) open(false); };
+  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
+  top.addEventListener('click', () => { scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' }); document.querySelector('.logo').focus({ preventScroll: true }); });
   const open = (o) => { m.hidden = !o; b.setAttribute('aria-expanded', o); b.setAttribute('aria-label', o ? 'Закрыть меню' : 'Открыть меню'); };
   b.addEventListener('click', () => open(m.hidden)); m.addEventListener('click', (e) => { if (e.target.closest('a')) open(false); });
-  addEventListener('keydown', (e) => { if (e.key === 'Escape' && !m.hidden) { open(false); b.focus(); } }); addEventListener('resize', () => { if (getComputedStyle(b).display === 'none') open(false); });
+  addEventListener('keydown', (e) => { if (e.key === 'Escape' && !m.hidden) { open(false); b.focus(); } }); onScroll(); addEventListener('resize', () => { if (getComputedStyle(b).display === 'none') open(false); });
   document.querySelectorAll('.mod .mh').forEach((btn) => btn.addEventListener('click', () => { const card = btn.closest('.mod'), open = !card.classList.contains('open');
     document.querySelectorAll('.mod.open').forEach((x) => { if (x !== card) { x.classList.remove('open'); x.querySelector('.mh').setAttribute('aria-expanded', 'false'); } });
     card.classList.toggle('open', open); btn.setAttribute('aria-expanded', open); }));
@@ -259,7 +265,7 @@ JS = """<script>
 DARK = """
 :root { --bg: #0b0b10; --ink: #f3f3f6; --ink2: #c4c4cf; --muted: #8c8c9a; --line: rgba(255,255,255,.08); --card: #14141b; --mint: rgba(61,220,151,.1); --green: #3ddc97;
   --sh: inset 0 0 0 1px rgba(255,255,255,.06), 0 18px 44px -22px rgba(0,0,0,.85); --sh2: inset 0 0 0 1px rgba(255,255,255,.07), 0 40px 80px -36px rgba(0,0,0,.95); }
-html { color-scheme: dark; } .skip { background: #f3f3f6; color: #0b0b10; }
+html { color-scheme: dark; } .totop { background: #f3f3f6; color: #0b0b10; box-shadow: 0 12px 30px -10px rgba(0,0,0,.8); } .totop { border-radius: 12px; } .skip { background: #f3f3f6; color: #0b0b10; }
 .bgfx i { opacity: .4; } .bgfx .a { background: #5b3fd6; } .bgfx .b { background: #0e8a64; } .bgfx .c { background: #a8522c; } .bgfx .d { background: #2553c9; opacity: .28; }
 .btn.p { background: #f3f3f6; color: #0b0b10; box-shadow: 0 10px 30px -12px rgba(160,140,255,.5); } .btn.g { background: rgba(255,255,255,.06); color: var(--ink); box-shadow: inset 0 0 0 1px rgba(255,255,255,.12); }
 .nav .in { background: rgba(20,20,28,.66); backdrop-filter: blur(18px) saturate(160%); -webkit-backdrop-filter: blur(18px) saturate(160%); box-shadow: inset 0 0 0 1px rgba(255,255,255,.08), 0 10px 30px -18px rgba(0,0,0,.8); }
@@ -382,7 +388,7 @@ def build(docs='', theme='light'):
             '<link rel="canonical" href="https://oneflow.art/">\n<meta property="og:url" content="https://oneflow.art/">\n'
             "<script>document.documentElement.classList.add('js')</script>\n<link rel=\"stylesheet\" href=\"fonts.css\">\n"
             f'<style>{CSS.replace("IMGVARS", imgvars)}{protos.CSS}{dark_css}{protos.DARK if theme == "dark" else ""}.sr {{ position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }}</style>\n</head>\n'
-            f'<body id="top">\n<div class="bgfx" aria-hidden="true"><i class="a"></i><i class="b"></i><i class="c"></i><i class="d"></i></div>\n{SYM}\n{nav}\n<main id="main">{hero}{why}{steps}{mods}{business}{horeca}{assistant}{gal}{pricing}{faq}{end}</main>\n{footer}\n{JS}</body>\n</html>\n')
+            f'<body id="top">\n<div class="bgfx" aria-hidden="true"><i class="a"></i><i class="b"></i><i class="c"></i><i class="d"></i></div>\n{SYM}\n{nav}\n<main id="main">{hero}{why}{steps}{mods}{business}{horeca}{assistant}{gal}{pricing}{faq}{end}</main>\n{footer}\n<button type="button" class="totop" id="totop" aria-label="Наверх">↑</button>\n{JS}</body>\n</html>\n')
 
 
 if __name__ == '__main__':
