@@ -199,8 +199,8 @@ CSS = """
 .pro-h { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: 1fr auto; gap: 12px 12px; width: 100%; min-height: 156px; padding: 20px; border: 0; background: none; text-align: left; cursor: pointer; }
 .pro-h .ic { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 11px; background: color-mix(in srgb, var(--c) 12%, #fff); color: var(--c); } .pro-h .ic svg { width: 20px; height: 20px; }
 .pro-t b { display: block; font: 600 16px/1.25 var(--d); } .pro-t span { display: block; margin-top: 4px; font-size: 13.5px; line-height: 1.45; color: var(--muted); }
-.pro-h .more { grid-column: 1 / -1; display: inline-flex; align-items: center; gap: 8px; font: 700 11.5px var(--d); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
-.pro-h .more i { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: color-mix(in srgb, var(--ink) 7%, transparent); color: var(--ink2); letter-spacing: 0; font-style: normal; font-size: 14px; transition: rotate .3s var(--e); }
+.pro-h .more { grid-column: 1 / -1; display: inline-flex; align-items: center; gap: 8px; font: 400 12px var(--d); color: var(--muted); }
+.pro-h .more i { display: grid; place-items: center; width: 16px; height: 16px; border-radius: 50%; background: color-mix(in srgb, var(--ink) 7%, transparent); color: var(--ink2); font-size: 12px !important; line-height: 1; font-style: normal; font-size: 14px; transition: rotate .3s var(--e); }
 .pro.open .pro-h .more i { rotate: 45deg; } .pro-h:hover .more { color: var(--ink2); } .pro-h:hover .more i { background: color-mix(in srgb, var(--ink) 13%, transparent); } .pro.open { box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--c) 45%, transparent), var(--sh); }
 .pro-b { display: flex; flex-direction: column; padding: 0 16px 16px; animation: uin .4s var(--e) both; } .pro-b[hidden] { display: none; }
 .ui { --ub: #0f0f12; --up: #1b1b20; --up2: #24242a; --ul: rgba(255,255,255,.08); --ut: #ececf1; --um: #8e8e99; --ug: #3ddc97;
