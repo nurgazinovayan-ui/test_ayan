@@ -273,7 +273,38 @@ JS = """<script>
 """.replace('__APP__', APP).replace('__REG__', REG)
 
 
-def build(docs=''):
+DARK = """
+:root { --bg: #0b0b10; --ink: #f3f3f6; --ink2: #c4c4cf; --muted: #8c8c9a; --line: rgba(255,255,255,.08); --card: #14141b; --mint: rgba(61,220,151,.1); --green: #3ddc97;
+  --sh: inset 0 0 0 1px rgba(255,255,255,.06), 0 18px 44px -22px rgba(0,0,0,.85); --sh2: inset 0 0 0 1px rgba(255,255,255,.07), 0 40px 80px -36px rgba(0,0,0,.95); }
+html { color-scheme: dark; } .skip { background: #f3f3f6; color: #0b0b10; }
+.bgfx i { opacity: .4; } .bgfx .a { background: #5b3fd6; } .bgfx .b { background: #0e8a64; } .bgfx .c { background: #a8522c; } .bgfx .d { background: #2553c9; opacity: .28; }
+.btn.p { background: #f3f3f6; color: #0b0b10; box-shadow: 0 10px 30px -12px rgba(160,140,255,.5); } .btn.g { background: rgba(255,255,255,.06); color: var(--ink); box-shadow: inset 0 0 0 1px rgba(255,255,255,.12); }
+.nav .in { background: rgba(20,20,28,.66); box-shadow: inset 0 0 0 1px rgba(255,255,255,.08), 0 10px 30px -18px rgba(0,0,0,.8); }
+.mnav { background: rgba(20,20,28,.97); } .mnav a:hover { background: rgba(255,255,255,.06); } .mnav .row .in2 { box-shadow: inset 0 0 0 1px rgba(255,255,255,.16); }
+.hero h1 span { background: linear-gradient(95deg, #ffffff 25%, #9ce8cb 60%, #b3a6ff); -webkit-background-clip: text; background-clip: text; }
+.panel { background: rgba(22,22,32,.55); box-shadow: inset 0 0 0 1px rgba(255,255,255,.08), var(--sh2); } .src { background: #1a1a23; } .fm { background: #1a1a23; } .fm .lb { background: rgba(10,10,14,.82); color: #fff; }
+.chip { background: rgba(28,28,38,.92); } .chip.c1 i { background: rgba(61,220,151,.15); } .chip.c2 i { background: rgba(124,92,255,.2); color: #b3a6ff; } .chip.c3 i { background: rgba(255,122,69,.16); }
+.models span { color: #ececf2; } .three .card::before { opacity: .16; }
+.ring { background: conic-gradient(var(--green) calc(var(--v, 0) * 1%), rgba(61,220,151,.14) 0); } .ring::before { background: var(--card); }
+.cmp .bx { background: repeating-linear-gradient(135deg, rgba(255,255,255,.09) 0 6px, rgba(255,255,255,.03) 6px 12px); } .cmp .by { background: linear-gradient(90deg, #b3a6ff, #9ce8cb); }
+.frames span { background: #1b1b24; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.14); }
+.steps::before { background: repeating-linear-gradient(90deg, rgba(255,255,255,.16) 0 6px, transparent 6px 12px); } .steps .n { background: var(--card); box-shadow: var(--sh); }
+.mods .ic { background: color-mix(in srgb, var(--c) 22%, #14141b); } .flow span, .li em, .msg { background: color-mix(in srgb, var(--c) 20%, #14141b); } .exs { border-top-color: rgba(255,255,255,.1); }
+.li li, .inv { background: rgba(255,255,255,.05); } .inv b { background: #f3f3f6; color: #0b0b10; } .sc i, .fn i { background: rgba(255,255,255,.08); } .mod .more, .mods .ic { filter: brightness(1.25); }
+.how3 .n { background: #f3f3f6; color: #0b0b10; }
+.vs th:last-child { background: #f3f3f6; color: #0b0b10; } .vs td:last-child { background: rgba(61,220,151,.1); color: #e8fff5; }
+.chat .me { background: #f3f3f6; color: #0b0b10; } .chat .pr { background: rgba(255,255,255,.05); } .chat .nodes span { background: rgba(255,255,255,.06); box-shadow: inset 0 0 0 1px rgba(255,255,255,.09); } .chat .run { background: #f3f3f6; color: #0b0b10; }
+.as4 .you { background: linear-gradient(135deg, #2c2356, #103c30); }
+.per div { background: var(--card); } .per button.on { background: #f3f3f6; color: #0b0b10; } .per em { background: rgba(61,220,151,.15); }
+.plan .btn.w { background: rgba(255,255,255,.06); color: var(--ink); box-shadow: inset 0 0 0 1px rgba(255,255,255,.12); }
+.plan.hot { background: linear-gradient(160deg, #f6f4ff, #e8fbf3); color: #0b0b10; box-shadow: 0 40px 80px -30px rgba(140,120,255,.45); } .plan.hot > p, .plan.hot .pr small, .plan.hot li::before { color: rgba(11,11,16,.6); }
+.plan.hot .btn { background: #0b0b10; color: #fff; } .plan .pop { background: rgba(124,92,255,.2); color: #b3a6ff; } .plan.hot .pop { background: #e3dcff; color: #5b3fd6; }
+.faq details, .end { background: var(--card); } .gal .t > div { box-shadow: 0 18px 44px -22px rgba(0,0,0,.9); }
+dialog.doc { background: #15151c; } dialog.doc .x { background: rgba(255,255,255,.08); color: var(--ink); } dialog.doc::backdrop { background: rgba(0,0,0,.6); }
+"""
+
+
+def build(docs='', theme='light'):
     """docs: <dialog> markup for the legal pages (added by the single-file build); footer buttons open them."""
     links = ''.join(f'<a href="{h}">{t}</a>' for h, t in NAV)
     nav = (f'<a class="skip" href="#main">К содержанию</a><header class="nav"><div class="wrap in"><a class="logo" href="#top" aria-label="ONEFLOW — наверх">{MARK}ONEFLOW</a>'
@@ -355,18 +386,20 @@ def build(docs=''):
     fnav = (''.join(f'<button type="button" data-doc="{k}" aria-haspopup="dialog">{t}</button>' for k, t in (('privacy', 'Конфиденциальность'), ('terms', 'Условия'), ('refunds', 'Возврат')))
             if docs else '<a href="#">Конфиденциальность</a><a href="#">Условия</a><a href="#">Возврат</a>')
     footer = f'<footer><div class="wrap"><div class="l"><span class="logo">{MARK}ONEFLOW</span><span>© 2026</span></div><nav aria-label="Документы">{fnav}</nav></div></footer>{docs}'
+    theme_color, dark_css = ('#0b0b10', DARK) if theme == 'dark' else ('#f7f7fa', '')
     imgvars = ' '.join(f'--img-{n}: url(assets/ol/{n}.webp);' for n in IMGS)
     return ('<!doctype html>\n<html lang="ru">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n'
             '<title>ONEFLOW — больше контента, до 50% дешевле</title>\n'
             '<meta name="description" content="30+ нейросетей в одном окне: фото, видео и тексты для рекламы. Адаптация под любой размер и пресеты Kaspi, РСЯ, Google, BYYD. Генерация до 50% дешевле, бюджет не сгорает в конце месяца.">\n'
-            '<meta name="theme-color" content="#f7f7fa">\n<meta property="og:type" content="website">\n<meta property="og:site_name" content="ONEFLOW">\n<meta property="og:locale" content="ru_RU">\n'
+            f'<meta name="theme-color" content="{theme_color}">\n<meta property="og:type" content="website">\n<meta property="og:site_name" content="ONEFLOW">\n<meta property="og:locale" content="ru_RU">\n'
             '<meta property="og:title" content="ONEFLOW — больше контента, до 50% дешевле">\n'
             '<link rel="canonical" href="https://oneflow.art/">\n<meta property="og:url" content="https://oneflow.art/">\n'
             "<script>document.documentElement.classList.add('js')</script>\n<link rel=\"stylesheet\" href=\"fonts.css\">\n"
-            f'<style>{CSS.replace("IMGVARS", imgvars)}.sr {{ position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }}</style>\n</head>\n'
+            f'<style>{CSS.replace("IMGVARS", imgvars)}{dark_css}.sr {{ position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }}</style>\n</head>\n'
             f'<body id="top">\n<div class="bgfx" aria-hidden="true"><i class="a"></i><i class="b"></i><i class="c"></i><i class="d"></i></div>\n{SYM}\n{nav}\n<main id="main">{hero}{why}{steps}{mods}{business}{horeca}{assistant}{gal}{pricing}{faq}{end}</main>\n{footer}\n{JS}</body>\n</html>\n')
 
 
 if __name__ == '__main__':
     open(os.path.join(HERE, 'v4-porcelain.html'), 'w', encoding='utf-8').write(build())
+    open(os.path.join(HERE, 'v4-porcelain-dark.html'), 'w', encoding='utf-8').write(build(theme='dark'))
     print('v4-porcelain.html')
