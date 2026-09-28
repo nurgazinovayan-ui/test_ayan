@@ -7,6 +7,8 @@ Images are CSS custom properties (one url each), so the single-file build stores
 """
 import os
 
+import protos
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 APP, REG = '/app', '?auth=register'  # same domain: oneflow.art → landing, oneflow.art/app → app
 MARK = ('<svg viewBox="0 0 76 52" aria-hidden="true"><path fill="currentColor" d="M17 0C18.66 0 20 1.34 20 3V14C20 15.1 20.9 16 22 16H32C33.66 16 35 17.34 35 19V30C35 31.1 35.9 32 37 32H38C39.1 32 40 31.1 40 30V19C40 17.34 41.34 16 43 16H57C58.66 16 60 17.34 60 19V30C60 31.1 60.9 32 62 32H73C74.66 32 76 33.34 76 35V49C76 50.66 74.66 52 73 52H59C57.34 52 56 50.66 56 49V38C56 36.9 55.1 36 54 36H51C49.9 36 49 36.9 49 38V49C49 50.66 47.66 52 46 52H32C30.34 52 29 50.66 29 49V38C29 36.9 28.1 36 27 36H24C22.9 36 22 36.9 22 38V49C22 50.66 20.66 52 19 52H5C3.34 52 2 50.66 2 49V35C2 33.34 3.34 32 5 32H13C14.1 32 15 31.1 15 30V22C15 20.9 14.1 20 13 20H3C1.34 20 0 18.66 0 17V3C0 1.34 1.34 0 3 0H17Z"/></svg>')
@@ -65,28 +67,6 @@ FAQ = [('Есть ли шаблоны для моей ниши?', 'Да, в ра
        ('Почему генерация до 50% дешевле?', 'Вы платите за генерации по ценам моделей — без наценок посредников и без подписки на каждый сервис. Итог зависит от моделей и объёма.'),
        ('Какие размеры поддерживает адаптация?', 'Любые — от сторис 9:16 до баннера 728×90, плюс пресеты Kaspi, GDN, Discovery, Яндекс РСЯ и BYYD.'),
        ('Можно ли работать командой?', 'Да — пригласите соавтора по почте и общайтесь во встроенном мессенджере.')]
-TOUR = [  # module tour: real screens of the app (assets/ui/*.webp, captured from the ONEFLOW interface)
-    ('gen', 'Генерация', 'Фото и видео по промпту', 'Опишите кадр, выберите модель, формат и разрешение — и нажмите «Сгенерировать».', 1100, 397, '#3b6cff',
-     '<path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/>'),
-    ('onelaunch', 'One Launch', 'Фото товара → рекламная кампания', 'Загрузите фото, впишите название и преимущества, выберите стиль макета — получите карточки под форматы и тексты постов.', 1300, 1362, '#ff7a45',
-     '<path d="M5 19c2-6 6-12 14-14-1 8-7 12-13 15z"/><path d="M9 15l-3-3"/>'),
-    ('copy', 'Copywrite engine', 'Тексты, идеи и документы', 'Чат для текстов: описания для Kaspi, заголовки объявлений, контент-план — с быстрыми подсказками и файлами Word, Excel, PowerPoint.', 1500, 830, '#8b5cf6',
-     '<path d="M6 3h9l4 4v14H6z"/><path d="M9 11h7M9 15h7M9 7h3"/>'),
-    ('trends', 'TRENDSWATCHING', 'Тренды TikTok, Instagram и Threads', 'Подборка трендов с цифрами и разбором: почему это работает и как применить для вашего бренда.', 1700, 892, '#16a36a',
-     '<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>'),
-    ('pred', 'Creative Predictor', 'Сравнение креативов до запуска', 'Загрузите 1–3 варианта картинки — получите оценку визуальной силы каждого.', 1400, 586, '#0ea5a4',
-     '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>'),
-    ('music', 'Музыка и голос', 'Трек по описанию или озвучка', 'Опишите настроение, выберите жанр и формат — или переключитесь на «Речь» и озвучьте фразу нужным голосом.', 1300, 1037, '#a855f7',
-     '<path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>'),
-    ('strategy', 'Стратегия', 'Воронка, бюджет и план', 'Ответьте на пару вопросов о бизнесе и цели — Стратегия предложит воронку, бюджет и план под вашу нишу.', 1200, 554, '#ef4444',
-     '<path d="M3 4h18l-7 8v6l-4 2v-8z"/>'),
-]
-HOT = [  # hotspots on the hero screenshot: (left %, top %, label)
-    (11.6, 7.6, 'Все инструменты — в одном переключателе'),
-    (41.5, 42, 'Загрузите фото товара — с диска или по ссылке'),
-    (86, 30.5, 'Нужные размеры: Kaspi, Stories, Яндекс РСЯ — или свой'),
-    (58, 85.6, 'Одна кнопка — все форматы сразу'),
-]
 NAV = [('#why', 'Преимущества'), ('#business', 'Для бизнеса'), ('#assistant', 'Ассистент'), ('#pricing', 'Цены'), ('#faq', 'Вопросы')]
 MODELS = ['GPT Image', 'Nano Banana Pro', 'Seedream', 'Veo 3.1', 'Kling', 'Seedance', 'Hailuo', 'Recraft', 'Flux', '+ ещё 20']
 
@@ -243,40 +223,6 @@ dialog.doc::backdrop { background: rgba(17,17,20,.35); backdrop-filter: blur(6px
 dialog.doc h2 { margin: 20px 0 6px; font: 600 16px var(--d); } dialog.doc p, dialog.doc li { font-size: 14.5px; color: var(--ink2); } dialog.doc .updated { margin-top: 6px; font-size: 12.5px; color: var(--muted); }
 dialog.doc .x { position: sticky; top: 0; float: right; width: 40px; height: 40px; margin: 12px 12px 0 0; border: 0; border-radius: 50%; background: var(--bg); font-size: 20px; cursor: pointer; }
 .js .rv { opacity: 0; transform: translateY(18px); transition: opacity .8s var(--e), transform .8s var(--e); } .js .rv.in { opacity: 1; transform: none; }
-/* real interface: app window, hotspots, tour */
-.appw { padding: 0; overflow: visible; } .appw .chip { z-index: 3; } .appw .chip.c1 { top: auto; bottom: -26px; left: auto; right: -20px; }
-.wbar { display: flex; align-items: center; gap: 7px; height: 38px; padding: 0 14px; border-radius: inherit; border-bottom-left-radius: 0; border-bottom-right-radius: 0; background: #16161c; font: 500 11.5px var(--m); color: #8c8c9a; }
-.wbar i { width: 10px; height: 10px; border-radius: 50%; background: #34343f; } .wbar span { flex: 1; margin-right: 44px; text-align: center; }
-.shot { position: relative; line-height: 0; } .shot img { width: 100%; height: auto; border-radius: 0 0 30px 30px; }
-.hot { position: absolute; z-index: 2; width: 26px; height: 26px; margin: -13px 0 0 -13px; padding: 0; border: 0; border-radius: 50%; background: #fff; box-shadow: 0 0 0 4px rgba(124,92,255,.45), 0 6px 18px rgba(0,0,0,.4); cursor: pointer; }
-.hot::before { content: ''; position: absolute; inset: 8px; border-radius: 50%; background: #7c5cff; } .hot::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 2px solid rgba(179,166,255,.9); animation: ping 2.2s ease-out infinite; }
-@keyframes ping { from { transform: scale(.8); opacity: 1; } to { transform: scale(1.9); opacity: 0; } }
-.hot .tip { position: absolute; left: 50%; bottom: calc(100% + 12px); translate: -50% 4px; width: max-content; max-width: 240px; padding: 9px 12px; border-radius: 10px; background: #fff; color: #111114; font: 500 13px/1.35 var(--d); text-align: left; box-shadow: 0 14px 34px -10px rgba(0,0,0,.5); opacity: 0; visibility: hidden; transition: opacity .2s, translate .2s, visibility .2s; pointer-events: none; }
-.hot:hover .tip, .hot:focus-visible .tip, .hot.on .tip { opacity: 1; visibility: visible; translate: -50% 0; } .hot:first-of-type .tip { left: 0; translate: -12px 4px; } .hot:first-of-type:hover .tip, .hot:first-of-type:focus-visible .tip, .hot:first-of-type.on .tip { translate: -12px 0; }
-.hot[style*="left:86"] .tip { left: auto; right: -12px; translate: 0 4px; } .hot[style*="left:86"]:hover .tip, .hot[style*="left:86"]:focus-visible .tip, .hot[style*="left:86"].on .tip { translate: 0 0; }
-.tour { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 20px; margin-top: 48px; align-items: start; }
-.tl { display: grid; gap: 6px; } .tl button { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; border: 0; border-radius: 16px; background: transparent; text-align: left; cursor: pointer; transition: background .2s, box-shadow .2s; }
-.tl button:hover { background: rgba(255,255,255,.5); } .tl button[aria-selected="true"] { background: var(--card); box-shadow: var(--sh); }
-.tl .ic { display: grid; place-items: center; flex: none; width: 38px; height: 38px; border-radius: 11px; background: color-mix(in srgb, var(--c) 12%, #fff); color: var(--c); } .tl .ic svg { width: 20px; height: 20px; }
-.tl b { display: block; font: 600 15px var(--d); } .tl small { display: block; margin-top: 1px; font-size: 13px; line-height: 1.35; color: var(--muted); }
-.tw { position: sticky; top: 90px; overflow: hidden; border-radius: 20px; background: #0f0f13; box-shadow: var(--sh2); } .tw .wbar { border-radius: 0; }
-.tp { margin: 0; } .tp[hidden] { display: none; } .tp .scr { display: grid; place-items: center; height: 460px; padding: 18px; background: #0b0b0d; }
-.tp img { max-width: 100%; max-height: 424px; width: auto; height: auto; border-radius: 10px; animation: tpin .45s var(--e); } @keyframes tpin { from { opacity: 0; transform: translateY(8px) scale(.99); } }
-.tp figcaption { padding: 16px 20px 18px; font-size: 14px; color: #b9b9c6; border-top: 1px solid rgba(255,255,255,.07); } .tp figcaption b { color: #f3f3f6; font-weight: 600; }
-.inapp { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 24px; align-items: center; margin-top: 18px; padding: 14px; border-radius: 22px; background: var(--card); box-shadow: var(--sh); }
-.inapp .scr, .chat.real .scr { overflow: hidden; border-radius: 12px; background: #0b0b0d; line-height: 0; } .inapp img, .chat.real img { width: 100%; height: auto; }
-.inapp figcaption { padding-right: 12px; font-size: 14.5px; color: var(--muted); } .inapp figcaption b, .chat.real figcaption b { display: block; margin-bottom: 6px; font: 600 17px var(--d); color: var(--ink); }
-.chat.real { padding: 12px; } .chat.real figcaption { padding: 16px 8px 6px; font-size: 14px; color: var(--muted); }
-@media (max-width: 1000px) { .tour { grid-template-columns: minmax(0, 1fr); } .tl { display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 10px; scroll-snap-type: x mandatory; scrollbar-width: none; } .tl::-webkit-scrollbar { display: none; }
-  .tl button { flex: none; width: auto; padding: 8px 14px 8px 8px; scroll-snap-align: start; } .tl small { display: none; } .tl .ic { width: 32px; height: 32px; } .tw { position: static; } .tp .scr { height: auto; } .tp img { max-height: 480px; } .inapp { grid-template-columns: minmax(0, 1fr); } }
-@media (max-width: 760px) { .panel.appw { display: block; padding: 0; border-radius: 20px; } .appw .chip.c1 { right: 8px; } .shot img { border-radius: 0 0 20px 20px; } .wbar { height: 30px; } .hot { width: 22px; height: 22px; margin: -11px 0 0 -11px; } .hot::before { inset: 7px; } .hot .tip { max-width: 190px; font-size: 12px; } .tp .scr { padding: 10px; } .tp figcaption { padding: 14px 16px; font-size: 13.5px; } }
-.wbar em { display: none; font-style: normal; } .shin { position: relative; } .hot.dn .tip { bottom: auto; top: calc(100% + 12px); translate: -50% -4px; } .hot.dn:first-of-type .tip { translate: -12px -4px; }
-.scr img { cursor: zoom-in; } .scr img:focus-visible { outline: 2px solid #7c5cff; outline-offset: -2px; }
-.lb { width: min(1500px, 100vw - 32px); max-width: none; max-height: calc(100dvh - 32px); margin: auto; padding: 0; border: 0; border-radius: 14px; background: #0b0b0d; box-shadow: 0 40px 120px rgba(0,0,0,.6); overflow: hidden; }
-.lb::backdrop { background: rgba(5,5,8,.8); backdrop-filter: blur(6px); } .lbi { max-height: calc(100dvh - 32px); overflow: auto; overscroll-behavior: contain; } .lbi img { display: block; width: 100%; height: auto; cursor: zoom-out; }
-.lb .x { position: absolute; right: 10px; top: 10px; z-index: 1; width: 40px; height: 40px; border: 0; border-radius: 50%; background: rgba(255,255,255,.14); color: #fff; font-size: 22px; line-height: 1; cursor: pointer; backdrop-filter: blur(8px); }
-@media (max-width: 760px) { .wbar em { display: inline; } .shot { overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; border-radius: 0 0 20px 20px; } .shot::-webkit-scrollbar { display: none; } .shin { width: 760px; } .shot img { border-radius: 0; }
-  .lb { width: 100vw; max-height: 100dvh; border-radius: 0; } .lbi { max-height: 100dvh; } .lbi img { width: 960px; max-width: none; height: auto; } }
 @media (max-width: 1000px) { .pg { grid-template-columns: 200px 60px minmax(0, 1fr); } .mods, .tpl { grid-template-columns: repeat(2, minmax(0, 1fr)); } .hr, .as { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 760px) { .panel { display: flex; flex-direction: column; padding: 20px; border-radius: 24px; } .chip.c3 { order: 2; position: static; align-self: center; translate: none; margin-top: 18px; } .fm .lb small { display: none; } .pg { grid-template-columns: minmax(0, 1fr); } .src { width: min(240px, 100%); margin: 0 auto; } .arr i { rotate: 90deg; margin: 18px 0; }
   .chip.c1 { left: 8px; } .chip.c2 { right: 8px; } .chip { padding: 7px 10px 7px 7px; } .chip b { font-size: 12.5px; } .chip i { width: 26px; height: 26px; }
@@ -297,21 +243,9 @@ JS = """<script>
   const open = (o) => { m.hidden = !o; b.setAttribute('aria-expanded', o); b.setAttribute('aria-label', o ? 'Закрыть меню' : 'Открыть меню'); };
   b.addEventListener('click', () => open(m.hidden)); m.addEventListener('click', (e) => { if (e.target.closest('a')) open(false); });
   addEventListener('keydown', (e) => { if (e.key === 'Escape' && !m.hidden) { open(false); b.focus(); } }); addEventListener('resize', () => { if (getComputedStyle(b).display === 'none') open(false); });
-  const tabs = [...document.querySelectorAll('.tl [role=tab]')];
-  const sel = (t, focus) => { tabs.forEach((x) => { const on = x === t; x.setAttribute('aria-selected', on); x.tabIndex = on ? 0 : -1; document.getElementById(x.getAttribute('aria-controls')).hidden = !on; });
-    if (focus) t.focus(); t.scrollIntoView({ block: 'nearest', inline: 'nearest' }); };
-  tabs.forEach((t, i) => { t.addEventListener('click', () => sel(t)); t.addEventListener('keydown', (e) => { const d = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[e.key];
-    if (d) { e.preventDefault(); sel(tabs[(i + d + tabs.length) % tabs.length], true); } else if (e.key === 'Home') { e.preventDefault(); sel(tabs[0], true); } else if (e.key === 'End') { e.preventDefault(); sel(tabs[tabs.length - 1], true); } }); });
-  const hots = document.querySelectorAll('.hot');
-  hots.forEach((h) => h.addEventListener('click', () => { const on = !h.classList.contains('on'); hots.forEach((x) => x.classList.remove('on')); h.classList.toggle('on', on); }));
-  document.addEventListener('click', (e) => { if (!e.target.closest('.hot')) hots.forEach((x) => x.classList.remove('on')); });
-  const shot = document.getElementById('shot');
-  const pan = () => { if (shot && shot.scrollWidth > shot.clientWidth) shot.scrollLeft = (shot.scrollWidth - shot.clientWidth) * .62; }; pan(); addEventListener('load', pan);
-  const lb = document.getElementById('lb'), lbImg = lb.querySelector('img');
-  document.querySelectorAll('.scr img').forEach((im) => { im.tabIndex = 0; im.setAttribute('role', 'button'); im.setAttribute('aria-label', 'Увеличить: ' + im.alt);
-    const open = () => { lbImg.src = im.currentSrc || im.src; lbImg.alt = im.alt; if (lb.showModal) lb.showModal(); };
-    im.addEventListener('click', open); im.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } }); });
-  lb.querySelector('.x').addEventListener('click', () => lb.close()); lb.addEventListener('click', (e) => { if (e.target === lb || e.target === lbImg) lb.close(); });
+  document.querySelectorAll('.mod .mh').forEach((btn) => btn.addEventListener('click', () => { const card = btn.closest('.mod'), open = !card.classList.contains('open');
+    document.querySelectorAll('.mod.open').forEach((x) => { if (x !== card) { x.classList.remove('open'); x.querySelector('.mh').setAttribute('aria-expanded', 'false'); } });
+    card.classList.toggle('open', open); btn.setAttribute('aria-expanded', open); }));
   document.querySelectorAll('[data-doc]').forEach((x) => x.addEventListener('click', () => { const d = document.getElementById('doc-' + x.dataset.doc); if (d && d.showModal) d.showModal(); }));
   document.querySelectorAll('dialog.doc').forEach((d) => { d.querySelector('.x').addEventListener('click', () => d.close()); d.addEventListener('click', (e) => { if (e.target === d) d.close(); }); });
   const els = document.querySelectorAll('.rv');
@@ -319,7 +253,7 @@ JS = """<script>
   else { const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .1 }); els.forEach((e) => io.observe(e)); }
 })();
 </script>
-""".replace('__APP__', APP).replace('__REG__', REG)
+""".replace('__APP__', APP).replace('__REG__', REG).replace("  document.querySelectorAll('.mod .mh')", protos.js() + "  document.querySelectorAll('.mod .mh')")
 
 
 DARK = """
@@ -356,10 +290,6 @@ dialog.doc { background: #15151c; } dialog.doc .x { background: rgba(255,255,255
 .ba figure { border-radius: 8px; } .how3 .card, .who3 .card, .as4 .card, .food2 figure, .faq details { border-radius: 12px; } .chat .me { border-radius: 10px 10px 3px 10px; } .chat .pr, .chat .run, .li li, .inv { border-radius: 8px; }
 .chat .nodes span, .flow span, .inv b, .th span, .plan .pop { border-radius: 6px; } .gal .t > div { border-radius: 10px; } .per div { border-radius: 10px; } .per button { border-radius: 7px; } .per em { border-radius: 5px; }
 .plan { border-radius: 16px; } .end { border-radius: 20px; } dialog.doc { border-radius: 14px; } dialog.doc .x { border-radius: 9px; } .mods .ic { border-radius: 9px; } .frames span { border-radius: 4px; }
-/* real interface */
-.tl button:hover { background: rgba(255,255,255,.04); } .tl .ic { background: color-mix(in srgb, var(--c) 22%, #14141b); filter: brightness(1.25); }
-.tw { box-shadow: inset 0 0 0 1px rgba(255,255,255,.08), var(--sh2); } .appw { box-shadow: inset 0 0 0 1px rgba(255,255,255,.1), var(--sh2); }
-.shot img { border-radius: 0 0 18px 18px; } .tl button { border-radius: 10px; } .tl .ic { border-radius: 8px; } .tw { border-radius: 14px; } .tp img, .inapp .scr, .chat.real .scr { border-radius: 8px; } .inapp { border-radius: 14px; } .hot .tip { border-radius: 8px; }
 """
 
 
@@ -371,18 +301,17 @@ def build(docs='', theme='light'):
            '<button class="burger" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="mnav"><i></i><i></i></button></div></header>'
            f'<nav class="mnav" id="mnav" aria-label="Меню" hidden>{links}<div class="row"><a class="in2" data-app="login" href="{APP}">Войти</a>{reg("Регистрация")}</div></nav>')
     fm = lambda c, lb: f'<div class="fm {c}"><i class="ft"></i><span class="lb">{lb}</span></div>'
-    hots = ''.join(f'<button type="button" class="hot{" dn" if y < 20 else ""}" style="left:{x}%;top:{y}%" aria-describedby="hot{i}"><span class="sr">Подсказка {i + 1}</span><span class="tip" id="hot{i}" role="tooltip">{t}</span></button>'
-                   for i, (x, y, t) in enumerate(HOT))
-    app = ('<div class="panel appw"><span class="chip c1"><i>↺</i><span><small>Перенесено на октябрь</small><b>+$112 бюджета</b></span></span>'
-           '<span class="chip c2"><i>⤢</i><span><small>Адаптация</small><b>1 фото → 3 формата</b></span></span>'
-           '<div class="wbar" aria-hidden="true"><i></i><i></i><i></i><span>oneflow.art/app<em> · листайте →</em></span></div>'
-           '<figure class="shot" id="shot"><div class="shin"><img src="assets/ui/canvas.webp" width="1800" height="1125" alt="Интерфейс ONEFLOW: режим «Ноды и адаптация» — нода «Изображение» с фото товара соединена с нодой «Адаптация»: форматы Kaspi 1125×330, Stories 1080×1920, Яндекс РСЯ 1080×450 и кнопка «Сгенерировать»">'
-           f'{hots}</div></figure></div>')
     hero = (f'<section class="hero"><div class="wrap">'
             '<h1>Больше контента.<br><span>До 50% дешевле.</span></h1>'
             '<p class="sub">Фото, видео и тексты на 30+ нейросетях — и адаптация под любой размер в один клик. Неиспользованный бюджет остаётся с вами.</p>'
             f'<div class="acts">{reg("Начать бесплатно →")}<a class="btn g" href="#how">Как это работает</a></div>'
-            f'{app}'
+            '<div class="panel" role="img" aria-label="Карточка «Мягкий зайка» адаптирована под Stories 9:16, Google Discovery, Яндекс РСЯ и Kaspi — пример">'
+            '<span class="chip c1"><i>↺</i><span><small>Перенесено на октябрь</small><b>+$112 бюджета</b></span></span>'
+            '<span class="chip c2"><i>⤢</i><span><small>Адаптация</small><b>1 фото → 4 формата</b></span></span>'
+            '<span class="chip c3"><i>★</i><span><small>Пресеты</small><b>Kaspi · РСЯ · Discovery</b></span></span>'
+            '<div class="pg"><figure class="src"><img src="assets/ol/bunny.webp" alt="" width="600" height="800"><figcaption><span>Исходник</span><span>3:4</span></figcaption></figure>'
+            '<div class="arr" aria-hidden="true"><i></i>адаптация</div>'
+            f'<div class="fmts">{fm("f916", "9:16")}{fm("fdis", "1200×628<small> · Discovery</small>")}{fm("frsy", "1080×450<small> · РСЯ</small>")}{fm("fksp", "1125×330<small> · Kaspi</small>")}</div></div></div>'
             f'<div class="models" role="img" aria-label="Модели: {", ".join(MODELS)}"><div class="t">{"".join(f"<span>{m}</span>" for m in MODELS) * 2}</div></div></div></section>')
     frames = ''.join(f'<span style="width:{w}px;height:{h}px">{t}</span>' for t, w, h in (('9:16', 30, 54), ('4:5', 40, 50), ('1:1', 46, 46), ('16:9', 62, 35), ('3:1', 72, 24)))
     why = ('<section class="sec" id="why"><div class="wrap"><div class="sh rv"><span class="k">Почему ONEFLOW</span><h2>Три вещи, которые меняют бюджет</h2>'
@@ -398,23 +327,13 @@ def build(docs='', theme='light'):
              '<div class="rv"><span class="n">01</span><h3>Загрузите фото или идею</h3><p>Товар, референс или пара строк — этого достаточно.</p></div>'
              '<div class="rv"><span class="n">02</span><h3>Ассистент соберёт цепочку</h3><p>Разберёт нишу, подготовит промпты и схему нод — вы проверяете и запускаете.</p></div>'
              '<div class="rv"><span class="n">03</span><h3>Получите все форматы</h3><p>Kaspi, Яндекс РСЯ, Google, BYYD и сторис — одним запуском.</p></div></div></div></section>')
-    tabs = ''.join(f'<button type="button" role="tab" id="tt-{k}" aria-controls="tp-{k}" aria-selected="{str(i == 0).lower()}" tabindex="{0 if i == 0 else -1}" style="--c:{c}">'
-                   f'<span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{ic}</svg></span>'
-                   f'<span class="tx"><b>{t}</b><small>{d}</small></span></button>' for i, (k, t, d, _, _, _, c, ic) in enumerate(TOUR))
-    panes = ''.join(f'<figure class="tp" role="tabpanel" id="tp-{k}" aria-labelledby="tt-{k}"{"" if i == 0 else " hidden"}><div class="scr"><img src="assets/ui/{k}.webp" width="{w}" height="{h}" alt="Экран «{t}» в ONEFLOW" loading="lazy"></div>'
-                    f'<figcaption><b>{t}</b> — {x}</figcaption></figure>' for i, (k, t, d, x, w, h, _, _) in enumerate(TOUR))
-    mods = ('<section class="sec" id="modules"><div class="wrap"><div class="sh rv"><span class="k">Возможности</span><h2>Всё для контента — в одном окне</h2>'
-            '<p>Так выглядит ONEFLOW изнутри. Нажмите на инструмент — покажем его экран.</p></div>'
-            f'<div class="tour rv"><div class="tl" role="tablist" aria-label="Инструменты ONEFLOW" aria-orientation="vertical">{tabs}</div><div class="tw"><div class="wbar" aria-hidden="true"><i></i><i></i><i></i><span>oneflow.art/app</span></div>{panes}</div></div>'
-            '<p class="note">Реальные экраны приложения. Ещё: нодовый холст, соавторы и мессенджер, ассеты и архив проекта.</p></div></section>')
+    mods = protos.section()
     tpl = ''.join(f'<article class="card rv" aria-label="Шаблон «{tn}»: {t}">{ba(k, after=tn)}<div class="tx"><span class="tn">{w}</span><h3>{t}</h3><p>{d}</p></div></article>' for k, w, t, d, tn in TPL)
     how3 = ''.join(f'<div class="card rv"><span class="n">{i}</span><span><b>{a}</b><small>{b_}</small></span></div>' for i, (a, b_) in enumerate(
         [('Выберите шаблон', 'HoReCa, Квартира, Авто, Техника или Мебель'), ('Загрузите своё фото', 'снимок на телефон подойдёт'), ('Получите студийный кадр', 'высокое разрешение — и любой размер для площадок')], 1))
     business = ('<section class="sec" id="business"><div class="wrap"><div class="sh rv"><span class="k">Шаблоны для бизнеса</span><h2>Студийные фото без фотографа</h2>'
                 '<p>Готовые шаблоны для ресторанов, риелторов, автодилеров и магазинов электроники. Загрузите фото с телефона — получите снимок студийного качества в высоком разрешении.</p></div>'
-                f'<div class="tpl">{tpl}</div><div class="how3">{how3}</div>'
-                '<figure class="inapp rv"><div class="scr"><img src="assets/ui/business.webp" width="1100" height="568" alt="Экран ONEFLOW «Начнём генерить?», вкладка «Для бизнеса»: HoReCa, Авто, Квартира, Мебель, Техника и электроника" loading="lazy"></div>'
-                '<figcaption><b>Так это выглядит в приложении</b>Стартовое окно → «Для бизнеса» → выберите шаблон и загрузите фото. Иллюстрации выше показывают эффект шаблона.</figcaption></figure></div></section>')
+                f'<div class="tpl">{tpl}</div><div class="how3">{how3}</div><p class="note">Иллюстрации показывают эффект шаблона. Шаблоны — в разделе «Для бизнеса» в приложении.</p></div></section>')
     menu = ''.join(f'<div class="mi"><svg viewBox="0 0 200 150" aria-hidden="true"><use href="#s-food"/></svg><span><b>{n}</b><small>{s}</small></span><em>{p}</em></div>'
                    for n, s, p in (('Поке с лососем', 'рис, авокадо, эдамаме', '3 900 ₸'), ('Поке веган', 'тофу, овощи, кунжут', '3 200 ₸'), ('Поке спайси', 'тунец, чили-майо', '4 100 ₸')))
     vs = ''.join(f'<tr><td>{a}</td><td>{b_}</td><td>{c}</td></tr>' for a, b_, c in VS)
@@ -428,8 +347,12 @@ def build(docs='', theme='light'):
               '<div class="card"><b>Магазины электроники</b><small>карточки товаров и баннеры</small></div></div></div></div></div></section>')
     assistant = ('<section class="sec" id="assistant"><div class="wrap"><div class="sh rv"><span class="k">ИИ-ассистент</span><h2>Помогает с идеями, промптами и схемой</h2>'
                  '<p>Когда нужен не только шаблон: ассистент разберёт нишу, подскажет идеи, напишет промпт и сам соберёт схему нод. Запускаете вы.</p></div><div class="as">'
-                 '<figure class="card chat real rv"><div class="scr"><img src="assets/ui/chat.webp" width="1400" height="812" alt="Ассистент Floko в ONEFLOW: окно чата поверх холста с нодами «Изображение» и «Адаптация»" loading="lazy"></div>'
-                 '<figcaption><b>Floko прямо на холсте</b>Опишите задачу — ассистент подскажет идею и промпт и поставит ноды. Проверяете и запускаете вы.</figcaption></figure>'
+                 '<div class="card chat rv" role="img" aria-label="Пример диалога с ассистентом: разбор ниши, промпт и схема нод; запуск — за пользователем">'
+                 '<div class="ch"><span>ИИ-ассистент</span><span>пример</span></div><p class="me">Кофейня, доставка. Нужны сторис на неделю под новое зимнее меню.</p>'
+                 '<div class="ai"><h4>Аудитория</h4><ul><li>студенты и офис — заказывают в обед и вечером</li><li>в сторис лучше заходят крупные планы напитков</li><li>акцент на сезонное меню и доставку до 30 минут</li></ul>'
+                 '<h4>Промпт</h4><p class="pr">Зимний латте на тёплом фоне, мягкий утренний свет, крупный план</p>'
+                 '<h4>Схема нод</h4><div class="nodes"><span>Фото</span><i>→</i><span>Генерация фото</span><i>→</i><span>Адаптация 9:16</span></div></div>'
+                 '<div class="ft"><span>Проверьте схему и нажмите «Запустить»</span><span class="run">Запустить пайплайн ▸</span></div></div>'
                  '<div class="as4"><article class="card rv"><span class="n">01</span><h3>Разбор ниши</h3><p>Аудитория, конкуренты и какой контент нужен именно вам.</p><span class="w">делает ассистент</span></article>'
                  '<article class="card rv"><span class="n">02</span><h3>Промпты</h3><p>Пишет и улучшает промпт под выбранную модель.</p><span class="w">делает ассистент</span></article>'
                  '<article class="card rv"><span class="n">03</span><h3>Схема нод</h3><p>По описанию задачи собирает схему на холсте.</p><span class="w">делает ассистент</span></article>'
@@ -458,8 +381,8 @@ def build(docs='', theme='light'):
             '<meta property="og:title" content="ONEFLOW — больше контента, до 50% дешевле">\n'
             '<link rel="canonical" href="https://oneflow.art/">\n<meta property="og:url" content="https://oneflow.art/">\n'
             "<script>document.documentElement.classList.add('js')</script>\n<link rel=\"stylesheet\" href=\"fonts.css\">\n"
-            f'<style>{CSS.replace("IMGVARS", imgvars)}{dark_css}.sr {{ position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }}</style>\n</head>\n'
-            f'<body id="top">\n<div class="bgfx" aria-hidden="true"><i class="a"></i><i class="b"></i><i class="c"></i><i class="d"></i></div>\n{SYM}\n{nav}\n<main id="main">{hero}{why}{steps}{mods}{business}{horeca}{assistant}{gal}{pricing}{faq}{end}</main>\n{footer}\n<dialog class="lb" id="lb" aria-label="Экран ONEFLOW"><button type="button" class="x" aria-label="Закрыть">×</button><div class="lbi"><img alt=""></div></dialog>\n{JS}</body>\n</html>\n')
+            f'<style>{CSS.replace("IMGVARS", imgvars)}{protos.CSS}{dark_css}{protos.DARK if theme == "dark" else ""}.sr {{ position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }}</style>\n</head>\n'
+            f'<body id="top">\n<div class="bgfx" aria-hidden="true"><i class="a"></i><i class="b"></i><i class="c"></i><i class="d"></i></div>\n{SYM}\n{nav}\n<main id="main">{hero}{why}{steps}{mods}{business}{horeca}{assistant}{gal}{pricing}{faq}{end}</main>\n{footer}\n{JS}</body>\n</html>\n')
 
 
 if __name__ == '__main__':
