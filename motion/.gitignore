@@ -1,3 +1,4 @@
 out/
 music.wav
 music-clean.wav
+__pycache__/
