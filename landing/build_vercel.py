@@ -64,9 +64,12 @@ def build4(theme='light'):
     html, nf = inline_fonts(html, used)
     for d_, n in sorted(set(re.findall(r'assets/(ol|ui)/([\w-]+)\.webp', html))):
         html = html.replace(f'assets/{d_}/{n}.webp', uri(os.path.join(HERE, 'assets', d_, f'{n}.webp'), 'image/webp'))
+    # hero promo video stays a separate file next to index.html (served from the site root); the poster is inlined
+    html = html.replace('assets/video/oneflow-promo.jpg', uri(os.path.join(HERE, 'assets', 'video', 'oneflow-promo.jpg'), 'image/jpeg'))
+    html = html.replace('src="assets/video/oneflow-promo.', 'src="/oneflow-promo.')
     html = html.replace('<meta name="theme-color"', f'<link rel="icon" href="{uri(os.path.join(APPREPO, "public", "favicon.svg"), "image/svg+xml")}" type="image/svg+xml">\n<meta name="theme-color"', 1)
     assert 'assets/' not in html and 'fonts/' not in html
-    bad = r'(?<![\w-])(?:src|href)="(?!data:|#|/app(?:\?|\")|https://oneflow\.art/\")'
+    bad = r'(?<![\w-])(?:src|href)="(?!data:|#|/app(?:\?|\")|https://oneflow\.art/\"|/oneflow-promo\.(?:mp4|webm)\")'
     assert not re.search(bad, html), re.findall(r'.{40}' + bad + r'.{30}', html)[:3]
     d = os.path.join(HERE, 'site', '4-porcelain' + sfx); os.makedirs(d, exist_ok=True)
     open(os.path.join(d, 'index.html'), 'w', encoding='utf-8').write(html)
@@ -74,6 +77,27 @@ def build4(theme='light'):
     with zipfile.ZipFile(os.path.join(HERE, 'out', f'ONEFLOW-4-Porcelain{sfx}-vercel.zip'), 'w', zipfile.ZIP_DEFLATED) as z:
         z.write(os.path.join(d, 'index.html'), 'index.html')
     print(f'site/4-porcelain{sfx}/index.html {len(html.encode()) // 1024} KB, {nf} font faces, fonts used {sorted(used)}')
+    site_zip(os.path.join(d, 'index.html'), sfx)
+
+
+def site_zip(index, sfx=''):
+    """Full oneflow.art upload: the previous site archive (app, assets, presets…) with the new index.html and the hero video files."""
+    base = os.environ.get('SITE_BASE', '/tmp/claude-0/site-prev.zip')
+    if not os.path.exists(base):
+        base = os.path.join(HERE, 'out', f'oneflow-art-site{sfx}.zip')
+    out = os.path.join(HERE, 'out', f'oneflow-art-site{sfx}.zip')
+    tmp = out + '.tmp'
+    extra = {'oneflow-promo.mp4': os.path.join(HERE, 'assets', 'video', 'oneflow-promo.mp4'), 'oneflow-promo.webm': os.path.join(HERE, 'assets', 'video', 'oneflow-promo.webm')}
+    with zipfile.ZipFile(base) as zi, zipfile.ZipFile(tmp, 'w', zipfile.ZIP_DEFLATED) as zo:
+        for it in zi.infolist():
+            if it.filename in ('index.html', *extra):
+                continue
+            zo.writestr(it, zi.read(it))
+        zo.write(index, 'index.html')
+        for name, src in extra.items():
+            zo.write(src, name, compress_type=zipfile.ZIP_STORED)
+    os.replace(tmp, out)
+    print(out, os.path.getsize(out) // 1024, 'KB')
 
 
 if __name__ == '__main__':
