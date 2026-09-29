@@ -444,10 +444,8 @@ __STYLES__
   window.DUR = T;
   if (q.get('s')) st.classList.add('s-' + q.get('s'));  // alternative look, see styles_clean.py
   const warp = (r) => { const A = TL.anch; for (let i = 1; i < A.length; i++) { const [a, ba] = A[i - 1], [b, bb] = A[i]; if (r <= bb * B) return a + (b - a) * (r / B - ba) / (bb - ba); } return A[A.length - 1][0]; };
-  const kickOn = (bt) => TL.kick.some(([a, b]) => bt >= a && bt < b);
   const fx = (r) => {
-    const bt = r / B, bi = Math.floor(bt + 1e-6), k = kickOn(bi) ? Math.exp(-(bt - bi) * B * 8) : 0;
-    let s = 1 + k * .006, x = 0, bl = 0, f = 0;
+    let s = 1, x = 0, bl = 0, f = 0;  // no per-beat pulse — only the hits on scene changes
     for (const [cb, kd] of TL.cuts) {
       const d = r - cb * B;
       if (kd === 'whip') { if (Math.abs(d) < .3) { const e = Math.exp(-Math.abs(d) * 16); x += (d < 0 ? -1 : 1) * 760 * e; bl = Math.max(bl, 18 * e); } }
@@ -456,8 +454,8 @@ __STYLES__
     cam.style.transform = 'translateX(' + x.toFixed(1) + 'px) scale(' + s.toFixed(4) + ')';
     cam.style.filter = bl > .3 ? 'blur(' + bl.toFixed(1) + 'px)' : '';
     fl.style.opacity = f.toFixed(3);
-    g1.style.transform = 'translate(' + (420 + 520 * Math.sin(r * .31)).toFixed(0) + 'px,' + (260 + 220 * Math.cos(r * .23)).toFixed(0) + 'px)'; g1.style.opacity = (.5 + .5 * k).toFixed(3);
-    g2.style.transform = 'translate(' + (1500 - 480 * Math.cos(r * .27)).toFixed(0) + 'px,' + (820 - 240 * Math.sin(r * .37)).toFixed(0) + 'px)'; g2.style.opacity = (.45 + .55 * k).toFixed(3);
+    g1.style.transform = 'translate(' + (420 + 520 * Math.sin(r * .31)).toFixed(0) + 'px,' + (260 + 220 * Math.cos(r * .23)).toFixed(0) + 'px)'; g1.style.opacity = '.7';
+    g2.style.transform = 'translate(' + (1500 - 480 * Math.cos(r * .27)).toFixed(0) + 'px,' + (820 - 240 * Math.sin(r * .37)).toFixed(0) + 'px)'; g2.style.opacity = '.65';
   };
   const counters = [...document.querySelectorAll('[data-count]')], typers = [...document.querySelectorAll('[data-type]')];
   const offOf = (el) => { const s = el && el.closest && el.closest('[data-off]'); return s ? +s.dataset.off : 0; };
