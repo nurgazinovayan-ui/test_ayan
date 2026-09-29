@@ -15,6 +15,7 @@ sys.path.insert(0, os.path.join(HERE, '..', 'landing'))
 import v4_porcelain as v  # noqa: E402  (brand mark)
 import styles  # noqa: E402  (alternative looks, ?s=<name>)
 import styles2  # noqa: E402  (unusual looks: hand, os, riso, crt, collage)
+import styles3  # noqa: E402  (ten more looks for the offer-first cut)
 
 MARK_D = re.search(r'd="([^"]+)"', v.MARK).group(1)
 MODELS = ['GPT Image', 'Nano Banana Pro', 'Seedream', 'Veo 3.1', 'Kling', 'Seedance', 'Hailuo', 'Recraft', 'Flux']
@@ -194,6 +195,7 @@ body { color: var(--t); font-family: var(--d-); -webkit-font-smoothing: antialia
 .sr b { text-align: right; font-size: 28px; } .sr.best b, .sr.best span { color: var(--g); }
 /* 7 · money */
 .s7 .a1 { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; animation: fout .35s linear 21.85s forwards; }
+.s7 .fn7 { position: absolute; left: 0; right: 0; bottom: 120px; text-align: center; font: 400 21px var(--i); color: var(--m); opacity: .85; }
 .s7 .big { font: 800 440px/.86 var(--d-); letter-spacing: -.07em; } .s7 .sub { margin-top: 26px; font: 700 64px var(--d-); letter-spacing: -.03em; }
 .s7 .a2 { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 110px; }
 .ring { position: relative; width: 460px; height: 460px; } .ring svg { width: 100%; height: 100%; rotate: -90deg; } .ring circle { fill: none; stroke-width: 34; }
@@ -284,7 +286,7 @@ __STYLES__</style>
 
   <!-- 7 · money 20–24 -->
   <section class="sc s7" style="--a:19.9s;--b:23.78s">
-    <div class="a1"><div class="big gt pop" style="--d:20.05s" data-count="20.1,.8,0,50,0" data-pre="−" data-suf="%">−0%</div><div class="sub up" style="--d:20.45s">до 50% дешевле генерация*</div></div>
+    <div class="a1"><div class="big gt pop" style="--d:20.05s" data-count="20.1,.8,0,50,0" data-pre="−" data-suf="%">−0%</div><div class="sub up" style="--d:20.45s">до 50% дешевле генерация*</div><p class="fn7 fin" style="--d:20.7s">* в сравнении с оплатой тех же моделей в отдельных сервисах; итог зависит от моделей и объёма</p></div>
     <div class="a2"><div class="ring pop" style="--d:22.0s"><svg viewBox="0 0 460 460"><circle class="bgc" cx="230" cy="230" r="210"/><circle class="fg" cx="230" cy="230" r="210"/></svg>
       <div class="c"><b data-count="22.2,1.1,0,112,0" data-pre="+$">+$0</b><small>перенесено</small></div></div>
       <div class="rt2"><h3><span class="up" style="--d:22.25s">Бюджет</span><br><span class="up gt" style="--d:22.38s">не сгорает</span></h3><p class="up" style="--d:22.6s">Остаток переходит<br>на следующий месяц</p></div></div>
@@ -307,15 +309,21 @@ __STYLES__</style>
   if (q.get('v') === 'port') document.body.classList.add('port');
   if (q.get('s')) document.body.classList.add('s-' + q.get('s'));
   const st = document.getElementById('st'), idx = document.getElementById('idx');
-  const cuts = [5, 8, 13, 16, 20, 24];
+  const cuts = new URLSearchParams(location.search).get('o') === 'hook' ? [4, 7, 12, 15, 19, 22] : [5, 8, 13, 16, 20, 24];
   const counters = [...document.querySelectorAll('[data-count]')], typers = [...document.querySelectorAll('[data-type]')];
+  // ?o=hook — same scenes, new order: offer first (old 20–24 s → 0–4 s), product, words, logo, end card
+  const HOOK = q.get('o') === 'hook';
+  const OFF = { s7: -20, s3: -1, s4: -1, s5: -1, s6: -1, s2: 17, s1: 22, s8: 0, hud: -1.8 };
+  const offOf = (el) => { if (!HOOK || !el) return 0; const sc = el.closest('.sc'); if (sc) return OFF[[...sc.classList].find((c) => /^s[1-8]$/.test(c))] || 0;
+    if (el.closest('.hud')) return OFF.hud; const d = el.closest('[data-sc]'); return d ? OFF[d.dataset.sc] || 0 : 0; };
+  counters.forEach((el) => { el._o = offOf(el); }); typers.forEach((el) => { el._o = offOf(el); });
   let AN = null; const boil = [...document.querySelectorAll('.boil')];
   window.seek = (t) => {
-    if (!AN) { AN = document.getAnimations(); AN.forEach((a) => a.pause()); }
-    AN.forEach((a) => { a.currentTime = t * 1000; });
-    counters.forEach((el) => { const [s, d, a, b, dec] = el.dataset.count.split(',').map(Number), p = Math.min(1, Math.max(0, (t - s) / d)), e = 1 - Math.pow(1 - p, 3);
+    if (!AN) { AN = document.getAnimations(); AN.forEach((a) => { a.pause(); a._o = offOf(a.effect && a.effect.target); }); }
+    AN.forEach((a) => { a.currentTime = (t - a._o) * 1000; });
+    counters.forEach((el) => { const [s, d, a, b, dec] = el.dataset.count.split(',').map(Number), p = Math.min(1, Math.max(0, (t - el._o - s) / d)), e = 1 - Math.pow(1 - p, 3);
       el.textContent = (el.dataset.pre || '') + (a + (b - a) * e).toFixed(dec || 0) + (el.dataset.suf || ''); });
-    typers.forEach((el) => { const [s, cps] = el.dataset.type.split(',').map(Number), n = Math.max(0, Math.min(el.dataset.txt.length, Math.floor((t - s) * cps)));
+    typers.forEach((el) => { const [s, cps] = el.dataset.type.split(',').map(Number), n = Math.max(0, Math.min(el.dataset.txt.length, Math.floor((t - el._o - s) * cps)));
       el.textContent = el.dataset.txt.slice(0, n); el.classList.toggle('tyc', n > 0 && n < el.dataset.txt.length); });
     boil.forEach((f) => f.setAttribute('seed', 1 + Math.floor(t * 8) % 4));
     idx.textContent = String(Math.min(6, cuts.filter((c) => t >= c).length + 1)).padStart(2, '0') + ' / 06';
@@ -335,7 +343,7 @@ __STYLES__</style>
 def build():
     html = (HTML.replace('__MARKW__', mark('', False)).replace('__MARK__', mark())
             .replace('__WM1__', letters('ONEFLOW', .45)).replace('__WM2__', letters('ONEFLOW', 24.15, .04))
-            .replace('__ROWS__', rows()).replace('__WALL__', wall()).replace('__FORMATS__', formats()).replace('__TRENDS__', trends()).replace('__STYLES__', styles.CSS + styles2.CSS + styles2.DDCSS).replace('__DEFS__', styles2.DEFS).replace('__DOODLES__', styles2.doodles()))
+            .replace('__ROWS__', rows()).replace('__WALL__', wall()).replace('__FORMATS__', formats()).replace('__TRENDS__', trends()).replace('__STYLES__', styles.CSS + styles2.CSS + styles2.DDCSS + styles3.CSS).replace('__DEFS__', styles2.DEFS).replace('__DOODLES__', styles2.doodles()))
     open(os.path.join(HERE, 'oneflow-motion.html'), 'w', encoding='utf-8').write(html)
     print('oneflow-motion.html')
 

@@ -217,7 +217,12 @@ DOODLES = [
     ('star', 520, 210, 110, 110, 24.5, 30, '#ffcf3a'), ('star', 1330, 210, 90, 90, 24.7, 30, '#e2553e'), ('arrow', 1370, 800, 200, 110, 25.6, 30, '#e2553e'),
 ]
 NOTES = [('ого!', 1240, 590, -8, 1.0, 1.7), ('и ещё больше', 1300, 820, -4, 6.2, 7.8), ('клик!', 330, 800, -10, 10.0, 12.7),
-         ('одним кликом', 1440, 90, 4, 11.5, 12.7), ('твои деньги', 1080, 610, -5, 23.0, 23.75), ('жми!', 1590, 880, -8, 25.8, 30)]
+         ('одним кликом', 1440, 90, 4, 11.5, 12.7), ('твои деньги', 1500, 700, -5, 23.0, 23.75), ('жми!', 1590, 880, -8, 25.8, 30)]
+
+
+def scene_of(t):
+    """Which scene a doodle belongs to (by its start time on the base timeline) — used to re-time it with ?o=hook."""
+    return 's' + str(1 + sum(t >= c for c in (2, 5, 8, 13, 16, 20, 24)))
 
 
 def doodles():
@@ -226,10 +231,10 @@ def doodles():
         vb, path = SHAPES[sh]
         vw, vh = map(float, vb.split()[2:])
         sw = 6 / ((w / vw * h / vh) ** .5)  # ≈6 px on screen whatever the doodle's size
-        out += (f'<svg class="dd" viewBox="{vb}" preserveAspectRatio="none" style="left:{x}px;top:{y}px;width:{w}px;height:{h}px;--d:{d}s;--o:{o}s;--c:{c};--sw:{sw:.2f}">'
+        out += (f'<svg class="dd" data-sc="{scene_of(d)}" viewBox="{vb}" preserveAspectRatio="none" style="left:{x}px;top:{y}px;width:{w}px;height:{h}px;--d:{d}s;--o:{o}s;--c:{c};--sw:{sw:.2f}">'
                 f'<path pathLength="1" d="{path}"/></svg>')
     for t, x, y, r, d, o in NOTES:
-        out += f'<span class="ddt" style="left:{x}px;top:{y}px;rotate:{r}deg;--d:{d}s;--o:{o}s">{t}</span>'
+        out += f'<span class="ddt" data-sc="{scene_of(d)}" style="left:{x}px;top:{y}px;rotate:{r}deg;--d:{d}s;--o:{o}s">{t}</span>'
     return f'<div class="dds" aria-hidden="true">{out}</div>'
 
 
