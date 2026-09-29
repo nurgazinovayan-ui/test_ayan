@@ -20,6 +20,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', 'landing'))
 import v4_porcelain as v  # noqa: E402
 import timeline_clean as tl  # noqa: E402
+import wire  # noqa: E402
 
 MARK_D = re.search(r'd="([^"]+)"', v.MARK).group(1)
 IMG = '../landing/assets/ol/'
@@ -50,7 +51,7 @@ def w(text, d, o, cls=''):
 
 
 def img(n, cls='', extra=''):
-    return f'<i class="im {cls}" style="background-image:url({IMG}{n}.webp){extra}"></i>'
+    return f'<i class="im {cls}" style="background-image:var(--w-{n}){extra}"></i>'
 
 
 # ---------------------------------------------------------------- scene helpers
@@ -141,6 +142,7 @@ HTML = r"""<!doctype html>
 <title>ONEFLOW — clean promo</title>
 <link rel="stylesheet" href="../landing/fonts.css">
 <style>
+__WIRE__
 :root { --bg: #f6f6fa; --ink: #0f1222; --mut: #8a8fa8; --b1: #3b5cff; --b2: #6fb6ff; --e: cubic-bezier(.7,0,.2,1); --e2: cubic-bezier(.16,.84,.24,1); --po: cubic-bezier(.2,1.4,.35,1); }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
@@ -189,8 +191,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
 .fm span { padding: 9px 12px; border-radius: 10px; background: #f4f5fa; box-shadow: inset 0 0 0 1px #e6e8f2; } .fm em { font-style: normal; color: var(--mut); text-align: center; }
 .gob { margin: 18px 20px 0; padding: 16px; border-radius: 99px; background: linear-gradient(90deg, #3b5cff, #6fb6ff); color: #fff; text-align: center; font: 600 20px 'Inter', sans-serif; }
 .n3 { left: 1060px; top: 190px; width: 330px; padding-bottom: 20px; } .outs { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; padding: 20px; }
-.ofr { position: relative; overflow: hidden; border-radius: 8px; background: #fff; } .ofr::before { content: ''; position: absolute; inset: -10px; background: url(../landing/assets/ol/bunny.webp) center / cover; filter: blur(8px); opacity: .8; }
-.ofr i { position: absolute; inset: 0; background: url(../landing/assets/ol/bunny.webp) center / contain no-repeat; }
+.ofr { position: relative; overflow: hidden; border-radius: 8px; background: #fff; } .ofr::before { content: ''; position: absolute; inset: -10px; background: var(--w-bunny) center / cover; filter: blur(8px); opacity: .8; }
+.ofr i { position: absolute; inset: 0; background: var(--w-bunny) center / contain no-repeat; }
 /* C · corridor */
 .sC { perspective: 720px; perspective-origin: 50% 50%; animation: scIn .4s var(--e2) 5.85s both, scOut .45s var(--e) 9.2s forwards; }
 @keyframes scIn { from { opacity: 0; filter: blur(20px); } } @keyframes scOut { to { opacity: 0; filter: blur(22px); transform: scale(1.15); } }
@@ -350,10 +352,9 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
 .flash { position: absolute; inset: 0; z-index: 60; background: radial-gradient(ellipse at center, #fff 30%, #eaf0ff); opacity: 0; }
 /* glow */
 .bl { filter: drop-shadow(0 0 22px rgba(77,124,255,.5)); } .wi.bl { filter: blur(0) drop-shadow(0 0 22px rgba(77,124,255,.5)); }
-.gob, .pill, .auto, .fch i { box-shadow: 0 0 36px rgba(59,92,255,.55), 0 10px 30px -8px rgba(59,92,255,.6); } .ava { box-shadow: 0 0 28px rgba(59,92,255,.55); }
-.pc .best { box-shadow: 0 0 36px rgba(22,163,106,.6); } .pc.win .bar i, .st .sp::after { box-shadow: 0 0 18px rgba(59,92,255,.75); }
-@keyframes adGo { to { background: linear-gradient(90deg, #3b5cff, #6fb6ff); box-shadow: 0 0 44px rgba(59,92,255,.75), 0 12px 30px -10px rgba(59,92,255,.8); } }
-@keyframes kbGo { to { background: linear-gradient(90deg, #3b5cff, #6fb6ff); transform: scale(1.08); box-shadow: 0 0 100px rgba(59,92,255,.8), 0 40px 80px -30px rgba(59,92,255,.8); } }
+.pc.win .bar i, .st .sp::after { box-shadow: 0 0 18px rgba(59,92,255,.75); }
+@keyframes kbGo { to { background: linear-gradient(90deg, #3b5cff, #6fb6ff); transform: scale(1.08); } }
+.kb { box-shadow: none; }
 .rib { box-shadow: 0 0 130px rgba(93,139,255,.6), 0 30px 80px -30px rgba(59,92,255,.6); }
 .ck { box-shadow: 0 0 0 3px #cfd9ff, 0 0 100px rgba(77,124,255,.6), 0 40px 80px -30px rgba(59,92,255,.55); } .ck path { filter: drop-shadow(0 0 10px rgba(77,124,255,.75)); }
 .rip { box-shadow: 0 0 22px rgba(59,92,255,.85), inset 0 0 12px rgba(59,92,255,.6); } .aed path, .aed2 path { filter: drop-shadow(0 0 7px rgba(111,141,255,.85)); }
@@ -384,7 +385,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
 
   <section class="sc sG"><div class="car">__CAROUSEL__</div></section>
 
-  <section class="sc sH">__ARCHIVE__<div class="zc"><i class="im" style="background-image:url(../landing/assets/ol/coffee.webp)"></i><b>Кофемашина Aroma One</b><small>Stories · Пост · Kaspi · Discovery — готово</small></div>__HAND_H__</section>
+  <section class="sc sH">__ARCHIVE__<div class="zc"><i class="im" style="background-image:var(--w-coffee)"></i><b>Кофемашина Aroma One</b><small>Stories · Пост · Kaspi · Discovery — готово</small></div>__HAND_H__</section>
 
   <section class="sc sI">__MODELS__<div class="row">__I1__</div></section>
 
@@ -415,12 +416,12 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
       <div class="st hint" style="--d:27.4s"><i class="sp"></i>Проверьте и нажмите «Запустить»</div></div>
     <div class="cvs"><span class="cvh">Холст · Проект «Зайка»</span><span class="auto">✦ Собрано ассистентом</span>
       <svg class="aed2" viewBox="0 0 1100 730" preserveAspectRatio="none"><path pathLength="1" style="--d:25.6s" d="M268 345 C 284 345, 284 345, 300 345"/><path pathLength="1" style="--d:26.2s" d="M538 345 C 554 345, 554 345, 570 345"/><path pathLength="1" style="--d:26.8s" d="M808 345 C 824 345, 824 345, 840 345"/></svg>
-      <div class="xn" style="left:30px;--d:25.3s"><div class="h"><b style="background:#e8f3ff;color:#3b8bff">▣</b>Фото товара</div><div class="bd"><i class="im" style="background-image:url(../landing/assets/ol/bunny.webp);background-position:center 30%"></i></div></div>
-      <div class="xn" style="left:300px;--d:25.9s"><div class="h"><b style="background:#fff1e3;color:#d98a2b">✦</b>Шаблон One Launch</div><div class="bd"><div class="tp3"><i class="im" style="background-image:url(../landing/assets/ol/pajama.webp)"></i><i class="im" style="background-image:url(../landing/assets/ol/body.webp)"></i></div></div></div>
+      <div class="xn" style="left:30px;--d:25.3s"><div class="h"><b style="background:#e8f3ff;color:#3b8bff">▣</b>Фото товара</div><div class="bd"><i class="im" style="background-image:var(--w-bunny);background-position:center 30%"></i></div></div>
+      <div class="xn" style="left:300px;--d:25.9s"><div class="h"><b style="background:#fff1e3;color:#d98a2b">✦</b>Шаблон One Launch</div><div class="bd"><div class="tp3"><i class="im" style="background-image:var(--w-pajama)"></i><i class="im" style="background-image:var(--w-body)"></i></div></div></div>
       <div class="xn" style="left:570px;--d:26.5s"><div class="h"><b style="background:#efeaff;color:#6b4dff">⌗</b>Адаптация</div><div class="bd"><span class="r"><span>Kaspi</span><span>1125×330</span></span><span class="r"><span>Stories</span><span>1080×1920</span></span><span class="r"><span>Пост</span><span>1080×1080</span></span></div></div>
       <div class="xn" style="left:840px;--d:27.1s"><div class="h"><b style="background:#e9f8f0;color:#16a36a">¶</b>Текст карточки</div><div class="bd"><i class="ln"></i><i class="ln"></i><i class="ln" style="width:70%"></i><i class="ln" style="width:85%"></i></div></div>
     </div></div></section>
-  <section class="sc sK" data-off="__SHIFT__"><div class="kr"><span class="cb"></span><i class="im" style="background-image:url(../landing/assets/ol/bunny.webp)"></i><div><b>Мягкий зайка · 4 формата</b><small>Kaspi · Яндекс РСЯ · Stories · Discovery</small></div></div>
+  <section class="sc sK" data-off="__SHIFT__"><div class="kr"><span class="cb"></span><i class="im" style="background-image:var(--w-bunny)"></i><div><b>Мягкий зайка · 4 формата</b><small>Kaspi · Яндекс РСЯ · Stories · Discovery</small></div></div>
     <div class="kb">Запустить пайплайн ▸</div>__HAND_K__</section>
 
   <section class="sc sL" data-off="__SHIFT__"><div class="trail"></div>__BIGMARK__</section>
@@ -503,7 +504,7 @@ def build():
         '__BIGMARK__': mark('bm'),
         '__M1__': w('Генерация.', 26.0, 27.95, 'bl') + w('Адаптация.', 26.5, 27.97) + w('Запуск.', 27.0, 28.0, 'bl')
                   + ''.join(f'<span class="spk" style="--d:{d}s;display:inline-block">{mark("mk")}</span>' for d in (27.25,)),
-        '__LOGOMARK__': mark(), '__T__': f'{tl.DUR:.4f}', '__TL__': json.dumps({'bpm': tl.BPM, 'anch': tl.ANCH, 'cuts': tl.CUTS, 'kick': tl.KICK}), '__SHIFT__': str(SHIFT), '__AI_SHIFT__': str(AI_SHIFT), '__AVA__': mark('mk', '#fff'),
+        '__LOGOMARK__': mark(), '__T__': f'{tl.DUR:.4f}', '__WIRE__': wire.css_vars(), '__TL__': json.dumps({'bpm': tl.BPM, 'anch': tl.ANCH, 'cuts': tl.CUTS, 'kick': tl.KICK}), '__SHIFT__': str(SHIFT), '__AI_SHIFT__': str(AI_SHIFT), '__AVA__': mark('mk', '#fff'),
         '__X1__': w('ИИ-ассистент', 22.05, 23.3, 'bl') + w('собирает', 22.3, 23.32) + w('пайплайн', 22.5, 23.34, 'bl') + w('за вас', 22.7, 23.36),
     }
     html = HTML
