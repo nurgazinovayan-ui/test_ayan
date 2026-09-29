@@ -68,6 +68,7 @@ FAQ = [('Есть ли шаблоны для моей ниши?', 'Да, в ра
        ('Какие размеры поддерживает адаптация?', 'Любые — от сторис 9:16 до баннера 728×90, плюс пресеты Kaspi, GDN, Discovery, Яндекс РСЯ и BYYD.'),
        ('Можно ли работать командой?', 'Да — пригласите соавтора по почте и общайтесь во встроенном мессенджере.')]
 NAV = [('#why', 'Преимущества'), ('#business', 'Для бизнеса'), ('#assistant', 'Ассистент'), ('#pricing', 'Цены'), ('#faq', 'Вопросы')]
+NICHES = ['магазина на Kaspi', 'вашей кофейни', 'бренда одежды', 'салона красоты', 'вашего стартапа', 'вашего бизнеса']  # hero headline rotates through these (entrepreneur niches)
 MODELS = ['GPT Image', 'Nano Banana Pro', 'Seedream', 'Veo 3.1', 'Kling', 'Seedance', 'Hailuo', 'Recraft', 'Flux', '+ ещё 20']
 
 CSS = """
@@ -107,7 +108,12 @@ main { overflow-x: clip; } a { color: inherit; text-decoration: none; } img, svg
 @media (max-width: 760px) { .bgfx i { filter: blur(60px); } .bgfx .a { width: 80vw; height: 70vw; } .bgfx .b { width: 80vw; height: 76vw; } .bgfx .c { width: 90vw; height: 70vw; } .bgfx .d { width: 60vw; height: 60vw; } }
 .pill { display: inline-flex; align-items: center; gap: 10px; padding: 5px 14px 5px 5px; border-radius: 99px; background: rgba(255,255,255,.75); font-size: 13.5px; color: var(--ink2); transition: background .2s; }
 .pill b { padding: 3px 9px; border-radius: 99px; background: var(--ink); color: #fff; font-size: 11.5px; font-weight: 600; } .pill:hover { background: #fff; }
-.hero h1 { margin-top: 26px; font: 700 clamp(44px, 6.6vw, 92px)/1 var(--d); letter-spacing: -.05em; } .hero h1 span { background: linear-gradient(95deg, #111114 30%, #3e6d63 70%, #5c5f9a); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hero h1 { margin-top: 26px; font: 700 clamp(44px, 6.6vw, 92px)/1 var(--d); letter-spacing: -.05em; } .hero h1 .gr { display: block; background: linear-gradient(95deg, #111114 30%, #3e6d63 70%, #5c5f9a); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.rot { position: relative; display: block; height: 1.1em; overflow: hidden; font-size: min(1em, 8.4vw); }
+.rw { position: absolute; left: 0; right: 0; top: 0; white-space: nowrap; transform: translateY(105%); opacity: 0; transition: transform .6s var(--e), opacity .5s var(--e); }
+.rw.on { transform: none; opacity: 1; } .rw.out { transform: translateY(-105%); opacity: 0; }
+@media (prefers-reduced-motion: reduce) { .rw { transition: none; } }
+@media (max-width: 760px) { .hero h1 { font-size: 9.4vw; } .rot { font-size: 1em; } }
 .hero .sub { max-width: 560px; margin: 24px auto 0; font-size: 18px; color: var(--ink2); } .acts { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 32px; }
 .hvid { position: relative; max-width: 1100px; margin: 56px auto 0; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 26px; background: #f3f3f8;
   box-shadow: inset 0 0 0 1px rgba(255,255,255,.9), var(--sh2); }
@@ -263,6 +269,11 @@ JS = """<script>
   if (!('IntersectionObserver' in window) || reduce) els.forEach((e) => e.classList.add('in'));
   else { const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .1 }); els.forEach((e) => io.observe(e)); }
 })();
+// hero headline: niche rotates every 2.6 s (stays on the first one for reduced motion)
+(() => { const r = document.getElementById('rot'); if (!r) return; const w = [...r.children];
+  if (w.length < 2 || matchMedia('(prefers-reduced-motion: reduce)').matches) return; let i = 0;
+  setInterval(() => { const a = w[i]; i = (i + 1) % w.length; const b = w[i];
+    a.classList.remove('on'); a.classList.add('out'); b.classList.remove('out'); b.classList.add('on'); setTimeout(() => a.classList.remove('out'), 700); }, 2600); })();
 </script>
 """.replace('__APP__', APP).replace('__REG__', REG).replace("  document.querySelectorAll('.mod .mh')", protos.js() + "  document.querySelectorAll('.mod .mh')")
 
@@ -275,7 +286,7 @@ html { color-scheme: dark; } .totop { background: #f3f3f6; color: #0b0b10; box-s
 .btn.p { background: #f3f3f6; color: #0b0b10; box-shadow: 0 10px 30px -12px rgba(160,140,255,.5); } .btn.g { background: rgba(255,255,255,.06); color: var(--ink); box-shadow: inset 0 0 0 1px rgba(255,255,255,.12); }
 .nav .in { background: rgba(20,20,28,.66); backdrop-filter: blur(18px) saturate(160%); -webkit-backdrop-filter: blur(18px) saturate(160%); box-shadow: inset 0 0 0 1px rgba(255,255,255,.08), 0 10px 30px -18px rgba(0,0,0,.8); }
 .mnav { background: rgba(20,20,28,.97); } .mnav a:hover { background: rgba(255,255,255,.06); } .mnav .row .in2 { box-shadow: inset 0 0 0 1px rgba(255,255,255,.16); }
-.hero h1 span { background: linear-gradient(95deg, #ffffff 25%, #9ce8cb 60%, #b3a6ff); -webkit-background-clip: text; background-clip: text; }
+.hero h1 .gr { background: linear-gradient(95deg, #ffffff 25%, #9ce8cb 60%, #b3a6ff); -webkit-background-clip: text; background-clip: text; }
 .panel { background: rgba(22,22,32,.55); box-shadow: inset 0 0 0 1px rgba(255,255,255,.08), var(--sh2); } .src { background: #1a1a23; } .fm { background: #1a1a23; } .fm .lb { background: rgba(10,10,14,.82); color: #fff; }
 .chip { background: rgba(28,28,38,.92); } .chip.c1 i { background: rgba(61,220,151,.15); } .chip.c2 i { background: rgba(124,92,255,.2); color: #b3a6ff; } .chip.c3 i { background: rgba(255,122,69,.16); }
 .models span { color: #ececf2; } .three .card::before { opacity: .16; }
@@ -313,7 +324,8 @@ def build(docs='', theme='light'):
            f'<nav class="mnav" id="mnav" aria-label="Меню" hidden>{links}<div class="row"><a class="in2" data-app="login" href="{APP}">Войти</a>{reg("Регистрация")}</div></nav>')
     fm = lambda c, lb: f'<div class="fm {c}"><i class="ft"></i><span class="lb">{lb}</span></div>'
     hero = (f'<section class="hero"><div class="wrap">'
-            '<h1>Больше контента.<br><span>До 50% дешевле.</span></h1>'
+            '<h1 aria-label="Больше контента для вашего бизнеса. До 50% дешевле*">Больше контента для<span class="rot" id="rot" aria-hidden="true">'
+            + ''.join(f'<span class="rw{" on" if k == 0 else ""}">{n}.</span>' for k, n in enumerate(NICHES)) + '</span><span class="gr">До 50% дешевле*</span></h1>'
             '<p class="sub">Фото, видео и тексты на 30+ нейросетях — и адаптация под любой размер в один клик. Неиспользованный бюджет остаётся с вами.</p>'
             f'<div class="acts">{reg("Начать бесплатно →")}<a class="btn g" href="#how">Как это работает</a></div>'
             '<div class="hvid"><video poster="assets/video/oneflow-promo.jpg" autoplay muted loop playsinline preload="auto" disablepictureinpicture disableremoteplayback '
