@@ -14,6 +14,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', 'landing'))
 import v4_porcelain as v  # noqa: E402  (brand mark)
 import styles  # noqa: E402  (alternative looks, ?s=<name>)
+import styles2  # noqa: E402  (unusual looks: hand, os, riso, crt, collage)
 
 MARK_D = re.search(r'd="([^"]+)"', v.MARK).group(1)
 MODELS = ['GPT Image', 'Nano Banana Pro', 'Seedream', 'Veo 3.1', 'Kling', 'Seedance', 'Hailuo', 'Recraft', 'Flux']
@@ -81,6 +82,7 @@ HTML = r"""<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ONEFLOW — motion</title>
 <link rel="stylesheet" href="../landing/fonts.css">
+<link rel="stylesheet" href="fonts-extra.css">
 <style>
 :root { --bg: #060609; --t: #f4f4f8; --m: #8d8d99; --v: #8b6cff; --g: #3ddc97; --o: #ff8a4c; --b: #4d7cff;
   --e: cubic-bezier(.7, 0, .2, 1); --e2: cubic-bezier(.16, .84, .24, 1); --po: cubic-bezier(.2, 1.45, .35, 1);
@@ -226,7 +228,7 @@ __STYLES__</style>
 <div id="st">
   <svg width="0" height="0" style="position:absolute"><defs>
     <linearGradient id="mg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".45" stop-color="#b9a8ff"/><stop offset=".8" stop-color="#7ef0c3"/><stop offset="1" stop-color="#ffb38a"/></linearGradient>
-    <linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3ddc97"/><stop offset="1" stop-color="#8b6cff"/></linearGradient></defs></svg>
+    __DEFS__<linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3ddc97"/><stop offset="1" stop-color="#8b6cff"/></linearGradient></defs></svg>
   <div class="bg"><i class="a"></i><i class="b"></i><i class="c"></i></div>
 
   <!-- 1 · logo 0–2 -->
@@ -295,6 +297,7 @@ __STYLES__</style>
     <div class="cta"><span class="btn pop" style="--d:25.2s">Начать бесплатно →</span><span class="url pop" style="--d:25.35s">oneflow.art</span></div></div>
     <p class="fn fin" style="--d:25.7s">* в сравнении с оплатой тех же моделей в отдельных сервисах; итог зависит от моделей и объёма</p></section>
 
+  __DOODLES__
   <div class="hud"><div class="l">__MARKW__ONEFLOW</div><div class="r">oneflow.art</div><div class="p"><i></i></div><div class="n" id="idx">01 / 06</div></div>
   <div class="vig"></div><div class="grain"></div><div class="end"></div>
 </div>
@@ -306,7 +309,7 @@ __STYLES__</style>
   const st = document.getElementById('st'), idx = document.getElementById('idx');
   const cuts = [5, 8, 13, 16, 20, 24];
   const counters = [...document.querySelectorAll('[data-count]')], typers = [...document.querySelectorAll('[data-type]')];
-  let AN = null;
+  let AN = null; const boil = [...document.querySelectorAll('.boil')];
   window.seek = (t) => {
     if (!AN) { AN = document.getAnimations(); AN.forEach((a) => a.pause()); }
     AN.forEach((a) => { a.currentTime = t * 1000; });
@@ -314,6 +317,7 @@ __STYLES__</style>
       el.textContent = (el.dataset.pre || '') + (a + (b - a) * e).toFixed(dec || 0) + (el.dataset.suf || ''); });
     typers.forEach((el) => { const [s, cps] = el.dataset.type.split(',').map(Number), n = Math.max(0, Math.min(el.dataset.txt.length, Math.floor((t - s) * cps)));
       el.textContent = el.dataset.txt.slice(0, n); el.classList.toggle('tyc', n > 0 && n < el.dataset.txt.length); });
+    boil.forEach((f) => f.setAttribute('seed', 1 + Math.floor(t * 8) % 4));
     idx.textContent = String(Math.min(6, cuts.filter((c) => t >= c).length + 1)).padStart(2, '0') + ' / 06';
   };
   const fit = () => { const w = st.offsetWidth, h = st.offsetHeight, k = Math.min(innerWidth / w, innerHeight / h); st.style.transform = 'translate(' + (innerWidth - w * k) / 2 + 'px,' + (innerHeight - h * k) / 2 + 'px) scale(' + k + ')'; };
@@ -331,7 +335,7 @@ __STYLES__</style>
 def build():
     html = (HTML.replace('__MARKW__', mark('', False)).replace('__MARK__', mark())
             .replace('__WM1__', letters('ONEFLOW', .45)).replace('__WM2__', letters('ONEFLOW', 24.15, .04))
-            .replace('__ROWS__', rows()).replace('__WALL__', wall()).replace('__FORMATS__', formats()).replace('__TRENDS__', trends()).replace('__STYLES__', styles.CSS))
+            .replace('__ROWS__', rows()).replace('__WALL__', wall()).replace('__FORMATS__', formats()).replace('__TRENDS__', trends()).replace('__STYLES__', styles.CSS + styles2.CSS + styles2.DDCSS).replace('__DEFS__', styles2.DEFS).replace('__DOODLES__', styles2.doodles()))
     open(os.path.join(HERE, 'oneflow-motion.html'), 'w', encoding='utf-8').write(html)
     print('oneflow-motion.html')
 
