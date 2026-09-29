@@ -21,6 +21,7 @@ sys.path.insert(0, os.path.join(HERE, '..', 'landing'))
 import v4_porcelain as v  # noqa: E402
 import timeline_clean as tl  # noqa: E402
 import wire  # noqa: E402
+from brand import wordmark  # noqa: E402
 import styles_clean  # noqa: E402
 
 MARK_D = re.search(r'd="([^"]+)"', v.MARK).group(1)
@@ -77,7 +78,7 @@ def app_window():
                  (('Stories 9:16', 1080, 1920), ('Пост 1:1', 1080, 1080), ('Discovery', 1200, 628), ('Kaspi', 1125, 330)))
     tabs = ''.join(f'<span class="{"on" if i == 0 else ""}">{t}</span>' for i, t in enumerate(('Ноды и адаптация', 'Генерация', 'Copywrite', 'One Launch', 'Тренды', 'Стратегия')))
     outs = ''.join(f'<span class="ofr" style="width:{wd}px;height:{ht}px"><i></i></span>' for wd, ht in ((70, 124), (100, 100), (150, 78), (170, 50)))
-    return (f'<div class="aw"><div class="atb">{mark("amk")}<b>ONEFLOW</b><div class="tabs">{tabs}</div><span class="bud">$0.00 / $50</span></div>'
+    return (f'<div class="aw"><div class="atb">{mark("amk")}<b>{wordmark("wmb")}</b><div class="tabs">{tabs}</div><span class="bud">$0.00 / $50</span></div>'
             '<div class="acv"><svg class="aed" viewBox="0 0 1500 780"><path d="M420 380 C 480 380, 480 330, 540 330"/><path d="M960 330 C 1010 330, 1010 380, 1060 380"/></svg>'
             f'<div class="nd n1"><div class="h"><b>▣</b>Изображение</div>{img("bunny", "nim")}<small>мягкий-зайка.webp</small></div>'
             f'<div class="nd n2"><div class="h"><b style="background:#fff1e3;color:#d98a2b">⌗</b>Адаптация</div><span class="lb">ФОРМАТЫ</span>{fm}<div class="gob">✦ Сгенерировать</div></div>'
@@ -96,7 +97,7 @@ def archive():
              ('robot', 'Робот-пылесос'), ('blender', 'Блендер Pro')]
     grid = ''.join(f'<div class="ac">{img(p)}<b>{t}</b><small>4 формата · сегодня</small></div>' for p, t in items)
     side = ''.join(f'<span class="{"on" if t == "Архив" else ""}"><i></i>{t}</span>' for t in ('Холст', 'Генерация', 'One Launch', 'Тренды', 'Архив'))
-    return (f'<div class="dash"><aside>{mark("amk")}<b>ONEFLOW</b>{side}</aside><main><div class="dh"><b>Архив проекта</b><span class="sr">Поиск…</span><span class="nw">+ Новый</span></div>'
+    return (f'<div class="dash"><aside>{mark("amk")}<b>{wordmark("wmb")}</b>{side}</aside><main><div class="dh"><b>Архив проекта</b><span class="sr">Поиск…</span><span class="nw">+ Новый</span></div>'
             '<div class="dt"><span class="on">Все</span><span>Фото</span><span>Видео</span><span>Тексты</span></div>'
             f'<div class="ag">{grid}</div></main></div>')
 
@@ -342,9 +343,11 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
 .pctl span { padding: 14px 22px; border-radius: 14px; background: #fff; font: 500 22px 'Inter', sans-serif; color: #6d7290; } .pctl span.on { background: #eef2ff; color: var(--b1); }
 .pctl .go { margin-left: 26px; padding: 16px 40px; border-radius: 16px; background: var(--ink); color: #fff; font: 600 24px 'Inter', sans-serif; animation: adGo .3s var(--e2) 30.0s both; }
 /* N · logo */
-.lg { position: absolute; left: 50%; top: 440px; display: flex; align-items: center; gap: 30px; transform: translateX(-50%); }
+.lg { position: absolute; left: 50%; top: 440px; display: flex; align-items: center; gap: 39px; transform: translateX(-50%); color: var(--ink); }
+.lg b .wm { display: block; height: 116px; width: auto; } .wmb { display: block; height: 18px; width: auto; }
+.dash aside > b { display: inline-block !important; vertical-align: middle; margin-left: 10px; } .atb > b { display: block; }
 .lg .mk { width: 150px; animation: lgM .6s var(--po) 28.2s both; } @keyframes lgM { from { opacity: 0; transform: scale(.2); filter: blur(10px); } }
-.lg b { font: 500 134px/1 'Inter', sans-serif; letter-spacing: -.04em; clip-path: inset(0 0 0 0); animation: lgW .7s var(--e2) 28.55s both; } @keyframes lgW { from { clip-path: inset(0 100% 0 0); transform: translateX(-60px); opacity: 0; } }
+.lg b { display: block; clip-path: inset(0 0 0 0); animation: lgW .7s var(--e2) 28.55s both; } @keyframes lgW { from { clip-path: inset(0 100% 0 0); transform: translateX(-60px); opacity: 0; } }
 .url { position: absolute; left: 0; right: 0; top: 700px; text-align: center; font: 500 34px 'Inter', sans-serif; color: var(--ink); animation: wIn .6s var(--e2) 29.05s both; }
 .fn { position: absolute; left: 0; right: 0; bottom: 60px; text-align: center; font: 400 20px 'Inter', sans-serif; color: #9ba0b8; animation: fin .5s linear 29.4s both; }
 
@@ -362,7 +365,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
 .ck { box-shadow: 0 0 0 3px #cfd9ff, 0 0 100px var(--glow), 0 40px 80px -30px rgba(59,92,255,.55); } .ck path { filter: drop-shadow(0 0 10px var(--glow)); }
 .rip { box-shadow: 0 0 22px rgba(59,92,255,.85), inset 0 0 12px rgba(59,92,255,.6); } .aed path, .aed2 path { filter: drop-shadow(0 0 7px rgba(111,141,255,.85)); }
 .bm { filter: blur(0) drop-shadow(0 40px 60px rgba(59,92,255,.45)) drop-shadow(0 0 46px rgba(111,182,255,.85)); }
-.lg .mk, .spk { filter: blur(0) drop-shadow(0 0 30px var(--glow)); }
+.spk { filter: blur(0) drop-shadow(0 0 30px var(--glow)); }
 __STYLES__
 </style>
 </head>
@@ -432,7 +435,7 @@ __STYLES__
 
   <section class="sc sM" data-off="__SHIFT__"><div class="row">__M1__</div></section>
 
-  <section class="sc sN" data-off="__SHIFT__"><div class="lg">__LOGOMARK__<b>ONEFLOW</b></div><div class="url">oneflow.art</div>
+  <section class="sc sN" data-off="__SHIFT__"><div class="lg">__LOGOMARK__<b>__WORD__</b></div><div class="url">oneflow.art</div>
     <p class="fn">* до 50% — в сравнении с оплатой тех же моделей в отдельных сервисах; итог зависит от моделей и объёма. Неизрасходованный бюджет переходит на следующий месяц.</p></section>
   </div><div class="flash"></div>
 </div>
@@ -507,7 +510,7 @@ def build():
         '__BIGMARK__': mark('bm'),
         '__M1__': w('Генерация.', 26.0, 27.95, 'bl') + w('Адаптация.', 26.5, 27.97) + w('Запуск.', 27.0, 28.0, 'bl')
                   + ''.join(f'<span class="spk" style="--d:{d}s;display:inline-block">{mark("mk")}</span>' for d in (27.25,)),
-        '__LOGOMARK__': mark(), '__T__': f'{tl.DUR:.4f}', '__WIRE__': wire.css_vars(), '__STYLES__': styles_clean.css(), '__TL__': json.dumps({'bpm': tl.BPM, 'anch': tl.ANCH, 'cuts': tl.CUTS, 'kick': tl.KICK}), '__SHIFT__': str(SHIFT), '__AI_SHIFT__': str(AI_SHIFT), '__AVA__': mark('mk', '#fff'),
+        '__LOGOMARK__': mark('mk', 'currentColor'), '__WORD__': wordmark(), '__T__': f'{tl.DUR:.4f}', '__WIRE__': wire.css_vars(), '__STYLES__': styles_clean.css(), '__TL__': json.dumps({'bpm': tl.BPM, 'anch': tl.ANCH, 'cuts': tl.CUTS, 'kick': tl.KICK}), '__SHIFT__': str(SHIFT), '__AI_SHIFT__': str(AI_SHIFT), '__AVA__': mark('mk', '#fff'),
         '__X1__': w('ИИ-ассистент', 22.05, 23.3, 'bl') + w('собирает', 22.3, 23.32) + w('пайплайн', 22.5, 23.34, 'bl') + w('за вас', 22.7, 23.36),
     }
     html = HTML

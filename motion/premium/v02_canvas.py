@@ -2,6 +2,7 @@
 camera glides frame to frame (pulling back between them), multiplayer cursors «Вы» and «ИИ-ассистент» click through
 the UI, a live zoom readout in the toolbar; ends on a pull-back to the whole board and the logo."""
 from lib import FOOT, adapted, an, assistant, formats, img, ln, logo, mark, models, nodes, page, predictor, progress, st, texts, trends, words
+from brand import wordmark  # noqa: E402  (lib puts motion/ on sys.path)
 
 NAME, TITLE = 'canvas', 'Infinite Canvas — одна камера по доске, курсоры'
 T = 42.5
@@ -77,7 +78,7 @@ def build():
     b.append(f'<div class="cur" id="c1">{ARROW.format(c="#121212")}<span style="background:#121212">Вы</span></div>')
     b.append(f'<div class="cur" id="c2">{ARROW.format(c="#7b61ff")}<span style="background:#7b61ff">ИИ-ассистент</span></div>')
     b.append('</div>')
-    b.append(f'<div class="tb">{mark()}<b>ONEFLOW</b><span class="mut">· Доска запуска «Мягкий зайка»</span>'
+    b.append(f'<div class="tb">{mark()}<b>{wordmark("wmb")}</b><span class="mut">· Доска запуска «Мягкий зайка»</span>'
              '<span class="av" style="background:#121212">Вы</span><span class="av" style="background:#7b61ff">ИИ</span><span class="zoom" id="zm">55%</span></div>')
     b.append(f'<div class="veil an" style="{st(38.6, i="fi", idur=.6)}"></div><div class="fin">'
              f'<div class="disp" style="position:absolute;left:0;right:0;top:300px;text-align:center;font-size:92px">{words("Генерация. Адаптация. Запуск.", 38.8, 40.2, step=.25, accent=(0, 2))}</div>'

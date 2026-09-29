@@ -16,6 +16,7 @@ sys.path.insert(0, os.path.join(HERE, '..'))
 sys.path.insert(0, os.path.join(HERE, '..', '..', 'landing'))
 import v4_porcelain as v  # noqa: E402
 import wire  # noqa: E402
+from brand import wordmark  # noqa: E402
 
 MARK_D = re.search(r'd="([^"]+)"', v.MARK).group(1)
 
@@ -195,7 +196,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
 .lnx { display: block; height: 10px; margin: 10px 12px 0; border-radius: 5px; background: var(--panel2); } .lnx:last-child { margin-bottom: 12px; width: 60%; }
 .auto { position: absolute; right: 22px; top: 18px; }
 /* logo */
-.logo { position: absolute; display: flex; align-items: center; gap: 28px; } .logo .mk { width: 130px; } .logo b { font: 600 120px/1 var(--f-disp); letter-spacing: -.045em; }
+.logo { position: absolute; display: flex; align-items: center; gap: 34px; color: var(--ink); } .logo .mk { width: 130px; } .logo b { display: block; } .logo b .wm { display: block; height: 101px; width: auto; }
+.wmb { display: block; height: 20px; width: auto; }
 .fnote { position: absolute; left: 0; right: 0; bottom: 48px; text-align: center; font: 400 18px var(--f-body); color: var(--mut); opacity: .8; }
 """
 
@@ -370,5 +372,5 @@ def assistant(t, style='', cls='', attrs=''):
 
 
 def logo(t, style='', o=None, big=1.0):
-    return (f'<div class="logo" style="{style}"><span {an(t, o, i="pi", idur=.7)}>{mark("mk")}</span>'
-            f'<b class="an" style="{st(t + .25, o, i="wr", idur=.8)}">ONEFLOW</b></div>')
+    return (f'<div class="logo" style="{style}"><span {an(t, o, i="pi", idur=.7)}>{mark("mk", "currentColor")}</span>'
+            f'<b class="an" style="{st(t + .25, o, i="wr", idur=.8)}">{wordmark()}</b></div>')

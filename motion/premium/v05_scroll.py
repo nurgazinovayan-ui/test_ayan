@@ -1,6 +1,7 @@
 """05 · Scroll Story — Stripe-like landing page that scrolls itself: skewed living mesh-gradient band, sticky nav, each
 section snaps into view and plays; UI panels ride a parallax layer; the footer band carries the logo."""
 from lib import FOOT, adapted, an, assistant, formats, img, ln, logo, mark, models, nodes, page, predictor, progress, st, texts, trends, words
+from brand import wordmark  # noqa: E402  (lib puts motion/ on sys.path)
 
 NAME, TITLE = 'scroll', 'Scroll Story — лендинг в стиле Stripe, параллакс'
 T = 40.0
@@ -14,7 +15,7 @@ THEME = """
   background: radial-gradient(40% 60% at 20% 30%, #7a73ff, transparent 70%), radial-gradient(35% 55% at 55% 20%, #ff5ab7, transparent 70%),
     radial-gradient(40% 60% at 85% 40%, #ffb86b, transparent 70%), radial-gradient(45% 70% at 60% 80%, #00d4ff, transparent 70%), #a960ee; background-size: 160% 160%; }
 .nav { position: absolute; left: 0; right: 0; top: 0; z-index: 50; display: flex; align-items: center; gap: 40px; height: 90px; padding: 0 160px; font: 500 19px var(--f-body); color: var(--ink); }
-.nav .mk { width: 38px; } .nav b { font: 700 24px var(--f-disp); letter-spacing: -.03em; margin-right: 30px; } .nav .btn { margin-left: auto; border-radius: 99px; padding: 11px 22px; }
+.nav .mk { width: 38px; } .nav .mk + b { margin-left: -26px; } .nav b { font: 700 24px var(--f-disp); letter-spacing: -.03em; margin-right: 30px; } .nav .btn { margin-left: auto; border-radius: 99px; padding: 11px 22px; }
 .nav.solid { background: rgba(255,255,255,.85); box-shadow: 0 1px 0 var(--line); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
 .col { position: absolute; left: 160px; width: 700px; } .h1 { font-size: 118px; } .h2 { font-size: 78px; } .h3 { font-size: 60px; }
 .kick { font: 600 20px var(--f-body); color: var(--acc); margin-bottom: 22px; }
@@ -66,7 +67,7 @@ def build():
                     + f'<div class="ctr" style="top:680px;font:600 36px var(--f-body);color:#fff"><span {an(a[8] + 1.8, i="fu")}>oneflow.art</span></div>'
                     f'<p class="fnote an" style="{st(a[8] + 2.0, i="fi")};color:#fff">{FOOT}</p>'))
     b.append('</div>')
-    b.append(f'<div class="nav" id="nav">{mark()}<b>ONEFLOW</b><span>Возможности</span><span>Тарифы</span><span>Архив</span><span class="btn">oneflow.art</span></div>')
+    b.append(f'<div class="nav" id="nav">{mark()}<b>{wordmark("wmb")}</b><span>Возможности</span><span>Тарифы</span><span>Архив</span><span class="btn">oneflow.art</span></div>')
     keys = [[0, 0]]
     for (i0, _, l0), (i1, a1, _) in zip(STOPS, STOPS[1:]):
         keys += [[l0, i0 * 1080], [a1, i1 * 1080]]
