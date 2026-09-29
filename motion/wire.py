@@ -48,23 +48,29 @@ ART = {
 }
 
 
-def svg(name):
-    bg = TINT.get(name, '#f3f5fc')
-    chips = ''.join(f'<circle cx="46" cy="{y}" r="13" fill="#fff" stroke="{INK}" stroke-width="2"/><rect x="66" y="{y - 9}" width="{w}" height="7" rx="3.5" fill="{BAR}"/>'
+DEFAULT = dict(ink=INK, acc=BLUE, bar=BAR, bg=None, dot='#cdd4ea', fill='#fff', head=INK, sw=3)
+
+
+def svg(name, pal=None):
+    p = dict(DEFAULT, **(pal or {}))
+    INK, BLUE, BAR = p['ink'], p['acc'], p['bar']  # noqa: N806
+    FILL, DOT, HEAD, SW = p['fill'], p['dot'], p['head'], p['sw']  # noqa: N806
+    bg = p['bg'] or TINT.get(name, '#f3f5fc')
+    chips = ''.join(f'<circle cx="46" cy="{y}" r="13" fill="{FILL}" stroke="{INK}" stroke-width="2"/><rect x="66" y="{y - 9}" width="{w}" height="7" rx="3.5" fill="{BAR}"/>'
                     f'<rect x="66" y="{y + 3}" width="{w - 22}" height="6" rx="3" fill="{BAR}" opacity=".7"/>' for y, w in ((168, 74), (226, 64), (284, 80)))
-    handles = ''.join(f'<rect x="{x - 5}" y="{y - 5}" width="10" height="10" fill="#fff" stroke="{BLUE}" stroke-width="2"/>' for x, y in ((165, 100), (385, 100), (165, 340), (385, 340)))
+    handles = ''.join(f'<rect x="{x - 5}" y="{y - 5}" width="10" height="10" fill="{FILL}" stroke="{BLUE}" stroke-width="2"/>' for x, y in ((165, 100), (385, 100), (165, 340), (385, 340)))
     return (f'<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">'
-            f'<defs><pattern id="g" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="1.5" cy="1.5" r="1.2" fill="#cdd4ea"/></pattern>'
-            f'<style>.art *{{fill:#fff;stroke:{INK};stroke-width:3;stroke-linejoin:round;stroke-linecap:round}}.art .a{{fill:none;stroke:{BLUE}}}.art .d{{fill:{INK};stroke:none}}</style></defs>'
+            f'<defs><pattern id="g" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="1.5" cy="1.5" r="1.2" fill="{DOT}"/></pattern>'
+            f'<style>.art *{{fill:{FILL};stroke:{INK};stroke-width:{SW};stroke-linejoin:round;stroke-linecap:round}}.art .a{{fill:none;stroke:{BLUE}}}.art .d{{fill:{INK};stroke:none}}</style></defs>'
             f'<rect width="400" height="400" fill="{bg}"/><rect width="400" height="400" fill="url(#g)"/>'
-            f'<rect x="30" y="32" width="230" height="22" rx="11" fill="{INK}" opacity=".85"/><rect x="30" y="66" width="160" height="10" rx="5" fill="{BAR}"/>'
-            f'{chips}<rect x="30" y="336" width="104" height="36" rx="10" fill="{BLUE}"/><rect x="46" y="350" width="60" height="8" rx="4" fill="#fff" opacity=".9"/>'
+            f'<rect x="30" y="32" width="230" height="22" rx="11" fill="{HEAD}" opacity=".85"/><rect x="30" y="66" width="160" height="10" rx="5" fill="{BAR}"/>'
+            f'{chips}<rect x="30" y="336" width="104" height="36" rx="10" fill="{BLUE}"/><rect x="46" y="350" width="60" height="8" rx="4" fill="{FILL}" opacity=".9"/>'
             f'<rect x="165" y="100" width="220" height="240" fill="none" stroke="{BLUE}" stroke-width="1.6" stroke-dasharray="7 6" opacity=".7"/>{handles}'
             f'<g class="art" transform="translate(175 110)">{ART[name]}</g></svg>')
 
 
-def css_vars():
-    return ':root { ' + ' '.join(f'--w-{n}: url(data:image/svg+xml;base64,{base64.b64encode(svg(n).encode()).decode()});' for n in ART) + ' }'
+def css_vars(sel=':root', pal=None):
+    return sel + ' { ' + ' '.join(f'--w-{n}: url(data:image/svg+xml;base64,{base64.b64encode(svg(n, pal).encode()).decode()});' for n in ART) + ' }'
 
 
 if __name__ == '__main__':  # python3 wire.py → out/wire-sheet.html (all drawings side by side)
