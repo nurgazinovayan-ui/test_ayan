@@ -188,7 +188,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
 .wall { position: absolute; display: flex; flex-wrap: wrap; align-content: flex-start; gap: 26px; padding: 26px; transform-style: preserve-3d; }
 .wl, .wr { width: 3600px; height: 860px; left: -1800px; top: -430px; flex-direction: column; } .wl { transform: translateX(-760px) translateZ(-1800px) rotateY(90deg); } .wr { transform: translateX(760px) translateZ(-1800px) rotateY(-90deg); }
 .wt, .wb { width: 1520px; height: 3600px; left: -760px; top: -1800px; } .wt { transform: translateY(-430px) translateZ(-1800px) rotateX(-90deg); } .wb { transform: translateY(430px) translateZ(-1800px) rotateX(90deg); }
-.tl { width: 250px; height: 250px; flex: none; overflow: hidden; border-radius: 28px; background: #fff; box-shadow: 0 0 0 2px #1b1d2e, 0 20px 40px -20px rgba(0,0,0,.4); }
+.tl { width: 250px; height: 250px; flex: none; overflow: hidden; border-radius: 28px; background: #fff; box-shadow: 0 0 0 1.5px rgba(207,217,255,.9), 0 24px 48px -22px rgba(59,92,255,.35); }
 .tl .im { width: 100%; height: 100%; } .tl.ui { padding: 24px; } .tl.ui em { display: block; width: 60px; height: 60px; border-radius: 16px; background: linear-gradient(150deg, #8fbcff, #3b5cff); margin-bottom: 18px; }
 .tl.ui b { display: block; height: 14px; margin-top: 12px; border-radius: 7px; background: #e6e9f4; } .tl.ui u { display: block; width: 70%; height: 36px; margin-top: 18px; border-radius: 18px; background: #0f1222; }
 .cglow { position: absolute; left: 50%; top: 50%; width: 1400px; height: 520px; margin: -260px 0 0 -700px; border-radius: 50%; background: radial-gradient(ellipse at center, rgba(246,246,250,.96) 35%, rgba(246,246,250,.7) 55%, transparent 72%); }
@@ -209,7 +209,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
   animation: ckIn .65s var(--po) 12.5s both, wOut .38s var(--e) 13.95s forwards; } @keyframes ckIn { from { opacity: 0; transform: scale(.3); filter: blur(10px); } }
 .ck svg { position: absolute; inset: 55px; } .ck path { fill: none; stroke: #4d7cff; stroke-width: 9; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw .45s var(--e2) 12.78s forwards; } @keyframes draw { to { stroke-dashoffset: 0; } }
 .cf { position: absolute; left: 50%; top: 560px; border-radius: 3px; opacity: 0; animation: cf 1.5s cubic-bezier(.1,.7,.3,1) var(--d) both; }
-@keyframes cf { 0% { opacity: 1; transform: translate(0, 0) rotate(0) scale(.2); } 55% { opacity: 1; transform: translate(var(--x), var(--y)) rotate(var(--r)) scale(1); } 100% { opacity: 0; transform: translate(var(--x), calc(var(--y) + var(--fall))) rotate(calc(var(--r) * 1.6)) scale(1); } }
+@keyframes cf { 0% { opacity: 0; transform: translate(0, 0) rotate(0) scale(.2); } 4% { opacity: 1; } 55% { opacity: 1; transform: translate(var(--x), var(--y)) rotate(var(--r)) scale(1); } 100% { opacity: 0; transform: translate(var(--x), calc(var(--y) + var(--fall))) rotate(calc(var(--r) * 1.6)) scale(1); } }
 /* G · carousel */
 .car { position: absolute; left: 0; top: 330px; display: flex; gap: 40px; padding-left: 1920px; animation: carM 2.4s cubic-bezier(.25,.1,.25,1) 13.95s both, wOut .38s var(--e) 16.05s forwards; }
 @keyframes carM { from { transform: translateX(-200px); filter: blur(14px); opacity: 0; } 15% { filter: blur(0); opacity: 1; } to { transform: translateX(-2980px); } }
