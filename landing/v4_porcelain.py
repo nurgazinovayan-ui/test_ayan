@@ -71,15 +71,18 @@ NAV = [('#why', 'Преимущества'), ('#business', 'Для бизнес�
 NICHES = ['магазина на Kaspi', 'вашей кофейни', 'бренда одежды', 'салона красоты', 'вашего стартапа', 'вашего бизнеса']  # hero headline rotates through these (entrepreneur niches)
 KLING_5S = 0.084 * 5          # $ per 5-second Kling 3.0 Standard clip, 720p, no audio (OpenRouter)
 NBP_1K = 0.067                # $ per 1K Nano Banana Pro image (price confirmed by ONEFLOW)
+GPTI_1K = 0.04174             # $ per 1K GPT Image 2.5 image, Sunburst (price confirmed by ONEFLOW)
 
 
 def gens(budget):
     """Approximate monthly generations for a plan budget; model names shown, the specs live behind the «?»."""
     n = lambda x: f'{int(budget // x):,}'.replace(',', '\u2009')  # noqa: E731
-    row = lambda cnt, what, model, tip: (f'<li><span><b>≈ {cnt}</b> {what}</span><span class="nw">{model}<span class="qm" tabindex="0" role="note" aria-label="{tip}" data-tip="{tip}">?</span></span></li>')  # noqa: E731
+    row = lambda cnt, what, model, tip, top=False: (f'<li{" class=hastop" if top else ""}><span><b>≈ {cnt}</b> {what}</span><span class="nw">'
+                                                   f'{"<i class=top>TOP</i>" if top else ""}{model}<span class="qm" tabindex="0" role="note" aria-label="{tip}" data-tip="{tip}">?</span></span></li>')  # noqa: E731
     return ('<div class="gens"><span>Примерно генераций в месяц</span><ul>'
             + row(n(KLING_5S), 'видео', 'Kling 3.0', 'Ролик 5 с, 720p, без звука')
-            + row(n(NBP_1K), 'фото', 'Nano Banana Pro', 'Изображение 1K') + '</ul></div>')
+            + row(n(NBP_1K), 'фото', 'Nano Banana Pro', 'Изображение 1K')
+            + row(n(GPTI_1K), 'фото', 'GPT Image 2.5', 'Изображение 1K · Sunburst', top=True) + '</ul></div>')
 
 
 MODELS = ['GPT Image', 'Nano Banana Pro', 'Seedream', 'Veo 3.1', 'Kling', 'Seedance', 'Hailuo', 'Recraft', 'Flux', '+ ещё 20']
@@ -232,7 +235,9 @@ main { overflow-x: clip; } a { color: inherit; text-decoration: none; } img, svg
 .plans { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-top: 26px; align-items: center; }
 @media (max-width: 1100px) { .plans { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .gens { margin: 16px 0 0; padding: 12px 14px; border-radius: 14px; background: rgba(17,17,20,.04); font-size: 13.5px; } .gens > span { font: 400 11.5px var(--m); color: var(--muted); }
-.gens ul { margin: 8px 0 0 !important; gap: 6px !important; font-size: 13.5px !important; } .gens li::before { display: none; } .gens b { font-weight: 700; } .gens li { display: flex; justify-content: space-between; align-items: center; gap: 8px; white-space: nowrap; } .gens .nw { font-size: 12.5px; color: var(--muted); }
+.gens ul { margin: 8px 0 0 !important; gap: 6px !important; font-size: 13.5px !important; } .gens li::before { display: none; } .gens b { font-weight: 700; } .gens li { display: flex; justify-content: space-between; align-items: center; gap: 8px; white-space: nowrap; } .gens .nw { position: relative; font-size: 12.5px; color: var(--muted); } .gens li.hastop { margin-top: 8px; }
+.gens .top { position: absolute; right: 22px; top: -12px; padding: 1px 4px; border-radius: 3px; background: var(--ink); color: #fff; font: 700 8.5px/1.3 var(--d); font-style: normal; letter-spacing: .06em; }
+.plan.hot .gens .top { background: #fff; color: var(--ink); }
 .plan.hot .gens .nw { color: rgba(255,255,255,.7); }
 .qm { position: relative; display: inline-grid; place-items: center; width: 16px; height: 16px; margin-left: 6px; border-radius: 50%; background: rgba(17,17,20,.1); color: var(--ink);
   font: 700 10.5px var(--d); vertical-align: 1px; cursor: help; outline: none; }
@@ -328,7 +333,7 @@ html { color-scheme: dark; } .totop { background: #f3f3f6; color: #0b0b10; box-s
 .plan .btn.w { background: rgba(255,255,255,.06); color: var(--ink); box-shadow: inset 0 0 0 1px rgba(255,255,255,.12); }
 .plan.hot { background: linear-gradient(160deg, #f6f4ff, #e8fbf3); color: #0b0b10; box-shadow: 0 40px 80px -30px rgba(140,120,255,.45); } .plan.hot > p, .plan.hot .pr small, .plan.hot li::before { color: rgba(11,11,16,.6); }
 .plan.hot .btn { background: #0b0b10; color: #fff; } .gens { background: rgba(255,255,255,.05); } .qm { background: rgba(255,255,255,.14); } .qm::after { background: #f3f3f6; color: #0b0b10; }
-.plan.hot .gens { background: rgba(11,11,16,.05); } .plan.hot .qm { background: rgba(11,11,16,.1); color: #0b0b10; } .plan.hot .gens > span { color: rgba(11,11,16,.6); } .plan.hot .qm::after { background: #0b0b10; color: #fff; } .plan.hot .gens .nw { color: rgba(11,11,16,.55); } .plan .pop { background: rgba(124,92,255,.2); color: #b3a6ff; } .plan.hot .pop { background: #e3dcff; color: #5b3fd6; }
+.plan.hot .gens { background: rgba(11,11,16,.05); } .plan.hot .qm { background: rgba(11,11,16,.1); color: #0b0b10; } .plan.hot .gens > span { color: rgba(11,11,16,.6); } .plan.hot .qm::after { background: #0b0b10; color: #fff; } .plan.hot .gens .nw { color: rgba(11,11,16,.55); } .gens .top { background: #f3f3f6; color: #0b0b10; } .plan.hot .gens .top { background: #0b0b10; color: #fff; } .plan .pop { background: rgba(124,92,255,.2); color: #b3a6ff; } .plan.hot .pop { background: #e3dcff; color: #5b3fd6; }
 .faq details, .end { background: var(--card); } .gal .t > div { box-shadow: 0 18px 44px -22px rgba(0,0,0,.9); }
 dialog.doc { background: #15151c; } dialog.doc .x { background: rgba(255,255,255,.08); color: var(--ink); } dialog.doc::backdrop { background: rgba(0,0,0,.6); }
 /* smaller corner radii */
