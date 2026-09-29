@@ -12,7 +12,8 @@ import wave
 
 import numpy as np
 
-SR, T, BPM = 44100, 31.0, 120
+SR, T, BPM = 44100, 38.5, 120
+S = 7.4  # the AI-assistant scene (22–29.4 s) pushes the launch / brand / logo scenes back by S seconds
 N = int(SR * T)
 BEAT = 60 / BPM
 rng = np.random.default_rng(21)
@@ -135,55 +136,66 @@ def soft_hit():
 
 # ---------------------------------------------------------------- arrangement
 CH = [(41, [53, 57, 60, 64]), (45, [57, 60, 64, 67]), (38, [50, 53, 57, 60]), (48, [48, 52, 55, 59])]  # Fmaj7 Am7 Dm7 Cmaj7
-for bar in range(16):
+for bar in range(20):
     t0 = bar * 2.0
     if t0 >= T:
         break
     root, notes = CH[bar % 4]
-    if t0 < 28:
+    if t0 < 28 + S:
         l, r = pad([NOTE(m) for m in notes], 2.1)
         g = .05 if t0 < 6 else .045
         add(l, t0, g, .4); add(r, t0, g, -.4)
         arp = [notes[i % 4] + 12 * (i // 4 % 2) for i in (0, 1, 2, 3, 4, 3, 2, 1)]
         for k, m in enumerate(arp):
-            add(pluck(NOTE(m + 12)), t0 + k * BEAT / 2, .13 if t0 < 6 else .09 if t0 < 24 else .07, pan=.3 if k % 2 else -.3)
-    if 6 <= t0 < 24:
+            add(pluck(NOTE(m + 12)), t0 + k * BEAT / 2, .13 if t0 < 6 else .09 if t0 < 24 + S else .07, pan=.3 if k % 2 else -.3)
+    if 6 <= t0 < 24 + S:
         for k in range(8):
             add(bass(NOTE(root - 12), .24), t0 + k * BEAT / 2, .32 if k % 2 == 0 else .22)
 l, r = pad([NOTE(m) for m in (53, 57, 60, 64, 69)], 3.0)
-add(l, 28, .06, .4); add(r, 28, .06, -.4)
+add(l, 28 + S, .06, .4); add(r, 28 + S, .06, -.4)
 
 K = kick()
-for t in np.arange(6.0, 24.0 - 1e-9, BEAT):
+for t in np.arange(6.0, 24.0 + S - 1e-9, BEAT):
     add(K, t, .7)
     i = at(t); n = min(at(.35), N - i); side[i:i + n] = np.minimum(side[i:i + n], 1 - .45 * np.exp(-np.arange(n) / SR / .1))
-for t in np.arange(6.0 + BEAT, 24.0 - 1e-9, 2 * BEAT):
+for t in np.arange(6.0 + BEAT, 24.0 + S - 1e-9, 2 * BEAT):
     add(clap(), t, .28, .1)
-for t in np.arange(4.0, 24.0 - 1e-9, BEAT / 4):
+for t in np.arange(4.0, 24.0 + S - 1e-9, BEAT / 4):
     add(shaker(), t, .05 if (t * 4) % 2 else .08, -.3)
 
 # UI sound design
-for t in (.15, .42, 1.5, 1.66, 1.88, 2.9, 3.42, 6.25, 6.5, 6.75, 7.0, 7.95, 8.1, 8.25, 18.2, 18.42, 26.0, 26.5, 27.0):
+for t in (.15, .42, 1.5, 1.66, 1.88, 2.9, 3.42, 6.25, 6.5, 6.75, 7.0, 7.95, 8.1, 8.25, 18.2, 18.42, 26.0 + S, 26.5 + S, 27.0 + S, 22.05, 22.3, 22.5, 22.7):
     add(tick(2600), t, .1, pan=.15)
 add(pop(), 3.12, .3)
-for t in (4.02, 17.2, 21.3, 23.25):
+for t in (4.02, 17.2, 21.3, 23.25 + S):
     add(click(), t, .35)
-for t, g in ((4.22, .35), (5.62, .25), (5.85, .3), (9.22, .4), (13.95, .3), (16.05, .3), (17.32, .22), (19.95, .3), (21.6, .25), (22.55, .25), (25.3, .4)):
+for t, g in ((4.22, .35), (5.62, .25), (5.85, .3), (9.22, .4), (13.95, .3), (16.05, .3), (17.32, .22), (19.95, .3), (21.6, .25), (22.55 + S, .25), (25.3 + S, .4), (23.25, .3), (28.9, .25)):
     add(whoosh(), t - .1, g)
 add(riser(1.75), 10.45, .12)
 for k, m in enumerate((72, 76, 79, 84)):
     add(bell(NOTE(m)), 12.45 + k * .07, .16, pan=(k - 1.5) * .2)
 add(sparkle(), 12.55, .5)
-add(bell(NOTE(84), 1.0), 23.3, .12)
-add(pop(), 24.15, .3)
-add(soft_hit(), 28.2, .55)
-add(sparkle(1.8), 28.3, .35)
+add(bell(NOTE(84), 1.0), 23.3 + S, .12)
+add(pop(), 24.15 + S, .3)
+add(soft_hit(), 28.2 + S, .55)
+add(sparkle(1.8), 28.3 + S, .35)
 for k, m in enumerate((65, 69, 72, 77)):
-    add(bell(NOTE(m), 2.0), 28.2 + k * .05, .07)
+    add(bell(NOTE(m), 2.0), 28.2 + S + k * .05, .07)
+
+# AI assistant scene: typing, reply, nodes popping onto the canvas, checks, «собрано ассистентом»
+ty = np.random.default_rng(5)
+for k in range(int((25.2 - 23.8) * 34 / 2)):
+    add(tick(ty.uniform(1500, 2100)), 23.8 + k * 2 / 34 + ty.uniform(0, .015), .05, pan=ty.uniform(-.2, .2))
+add(pop(), 25.0, .22)
+for t in (25.3, 25.9, 26.5, 27.1):
+    add(pop(), t, .25)
+for t, m in ((25.6, 84), (26.2, 88), (26.8, 91)):
+    add(bell(NOTE(m), .9), t, .1)
+add(sparkle(.9), 27.25, .3)
 
 # master
 mix_l, mix_r = L * side, R * side
-fade = np.ones(N); fs = at(29.8); fade[fs:] = np.linspace(1, 0, N - fs) ** 1.4
+fade = np.ones(N); fs = at(29.8 + S); fade[fs:] = np.linspace(1, 0, N - fs) ** 1.4
 fin = np.ones(N); fin[: at(.03)] = np.linspace(0, 1, at(.03))
 mix_l *= fade * fin; mix_r *= fade * fin
 peak = max(np.abs(mix_l).max(), np.abs(mix_r).max())

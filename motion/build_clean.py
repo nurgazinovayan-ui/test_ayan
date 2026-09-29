@@ -21,7 +21,8 @@ import v4_porcelain as v  # noqa: E402
 MARK_D = re.search(r'd="([^"]+)"', v.MARK).group(1)
 IMG = '../landing/assets/ol/'
 PRODUCTS = ['bunny', 'coffee', 'airbuds', 'watch', 'speaker', 'blender', 'pajama', 'robot', 'hoodie', 'pyramid', 'airfryer', 'powerbank', 'toothbrush', 'body']
-T = 31
+T = 38.5
+SHIFT = 7.4  # scenes K–N (launch, brand mark, words, logo) play 7.4 s later to make room for the assistant scene
 
 
 def mark(cls='mk', fill='url(#bg1)'):
@@ -259,6 +260,34 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
   animation: trl .8s var(--e) 25.3s both; } @keyframes trl { 0% { opacity: 0; transform: scaleX(0); } 45% { opacity: 1; } 100% { opacity: 0; transform: scaleX(1) translateX(300px); } }
 /* M · words + sparkle */
 .sM .row { font-size: 88px; gap: 22px; } .spk { width: 54px; animation: spk .5s var(--po) var(--d) both, wOut .38s var(--e) 27.95s forwards; } @keyframes spk { from { opacity: 0; transform: scale(.2) rotate(-90deg); } }
+
+/* A2 · AI assistant: chat builds the node scheme, user runs it */
+.sX .row { font-size: 88px; }
+.aiw { position: absolute; left: 130px; top: 175px; width: 1660px; height: 730px; display: grid; grid-template-columns: 560px 1fr; overflow: hidden; border-radius: 32px; background: #fff;
+  box-shadow: 0 0 0 2px #d6ddff, 0 60px 120px -40px rgba(59,92,255,.45); animation: aiIn .8s var(--e2) 23.3s both, aiOut .45s var(--e) 28.95s forwards; }
+@keyframes aiIn { from { opacity: 0; filter: blur(20px); transform: perspective(1600px) rotateX(24deg) scale(1.25); } to { transform: perspective(1600px) rotateX(6deg); } }
+@keyframes aiOut { from { transform: perspective(1600px) rotateX(6deg); } to { opacity: 0; filter: blur(16px); transform: perspective(1600px) rotateX(6deg) scale(1.1); } }
+.ch { display: flex; flex-direction: column; gap: 18px; padding: 30px 30px; border-right: 1.5px solid #eceef6; background: #fbfbfe; }
+.chh { display: flex; align-items: center; gap: 14px; padding-bottom: 18px; border-bottom: 1.5px solid #eceef6; } .ava { display: grid; place-items: center; width: 54px; height: 54px; border-radius: 50%; background: linear-gradient(150deg, #8fbcff, #3b5cff); }
+.ava .mk { width: 28px; } .chh b { display: block; font: 700 26px 'Inter', sans-serif; } .chh small { font: 500 18px 'Inter', sans-serif; color: #16a36a; }
+.ub { align-self: flex-end; max-width: 92%; padding: 18px 22px; border-radius: 22px 22px 6px 22px; background: var(--ink); color: #fff; font: 400 25px/1.35 'Inter', sans-serif; animation: wIn .45s var(--e2) 23.65s both; min-height: 64px; }
+.ub .tc.tyc::after { content: '▍'; color: #8fbcff; }
+.ar { font: 500 24px 'Inter', sans-serif; color: var(--ink); animation: wIn .45s var(--e2) 25.0s both; }
+.st { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 16px; background: #fff; box-shadow: 0 0 0 1.5px #e3e7f5; font: 500 23px 'Inter', sans-serif; animation: wIn .45s var(--e2) var(--d) both; }
+.st .sp { position: relative; width: 30px; height: 30px; flex: none; } .st .sp::before { content: ''; position: absolute; inset: 0; border-radius: 50%; border: 3.5px solid #cfd9ff; border-top-color: var(--b1); animation: spin .7s linear 0s infinite, fo .15s linear var(--k) forwards; }
+.st .sp::after { content: '✓'; position: absolute; inset: 0; display: grid; place-items: center; border-radius: 50%; background: linear-gradient(150deg, #6fb6ff, #3b5cff); color: #fff; font: 700 17px 'Inter', sans-serif; animation: ckPop .35s var(--po) var(--k) both; }
+@keyframes spin { to { rotate: 360deg; } } @keyframes ckPop { from { opacity: 0; transform: scale(.3); } }
+.st.hint { background: #eef2ff; box-shadow: inset 0 0 0 2px #cfd9ff; color: var(--b1); } .st.hint .sp::before { display: none; } .st.hint .sp::after { content: '▸'; animation: ckPop .35s var(--po) var(--d) both; }
+.cvs { position: relative; background: radial-gradient(#dfe3f1 1.5px, transparent 2px) 0 0 / 28px 28px; } .cvh { position: absolute; left: 34px; top: 26px; font: 600 22px 'Inter', sans-serif; color: var(--mut); }
+.auto { position: absolute; right: 30px; top: 22px; padding: 10px 18px; border-radius: 99px; background: linear-gradient(90deg, #3b5cff, #6fb6ff); color: #fff; font: 600 19px 'Inter', sans-serif; animation: ckPop .45s var(--po) 27.25s both; }
+.aed2 { position: absolute; inset: 0; width: 100%; height: 100%; } .aed2 path { fill: none; stroke: #6f8dff; stroke-width: 4; stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw .4s var(--e2) var(--d) forwards; }
+.xn { position: absolute; top: 215px; width: 238px; border-radius: 20px; background: #fff; box-shadow: 0 0 0 1.5px #e3e7f5, 0 30px 60px -30px rgba(40,50,120,.35); animation: nIn .55s var(--po) var(--d) both; }
+@keyframes nIn { from { opacity: 0; transform: scale(.4) translateY(30px); filter: blur(8px); } }
+.xn .h { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 1.5px solid #eef0f7; font: 600 19px 'Inter', sans-serif; }
+.xn .h b { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 9px; font-size: 15px; } .xn .bd { padding: 14px 16px; }
+.xn .im { height: 175px; border-radius: 12px; } .xn .tp3 { display: flex; gap: 8px; } .xn .tp3 .im { flex: 1; height: 120px; border-radius: 10px; } .xn .sel { box-shadow: 0 0 0 3px var(--b1); }
+.xn .r { display: flex; justify-content: space-between; margin-top: 8px; padding: 9px 12px; border-radius: 10px; background: #f4f5fa; font: 500 16px 'Inter', sans-serif; } .xn .r:first-child { margin-top: 0; }
+.xn .ln { display: block; height: 12px; margin-top: 10px; border-radius: 6px; background: #e6e9f4; } .xn .ln:first-child { margin-top: 0; width: 90%; background: #cfd9ff; }
 /* N · logo */
 .lg { position: absolute; left: 50%; top: 440px; display: flex; align-items: center; gap: 30px; transform: translateX(-50%); }
 .lg .mk { width: 150px; animation: lgM .6s var(--po) 28.2s both; } @keyframes lgM { from { opacity: 0; transform: scale(.2); filter: blur(10px); } }
@@ -295,26 +324,46 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
 
   <section class="sc sJ">__TRENDS__ __HAND_J__</section>
 
-  <section class="sc sK"><div class="kr"><span class="cb"></span><i class="im" style="background-image:url(../landing/assets/ol/bunny.webp)"></i><div><b>Мягкий зайка · 4 формата</b><small>Kaspi · Яндекс РСЯ · Stories · Discovery</small></div></div>
+
+  <section class="sc sX"><div class="row">__X1__</div>
+    <div class="aiw"><div class="ch"><div class="chh"><span class="ava">__AVA__</span><div><b>Floko</b><small>● ИИ-ассистент</small></div></div>
+      <div class="ub"><span class="tc" data-type="23.8,34" data-txt="Сделай карточки мягкого зайки для Kaspi и сторис"></span></div>
+      <div class="ar">Готово, собрал схему:</div>
+      <div class="st" style="--d:25.2s;--k:25.6s"><i class="sp"></i>Разобрал аудиторию и нишу</div>
+      <div class="st" style="--d:25.8s;--k:26.2s"><i class="sp"></i>Подобрал шаблон и промпт</div>
+      <div class="st" style="--d:26.4s;--k:26.8s"><i class="sp"></i>Собрал 4 ноды на холсте</div>
+      <div class="st hint" style="--d:27.4s"><i class="sp"></i>Проверьте и нажмите «Запустить»</div></div>
+    <div class="cvs"><span class="cvh">Холст · Проект «Зайка»</span><span class="auto">✦ Собрано ассистентом</span>
+      <svg class="aed2" viewBox="0 0 1100 730" preserveAspectRatio="none"><path pathLength="1" style="--d:25.6s" d="M268 345 C 284 345, 284 345, 300 345"/><path pathLength="1" style="--d:26.2s" d="M538 345 C 554 345, 554 345, 570 345"/><path pathLength="1" style="--d:26.8s" d="M808 345 C 824 345, 824 345, 840 345"/></svg>
+      <div class="xn" style="left:30px;--d:25.3s"><div class="h"><b style="background:#e8f3ff;color:#3b8bff">▣</b>Фото товара</div><div class="bd"><i class="im" style="background-image:url(../landing/assets/ol/bunny.webp);background-position:center 30%"></i></div></div>
+      <div class="xn" style="left:300px;--d:25.9s"><div class="h"><b style="background:#fff1e3;color:#d98a2b">✦</b>Шаблон One Launch</div><div class="bd"><div class="tp3"><i class="im sel" style="background-image:url(../landing/assets/ol/pajama.webp)"></i><i class="im" style="background-image:url(../landing/assets/ol/body.webp)"></i></div></div></div>
+      <div class="xn" style="left:570px;--d:26.5s"><div class="h"><b style="background:#efeaff;color:#6b4dff">⌗</b>Адаптация</div><div class="bd"><span class="r"><span>Kaspi</span><span>1125×330</span></span><span class="r"><span>Stories</span><span>1080×1920</span></span><span class="r"><span>Пост</span><span>1080×1080</span></span></div></div>
+      <div class="xn" style="left:840px;--d:27.1s"><div class="h"><b style="background:#e9f8f0;color:#16a36a">¶</b>Текст карточки</div><div class="bd"><i class="ln"></i><i class="ln"></i><i class="ln" style="width:70%"></i><i class="ln" style="width:85%"></i></div></div>
+    </div></div></section>
+  <section class="sc sK" data-off="__SHIFT__"><div class="kr"><span class="cb"></span><i class="im" style="background-image:url(../landing/assets/ol/bunny.webp)"></i><div><b>Мягкий зайка · 4 формата</b><small>Kaspi · Яндекс РСЯ · Stories · Discovery</small></div></div>
     <div class="kb">Запустить пайплайн ▸</div>__HAND_K__</section>
 
-  <section class="sc sL"><div class="trail"></div>__BIGMARK__</section>
+  <section class="sc sL" data-off="__SHIFT__"><div class="trail"></div>__BIGMARK__</section>
 
-  <section class="sc sM"><div class="row">__M1__</div></section>
+  <section class="sc sM" data-off="__SHIFT__"><div class="row">__M1__</div></section>
 
-  <section class="sc sN"><div class="lg">__LOGOMARK__<b>ONEFLOW</b></div><div class="url">oneflow.art</div>
+  <section class="sc sN" data-off="__SHIFT__"><div class="lg">__LOGOMARK__<b>ONEFLOW</b></div><div class="url">oneflow.art</div>
     <p class="fn">* до 50% — в сравнении с оплатой тех же моделей в отдельных сервисах; итог зависит от моделей и объёма. Неизрасходованный бюджет переходит на следующий месяц.</p></section>
 </div>
 <script>
 (function () {
   const T = __T__, q = new URLSearchParams(location.search), st = document.getElementById('st');
-  const counters = [...document.querySelectorAll('[data-count]')];
+  const counters = [...document.querySelectorAll('[data-count]')], typers = [...document.querySelectorAll('[data-type]')];
+  const offOf = (el) => { const s = el && el.closest && el.closest('[data-off]'); return s ? +s.dataset.off : 0; };
+  counters.forEach((el) => { el._o = offOf(el); }); typers.forEach((el) => { el._o = offOf(el); });
   let AN = null;
   window.seek = (t) => {
-    if (!AN) { AN = document.getAnimations(); AN.forEach((a) => a.pause()); }
-    AN.forEach((a) => { a.currentTime = t * 1000; });
-    counters.forEach((el) => { const [s, d, a, b, dec] = el.dataset.count.split(',').map(Number), p = Math.min(1, Math.max(0, (t - s) / d)), e = 1 - Math.pow(1 - p, 3);
+    if (!AN) { AN = document.getAnimations(); AN.forEach((a) => { a.pause(); a._o = offOf(a.effect && a.effect.target); }); }
+    AN.forEach((a) => { a.currentTime = (t - a._o) * 1000; });
+    counters.forEach((el) => { const [s, d, a, b, dec] = el.dataset.count.split(',').map(Number), p = Math.min(1, Math.max(0, (t - el._o - s) / d)), e = 1 - Math.pow(1 - p, 3);
       el.textContent = (el.dataset.pre || '') + (a + (b - a) * e).toFixed(dec || 0) + (el.dataset.suf || ''); });
+    typers.forEach((el) => { const [s, cps] = el.dataset.type.split(',').map(Number), n = Math.max(0, Math.min(el.dataset.txt.length, Math.floor((t - el._o - s) * cps)));
+      el.textContent = el.dataset.txt.slice(0, n); el.classList.toggle('tyc', n > 0 && n < el.dataset.txt.length); });
   };
   const fit = () => { const k = Math.min(innerWidth / 1920, innerHeight / 1080); st.style.transform = 'translate(' + (innerWidth - 1920 * k) / 2 + 'px,' + (innerHeight - 1080 * k) / 2 + 'px) scale(' + k + ')'; };
   if (q.get('cap')) { window.seek(0); return; }
@@ -345,7 +394,8 @@ def build():
         '__BIGMARK__': mark('bm'),
         '__M1__': w('Генерация.', 26.0, 27.95, 'bl') + w('Адаптация.', 26.5, 27.97) + w('Запуск.', 27.0, 28.0, 'bl')
                   + ''.join(f'<span class="spk" style="--d:{d}s;display:inline-block">{mark("mk")}</span>' for d in (27.25,)),
-        '__LOGOMARK__': mark(), '__T__': str(T),
+        '__LOGOMARK__': mark(), '__T__': str(T), '__SHIFT__': str(SHIFT), '__AVA__': mark('mk', '#fff'),
+        '__X1__': w('ИИ-ассистент', 22.05, 23.3, 'bl') + w('собирает', 22.3, 23.32) + w('пайплайн', 22.5, 23.34, 'bl') + w('за вас', 22.7, 23.36),
     }
     html = HTML
     for k, val in rep.items():
