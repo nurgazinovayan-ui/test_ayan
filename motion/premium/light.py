@@ -1,5 +1,5 @@
-"""Light look for the premium variants — the palette of the landing promo (oneflow-clean): #f6f6fa with a soft blue glow,
-ink #0f1222, blue gradient accent, white panels, Inter, the default wireframes. Each variant keeps its own direction;
+"""Light look for the premium variants — the palette of the landing promo (oneflow-clean), flat: plain #f6f6fa background,
+ink #0f1222, one solid blue accent (no gradients), white panels, Inter, the default wireframes. Each variant keeps its own direction;
 only colours are overridden (plus the few variant-specific dark pieces).
 
 apply(html, module_name) → html with the light overrides appended to the page's <style>.
@@ -13,9 +13,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."
 import wire  # noqa: E402
 
 BASE = """
-:root { --bg: radial-gradient(ellipse 70% 60% at 50% 110%, #e9edff, transparent 70%), #f6f6fa !important; --ink: #0f1222 !important; --mut: #8a8fa8 !important;
+:root { --bg: #f6f6fa !important; --ink: #0f1222 !important; --mut: #8a8fa8 !important;
   --panel: #fff !important; --panel2: #f3f4f9 !important; --line: #e3e7f5 !important; --dot: #dfe3f1 !important; --acc: #3b5cff !important; --on-acc: #fff !important;
-  --on-ink: #fff !important; --grad: linear-gradient(90deg, #3b5cff, #6fb6ff) !important; --sh: 0 50px 100px -50px rgba(59,92,255,.32) !important;
+  --on-ink: #fff !important; --grad: #3b5cff !important;  /* flat accent, no gradients */ --sh: 0 50px 100px -50px rgba(59,92,255,.32) !important;
   --f-disp: 'Inter' !important; --f-body: 'Inter' !important; --f-mono: 'JetBrains Mono' !important; --w-disp: 500 !important; --ls-disp: -.04em !important; --grain: .018 !important; }
 .ub { background: var(--ink) !important; color: #fff !important; } .btn.acc, .pill.acc { background: var(--grad) !important; color: #fff !important; }
 """
@@ -66,6 +66,6 @@ EXTRA = {
 def apply(html, module):
     css = BASE + EXTRA.get(module, '') + wire.css_vars(':root', None)
     html = html.replace('</style>\n</head>', css + '\n</style>\n</head>', 1)
-    stops = iter(('#8fc6ff', '#4d7cff', '#3b5cff'))
+    stops = iter(('#3b5cff', '#3b5cff', '#3b5cff'))  # flat brand mark
     return re.sub(r'(<linearGradient id="mg"[^>]*>)(.*?)(</linearGradient>)',
                   lambda m: m.group(1) + re.sub(r'stop-color="[^"]+"', lambda _: f'stop-color="{next(stops)}"', m.group(2)) + m.group(3), html, count=1)
