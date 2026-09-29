@@ -70,7 +70,7 @@ FAQ = [('Есть ли шаблоны для моей ниши?', 'Да, в ра
 NAV = [('#why', 'Преимущества'), ('#business', 'Для бизнеса'), ('#assistant', 'Ассистент'), ('#pricing', 'Цены'), ('#faq', 'Вопросы')]
 NICHES = ['магазина на Kaspi', 'вашей кофейни', 'бренда одежды', 'салона красоты', 'вашего стартапа', 'вашего бизнеса']  # hero headline rotates through these (entrepreneur niches)
 KLING_5S = 0.084 * 5          # $ per 5-second Kling 3.0 Standard clip, 720p, no audio (OpenRouter)
-NBP_1K = 1120 * 120 / 1e6     # $ per 1K Nano Banana Pro image (OpenRouter: $120 per 1M image-output tokens)
+NBP_1K = 0.067                # $ per 1K Nano Banana Pro image (price confirmed by ONEFLOW)
 
 
 def gens(budget):
