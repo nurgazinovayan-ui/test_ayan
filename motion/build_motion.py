@@ -161,8 +161,8 @@ body { color: var(--t); font-family: var(--d-); -webkit-font-smoothing: antialia
 .fr::before { content: ''; position: absolute; inset: -20px; background: url(../landing/assets/ol/bunny.webp) center / cover; filter: blur(18px); opacity: .9; } .fr > i { position: absolute; inset: 0; background: url(../landing/assets/ol/bunny.webp) center / contain no-repeat; }
 .fl2 { position: absolute; left: 10px; bottom: 10px; padding: 6px 10px; border-radius: 8px; background: rgba(8,8,12,.82); font: 500 17px var(--mo); white-space: nowrap; }
 .fly { animation: fly .7s var(--e2) var(--d) both; } @keyframes fly { from { opacity: 0; transform: translate(var(--fx), var(--fy)) scale(.15) rotate(-12deg); } 30% { opacity: 1; } }
-.cur { position: absolute; left: 0; top: 0; width: 46px; animation: cur .7s var(--e) 9.55s both, clk .22s ease-out 10.22s both, fout .3s linear 11s forwards; } @keyframes cur { from { transform: translate(1560px, 1000px); opacity: 0; } 20% { opacity: 1; } to { transform: translate(840px, 832px); } }
-@keyframes clk { 50% { scale: .8; } } .rip { position: absolute; left: 860px; top: 852px; width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 50%; border: 3px solid #fff; animation: rip .6s ease-out 10.25s both; }
+.curw { position: absolute; left: 0; top: 0; animation: cur .7s var(--e) 9.55s both, fout .3s linear 11s forwards; } .cur { display: block; width: 46px; transform-origin: 6px 4px; animation: clk .22s ease-out 10.22s both; } @keyframes cur { from { transform: translate(1560px, 1000px); opacity: 0; } 20% { opacity: 1; } to { transform: translate(850px, 664px); } }
+@keyframes clk { 50% { scale: .8; } } .rip { position: absolute; left: 856px; top: 668px; width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 50%; border: 4px solid #8b6cff; animation: rip .6s ease-out 10.25s both; }
 @keyframes rip { from { opacity: 0; transform: scale(.3); } 20% { opacity: 1; } to { opacity: 0; transform: scale(5); } }
 .s4 .tag { position: absolute; left: 0; right: 0; bottom: 70px; text-align: center; } .pill { display: inline-flex; gap: 18px; padding: 16px 30px; border-radius: 99px; background: rgba(255,255,255,.07); box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.12); font: 600 28px var(--i); }
 /* 5 · One Launch */
@@ -257,7 +257,7 @@ body { color: var(--t); font-family: var(--d-); -webkit-font-smoothing: antialia
         <div class="go g2"><span class="fout" style="--d:10.3s">✦ Сгенерировать</span><span class="fin" style="--d:10.3s"><span class="fout" style="--d:10.9s;display:flex;align-items:center;gap:12px"><i class="spin"></i>Генерация…</span></span><span class="fin" style="--d:10.95s">✓ Готово · 4 формата</span></div></div></div>
     </div>
     <div class="stg2">__FORMATS__</div>
-    <div class="stg" style="pointer-events:none"><div class="rip"></div><svg class="cur" viewBox="0 0 24 24"><path d="M3 2l7.5 19 2.5-8 8-2.5z" fill="#fff" stroke="#111" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+    <div class="stg" style="pointer-events:none"><div class="rip"></div><div class="curw"><svg class="cur" viewBox="0 0 24 24"><path d="M3 2l7.5 19 2.5-8 8-2.5z" fill="#fff" stroke="#111" stroke-width="1.4" stroke-linejoin="round"/></svg></div></div>
     <div class="tag"><span class="pill up" style="--d:11.6s">Kaspi · Яндекс РСЯ · Google · BYYD · Stories</span></div>
   </section>
 
