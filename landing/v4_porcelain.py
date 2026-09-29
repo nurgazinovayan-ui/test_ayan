@@ -109,6 +109,11 @@ main { overflow-x: clip; } a { color: inherit; text-decoration: none; } img, svg
 .pill b { padding: 3px 9px; border-radius: 99px; background: var(--ink); color: #fff; font-size: 11.5px; font-weight: 600; } .pill:hover { background: #fff; }
 .hero h1 { margin-top: 26px; font: 700 clamp(44px, 6.6vw, 92px)/1 var(--d); letter-spacing: -.05em; } .hero h1 span { background: linear-gradient(95deg, #111114 30%, #3e6d63 70%, #5c5f9a); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .hero .sub { max-width: 560px; margin: 24px auto 0; font-size: 18px; color: var(--ink2); } .acts { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 32px; }
+.hvid { position: relative; max-width: 1100px; margin: 56px auto 0; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 26px; background: #f3f3f8;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.9), var(--sh2); }
+.hvid video { display: block; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+.hvid video::-webkit-media-controls, .hvid video::-webkit-media-controls-start-playback-button { display: none !important; -webkit-appearance: none; }
+@media (max-width: 760px) { .hvid { margin-top: 36px; border-radius: 18px; } }
 .tiny { margin-top: 16px; font: 400 12.5px var(--m); color: var(--muted); }
 .panel { position: relative; margin: 70px auto 0; padding: 34px; border-radius: 30px; background: rgba(255,255,255,.62); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: inset 0 0 0 1px rgba(255,255,255,.9), var(--sh2); text-align: left; }
 .pg { display: grid; grid-template-columns: 260px 90px minmax(0, 1fr); align-items: center; gap: 10px; }
@@ -311,6 +316,9 @@ def build(docs='', theme='light'):
             '<h1>Больше контента.<br><span>До 50% дешевле.</span></h1>'
             '<p class="sub">Фото, видео и тексты на 30+ нейросетях — и адаптация под любой размер в один клик. Неиспользованный бюджет остаётся с вами.</p>'
             f'<div class="acts">{reg("Начать бесплатно →")}<a class="btn g" href="#how">Как это работает</a></div>'
+            '<div class="hvid"><video poster="assets/video/oneflow-promo.jpg" autoplay muted loop playsinline preload="auto" disablepictureinpicture disableremoteplayback '
+            'aria-label="Промо-ролик ONEFLOW: генерация, адаптация и запуск контента"><source src="assets/video/oneflow-promo.mp4" type="video/mp4">'
+            '<source src="assets/video/oneflow-promo.webm" type="video/webm"></video></div>'
             '<div class="panel" role="img" aria-label="Карточка «Мягкий зайка» адаптирована под Stories 9:16, Google Discovery, Яндекс РСЯ и Kaspi — пример">'
             '<span class="chip c1"><i>↺</i><span><small>Перенесено на октябрь</small><b>+$112 бюджета</b></span></span>'
             '<span class="chip c2"><i>⤢</i><span><small>Адаптация</small><b>1 фото → 4 формата</b></span></span>'
