@@ -1,8 +1,9 @@
 """ONEFLOW promo in the clean SaaS style of the reference (light, airy, one blue gradient, focus-pull words, 3D UI, cursor clicks).
 
-31 s, 1920×1080. Offer first: «Больше контента → До 50% дешевле* → Остаток [+$112] не сгорает», click into the tile,
+49.8 s, 1920×1080. Offer first: «Больше контента → До 50% дешевле* → Остаток [+$112] не сгорает», click into the tile,
 tilted app, 3D corridor of cards, ribbon → progress bar, «Готово» + confetti, formats carousel, archive + card zoom,
-«30+ нейросетей» with flying model cards, trends list → «Запустить пайплайн» click, brand mark flies off,
+«30+ нейросетей» with flying model cards, auto trend analysis → «Адаптировать» click, «Тексты и документы», Creative Predictor
+scores, AI assistant builds the node scheme → «Запустить пайплайн» click, brand mark flies off,
 «Генерация. Адаптация. Запуск.», logo lockup + oneflow.art + footnote.
 
 Same engine as oneflow-motion.html: every animation is a CSS animation on one absolute timeline; window.seek(t) scrubs it.
@@ -21,8 +22,10 @@ import v4_porcelain as v  # noqa: E402
 MARK_D = re.search(r'd="([^"]+)"', v.MARK).group(1)
 IMG = '../landing/assets/ol/'
 PRODUCTS = ['bunny', 'coffee', 'airbuds', 'watch', 'speaker', 'blender', 'pajama', 'robot', 'hoodie', 'pyramid', 'airfryer', 'powerbank', 'toothbrush', 'body']
-T = 38.5
-SHIFT = 7.4  # scenes K–N (launch, brand mark, words, logo) play 7.4 s later to make room for the assistant scene
+T = 49.8
+AI_SHIFT = 11.3  # the assistant scene plays 11.3 s later (trends grew, «Тексты» and «Creative Predictor» were added before it)
+SHIFT = 18.7  # scenes K–N (launch, brand mark, words, logo) play 18.7 s later: assistant scene + the scenes above
+HJ, HP = (1100, 388), (1152, 911)  # cursor targets: «Адаптировать» (trends), «Оценить» (predictor)
 
 
 def mark(cls='mk', fill='url(#bg1)'):
@@ -106,9 +109,13 @@ def model_cards():
 
 def trends():
     rows = [('pyramid', 'TikTok', 'Товар в неожиданном масштабе', '318K'), ('robot', 'Instagram', 'Один предмет — три сценария', '132K'),
-            ('body', 'TikTok', 'Честный обзор вместо рекламы', '174K'), ('speaker', 'Instagram', 'Распаковка без лица', '78K'), ('coffee', 'Threads', 'Почему покупатели возвращаются', '1.9K')]
-    return ('<div class="tp"><div class="th"><b>Тренды</b><span>Все площадки</span><span>За 7 дней</span></div>'
-            + ''.join(f'<div class="trw">{img(p)}<div><small>{pl}</small><b>{t}</b></div><em>{m}</em></div>' for p, pl, t, m in rows) + '</div>')
+            ('body', 'TikTok', 'Честный обзор вместо рекламы', '174K'), ('speaker', 'Instagram', 'Распаковка без лица', '78K')]
+    out = ''.join(f'<div class="trw">{img(p)}<div><small>{pl}</small><b>{t}</b></div><em>{m}</em><span class="adb{"" if i == 0 else " ghost"}">✦ Адаптировать</span></div>'
+                  for i, (p, pl, t, m) in enumerate(rows))
+    steps = ''.join(f'<span class="ln2" style="--d:{d}s"><em>{a}</em>{b}</span>' for d, a, b in
+                    ((22.1, '0–1 с', 'зайка крупно в ладони'), (22.3, '1–4 с', 'камера отъезжает: рядом огромная кровать'), (22.5, '4–7 с', 'название и цена на экране')))
+    card = (f'<div class="adc"><span class="pill">✦ Адаптировано под ваш товар</span><div class="hd">{img("bunny")}<div><b>Мягкий зайка</b><small>по тренду «Товар в неожиданном масштабе»</small></div></div>{steps}</div>')
+    return ('<div class="tp"><div class="th"><b>Тренды</b><span>Все площадки</span><span>За 7 дней</span></div>' + out + '</div>' + card)
 
 
 def confetti():
@@ -170,8 +177,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
 .atb { display: flex; align-items: center; gap: 14px; height: 78px; padding: 0 28px; border-bottom: 1.5px solid #eceef6; } .atb .amk { width: 34px; } .atb > b { font: 700 22px 'Inter', sans-serif; }
 .tabs { display: flex; gap: 6px; margin-left: 40px; padding: 5px; border-radius: 14px; background: #f3f4f9; } .tabs span { padding: 9px 16px; border-radius: 10px; font: 500 17px 'Inter', sans-serif; color: #6d7290; }
 .tabs .on { background: #fff; color: var(--b1); box-shadow: 0 2px 8px rgba(59,92,255,.18); } .bud { margin-left: auto; font: 500 17px 'JetBrains Mono', monospace; color: var(--mut); }
-.acv { position: relative; height: 782px; background: radial-gradient(#dfe3f1 1.5px, transparent 2px) 0 0 / 28px 28px; } .aed { position: absolute; inset: 0; width: 100%; height: 100%; }
-.aed path { fill: none; stroke: #9aa8ff; stroke-width: 3.5; } .nd { position: absolute; border-radius: 22px; background: #fff; box-shadow: 0 0 0 1.5px #e3e7f5, 0 30px 60px -30px rgba(40,50,120,.35); font-family: 'Inter', sans-serif; }
+.acv { position: relative; height: 782px; background: radial-gradient(#dde1ee 1.5px, transparent 2px) 0 0 / 28px 28px, #f3f4f9; } .aed { position: absolute; inset: 0; width: 100%; height: 100%; }
+.aed path { fill: none; stroke: #9aa8ff; stroke-width: 3.5; } .nd { position: absolute; border-radius: 22px; background: #fff; font-family: 'Inter', sans-serif; }
 .nd .h { display: flex; align-items: center; gap: 12px; padding: 16px 20px; border-bottom: 1.5px solid #eef0f7; font: 600 22px 'Inter', sans-serif; }
 .nd .h b { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; background: #e8f3ff; color: #3b8bff; font-size: 18px; }
 .n1 { left: 120px; top: 170px; width: 300px; padding-bottom: 16px; } .nim { height: 240px; margin: 16px 18px 10px; border-radius: 14px; background-position: center 25%; } .n1 small { margin-left: 20px; font: 400 16px 'JetBrains Mono', monospace; color: var(--mut); }
@@ -180,7 +187,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
 .fm span { padding: 9px 12px; border-radius: 10px; background: #f4f5fa; box-shadow: inset 0 0 0 1px #e6e8f2; } .fm em { font-style: normal; color: var(--mut); text-align: center; }
 .gob { margin: 18px 20px 0; padding: 16px; border-radius: 99px; background: linear-gradient(90deg, #3b5cff, #6fb6ff); color: #fff; text-align: center; font: 600 20px 'Inter', sans-serif; }
 .n3 { left: 1060px; top: 190px; width: 330px; padding-bottom: 20px; } .outs { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; padding: 20px; }
-.ofr { position: relative; overflow: hidden; border-radius: 8px; background: #fff; box-shadow: 0 0 0 1.5px #e3e7f5; } .ofr::before { content: ''; position: absolute; inset: -10px; background: url(../landing/assets/ol/bunny.webp) center / cover; filter: blur(8px); opacity: .8; }
+.ofr { position: relative; overflow: hidden; border-radius: 8px; background: #fff; } .ofr::before { content: ''; position: absolute; inset: -10px; background: url(../landing/assets/ol/bunny.webp) center / cover; filter: blur(8px); opacity: .8; }
 .ofr i { position: absolute; inset: 0; background: url(../landing/assets/ol/bunny.webp) center / contain no-repeat; }
 /* C · corridor */
 .sC { perspective: 720px; perspective-origin: 50% 50%; animation: scIn .4s var(--e2) 5.85s both, scOut .45s var(--e) 9.2s forwards; }
@@ -189,7 +196,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
 .wall { position: absolute; display: flex; flex-wrap: wrap; align-content: flex-start; gap: 26px; padding: 26px; transform-style: preserve-3d; }
 .wl, .wr { width: 3600px; height: 860px; left: -1800px; top: -430px; flex-direction: column; } .wl { transform: translateX(-760px) translateZ(-1800px) rotateY(90deg); } .wr { transform: translateX(760px) translateZ(-1800px) rotateY(-90deg); }
 .wt, .wb { width: 1520px; height: 3600px; left: -760px; top: -1800px; } .wt { transform: translateY(-430px) translateZ(-1800px) rotateX(-90deg); } .wb { transform: translateY(430px) translateZ(-1800px) rotateX(90deg); }
-.tl { width: 250px; height: 250px; flex: none; overflow: hidden; border-radius: 28px; background: #fff; box-shadow: 0 0 0 1.5px rgba(207,217,255,.9), 0 24px 48px -22px rgba(59,92,255,.35); }
+.tl { width: 250px; height: 250px; flex: none; overflow: hidden; border-radius: 28px; background: #fff; }
 .tl .im { width: 100%; height: 100%; } .tl.ui { padding: 24px; } .tl.ui em { display: block; width: 60px; height: 60px; border-radius: 16px; background: linear-gradient(150deg, #8fbcff, #3b5cff); margin-bottom: 18px; }
 .tl.ui b { display: block; height: 14px; margin-top: 12px; border-radius: 7px; background: #e6e9f4; } .tl.ui u { display: block; width: 70%; height: 36px; margin-top: 18px; border-radius: 18px; background: #0f1222; }
 .cglow { position: absolute; left: 50%; top: 50%; width: 1400px; height: 520px; margin: -260px 0 0 -700px; border-radius: 50%; background: radial-gradient(ellipse at center, rgba(246,246,250,.96) 35%, rgba(246,246,250,.7) 55%, transparent 72%); }
@@ -214,7 +221,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
 /* G · carousel */
 .car { position: absolute; left: 0; top: 330px; display: flex; gap: 40px; padding-left: 1920px; animation: carM 2.4s cubic-bezier(.25,.1,.25,1) 13.95s both, wOut .38s var(--e) 16.05s forwards; }
 @keyframes carM { from { transform: translateX(-200px); filter: blur(14px); opacity: 0; } 15% { filter: blur(0); opacity: 1; } to { transform: translateX(-2980px); } }
-.cc { position: relative; width: 400px; flex: none; padding: 16px; border-radius: 28px; background: #fff; box-shadow: 0 0 0 2.5px #cfd9ff, 0 40px 80px -40px rgba(59,92,255,.55); }
+.cc { position: relative; width: 400px; flex: none; padding: 16px; border-radius: 28px; background: #fff; }
 .cim { height: 280px; border-radius: 18px; } .cm { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 4px 10px; margin: 18px 6px 4px; } .cm b { font: 600 26px 'Inter', sans-serif; }
 .cm .dot { width: 14px; height: 14px; border-radius: 50%; } .cm small { grid-column: 1 / -1; font: 400 19px 'Inter', sans-serif; color: var(--mut); } .cc .dots { position: absolute; right: 24px; bottom: 26px; color: var(--mut); letter-spacing: 2px; }
 /* H · archive dashboard */
@@ -229,23 +236,35 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
 .dh .nw { padding: 12px 20px; border-radius: 12px; background: var(--ink); color: #fff; font: 600 18px 'Inter', sans-serif; } .dt { display: flex; gap: 24px; margin-top: 22px; padding-bottom: 14px; border-bottom: 1.5px solid #eceef6; font: 500 19px 'Inter', sans-serif; color: var(--mut); }
 .dt .on { color: var(--b1); } .ag { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; margin-top: 24px; } .ac .im { height: 230px; border-radius: 16px; } .ac b { display: block; margin-top: 12px; font: 600 20px 'Inter', sans-serif; }
 .ac small { font: 400 16px 'Inter', sans-serif; color: var(--mut); }
-.zc { position: absolute; left: 610px; top: 160px; width: 700px; padding: 22px; border-radius: 34px; background: #fff; box-shadow: 0 0 0 3px #cfd9ff, 0 60px 120px -40px rgba(59,92,255,.6); animation: zIn .6s var(--e2) 17.32s both, wOut .38s var(--e) 17.95s forwards; }
+.zc { position: absolute; left: 610px; top: 160px; width: 700px; padding: 22px; border-radius: 34px; background: #fff; animation: zIn .6s var(--e2) 17.32s both, wOut .38s var(--e) 17.95s forwards; }
 @keyframes zIn { from { opacity: 0; transform: translate(-190px, -40px) scale(.36); } 30% { opacity: 1; } } .zc .im { height: 520px; border-radius: 22px; } .zc b { display: block; margin: 18px 6px 0; font: 600 34px 'Inter', sans-serif; } .zc small { margin-left: 6px; font: 400 24px 'Inter', sans-serif; color: var(--mut); }
 /* I · models */
-.sI .row { font-size: 96px; } .mc { position: absolute; width: 380px; padding: 16px; border-radius: 26px; background: #fff; box-shadow: 0 0 0 2.5px #cfd9ff, 0 40px 80px -40px rgba(59,92,255,.5); rotate: var(--r);
+.sI .row { font-size: 96px; } .mc { position: absolute; width: 380px; padding: 16px; border-radius: 26px; background: #fff; rotate: var(--r);
   animation: mcIn .8s var(--e2) var(--d) both, mcDrift 2s linear var(--d) both, wOut .38s var(--e) 19.85s forwards; }
 @keyframes mcIn { from { opacity: 0; filter: blur(16px); translate: var(--fx) var(--fy); rotate: var(--fr); } } @keyframes mcDrift { to { transform: translateY(-18px); } }
 .mim { height: 230px; border-radius: 16px; } .mm { margin: 14px 4px 2px; } .mm b { font: 600 26px 'Inter', sans-serif; } .mm small { display: block; font: 400 18px 'Inter', sans-serif; color: var(--mut); }
 /* J · trends list */
-.sJ { perspective: 1600px; } .tp { position: absolute; left: 260px; top: 120px; width: 1400px; padding: 34px 40px; border-radius: 30px; background: #fff; box-shadow: 0 0 0 2px #d6ddff, 0 60px 120px -40px rgba(59,92,255,.4);
-  animation: tpIn .8s var(--e2) 19.95s both, tpOut .45s var(--e) 21.6s forwards; }
-@keyframes tpIn { from { opacity: 0; filter: blur(18px); transform: rotateX(34deg) rotateZ(4deg) scale(1.3); } to { transform: rotateX(20deg) rotateZ(-3deg); } }
-@keyframes tpOut { from { transform: rotateX(20deg) rotateZ(-3deg); } to { opacity: 0; filter: blur(16px); transform: rotateX(8deg) scale(1.5) translateY(-60px); } }
+/* headline over a UI scene (J, T, P) */
+.hl { position: absolute; left: 0; right: 0; top: 64px; display: flex; justify-content: center; gap: 20px; font: 400 72px/1.1 'Inter', sans-serif; letter-spacing: -.035em; }
+.sub { position: absolute; left: 0; right: 0; top: 162px; text-align: center; font: 400 30px 'Inter', sans-serif; color: var(--mut); }
+.pill { display: inline-block; padding: 10px 22px; border-radius: 99px; background: linear-gradient(90deg, #3b5cff, #6fb6ff); color: #fff; font: 600 24px 'Inter', sans-serif; }
+.tyc::after { content: '▍'; color: #8fbcff; }
+.sJ { perspective: 1600px; } .tp { position: absolute; left: 180px; top: 250px; width: 1100px; padding: 30px 36px; border-radius: 30px; background: #fff; box-shadow: 0 0 0 2px #d6ddff, 0 60px 120px -40px rgba(59,92,255,.4);
+  animation: tpIn .8s var(--e2) 20.2s both, tpOut .45s var(--e) 23.9s forwards; }
+@keyframes tpIn { from { opacity: 0; filter: blur(18px); transform: rotateX(30deg) rotateZ(3deg) scale(1.25); } to { transform: rotateX(10deg) rotateZ(-1.5deg); } }
+@keyframes tpOut { from { transform: rotateX(10deg) rotateZ(-1.5deg); } to { opacity: 0; filter: blur(16px); transform: rotateX(8deg) scale(1.2) translateY(-40px); } }
+.adb { padding: 12px 18px; border-radius: 12px; background: var(--ink); color: #fff; font: 600 19px 'Inter', sans-serif; white-space: nowrap; animation: adGo .3s var(--e2) 21.7s both; } @keyframes adGo { to { background: linear-gradient(90deg, #3b5cff, #6fb6ff); } }
+.trw .adb.ghost { visibility: hidden; }
+.adc { position: absolute; left: 1270px; top: 330px; width: 560px; padding: 26px 28px; border-radius: 28px; background: #fff; box-shadow: 0 0 0 2px #d6ddff, 0 50px 100px -40px rgba(59,92,255,.5);
+  animation: adIn .6s var(--po) 21.9s both, wOut .38s var(--e) 23.9s forwards; } @keyframes adIn { from { opacity: 0; transform: translateX(-140px) scale(.6); filter: blur(12px); } }
+.adc .pill { font-size: 19px; padding: 8px 16px; } .adc .hd { display: flex; align-items: center; gap: 16px; margin: 20px 0 16px; } .adc .hd .im { width: 84px; height: 84px; border-radius: 16px; }
+.adc .hd b { display: block; font: 600 27px 'Inter', sans-serif; } .adc .hd small { font: 400 19px 'Inter', sans-serif; color: var(--mut); }
+.adc .ln2 { display: block; margin-top: 10px; padding: 13px 16px; border-radius: 14px; background: #f4f5fa; font: 500 20px 'Inter', sans-serif; animation: wIn .4s var(--e2) var(--d) both; } .adc .ln2 em { font-style: normal; color: var(--b1); font-weight: 600; margin-right: 8px; }
 .th { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; } .th b { font: 700 36px 'Inter', sans-serif; margin-right: auto; } .th span { padding: 10px 18px; border-radius: 12px; background: #f4f5fa; font: 500 18px 'Inter', sans-serif; color: #6d7290; }
-.trw { display: grid; grid-template-columns: 90px 1fr auto; gap: 22px; align-items: center; padding: 16px; border-radius: 18px; } .trw:first-of-type { background: #eef2ff; box-shadow: inset 0 0 0 2px #cfd9ff; }
+.trw { display: grid; grid-template-columns: 90px 1fr auto auto; gap: 22px; align-items: center; padding: 16px; border-radius: 18px; } .trw:nth-child(2) { background: #eef2ff; }
 .trw .im { width: 90px; height: 90px; border-radius: 14px; } .trw small { font: 500 18px 'Inter', sans-serif; color: var(--mut); } .trw b { display: block; font: 600 28px 'Inter', sans-serif; } .trw em { font: 700 34px 'Inter', sans-serif; font-style: normal; color: #16a36a; }
 /* K · row + launch button */
-.kr { position: absolute; left: 380px; top: 440px; width: 1160px; height: 200px; display: flex; align-items: center; gap: 30px; padding: 0 40px; border-radius: 34px; background: #fff; box-shadow: 0 0 0 2px #d6ddff, 0 50px 100px -40px rgba(59,92,255,.45);
+.kr { position: absolute; left: 380px; top: 440px; width: 1160px; height: 200px; display: flex; align-items: center; gap: 30px; padding: 0 40px; border-radius: 34px; background: #fff;
   animation: wIn .6s var(--e2) 21.85s both, krOut .55s var(--e) 22.55s forwards; } @keyframes krOut { to { transform: translateX(-560px); opacity: .0; filter: blur(10px); } }
 .kr .cb { width: 34px; height: 34px; border-radius: 9px; box-shadow: inset 0 0 0 2.5px #c7cde2; } .kr .im { width: 130px; height: 130px; border-radius: 20px; } .kr b { font: 600 44px 'Inter', sans-serif; } .kr small { display: block; margin-top: 6px; font: 400 26px 'Inter', sans-serif; color: var(--mut); }
 .kb { position: absolute; left: 50%; top: 470px; width: 620px; height: 140px; margin-left: -310px; display: grid; place-items: center; border-radius: 30px; font: 600 44px 'Inter', sans-serif; letter-spacing: -.01em;
@@ -278,16 +297,43 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
 .st .sp::after { content: '✓'; position: absolute; inset: 0; display: grid; place-items: center; border-radius: 50%; background: linear-gradient(150deg, #6fb6ff, #3b5cff); color: #fff; font: 700 17px 'Inter', sans-serif; animation: ckPop .35s var(--po) var(--k) both; }
 @keyframes spin { to { rotate: 360deg; } } @keyframes ckPop { from { opacity: 0; transform: scale(.3); } }
 .st.hint { background: #eef2ff; box-shadow: inset 0 0 0 2px #cfd9ff; color: var(--b1); } .st.hint .sp::before { display: none; } .st.hint .sp::after { content: '▸'; animation: ckPop .35s var(--po) var(--d) both; }
-.cvs { position: relative; background: radial-gradient(#dfe3f1 1.5px, transparent 2px) 0 0 / 28px 28px; } .cvh { position: absolute; left: 34px; top: 26px; font: 600 22px 'Inter', sans-serif; color: var(--mut); }
+.cvs { position: relative; background: radial-gradient(#dde1ee 1.5px, transparent 2px) 0 0 / 28px 28px, #f3f4f9; } .cvh { position: absolute; left: 34px; top: 26px; font: 600 22px 'Inter', sans-serif; color: var(--mut); }
 .auto { position: absolute; right: 30px; top: 22px; padding: 10px 18px; border-radius: 99px; background: linear-gradient(90deg, #3b5cff, #6fb6ff); color: #fff; font: 600 19px 'Inter', sans-serif; animation: ckPop .45s var(--po) 27.25s both; }
 .aed2 { position: absolute; inset: 0; width: 100%; height: 100%; } .aed2 path { fill: none; stroke: #6f8dff; stroke-width: 4; stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw .4s var(--e2) var(--d) forwards; }
-.xn { position: absolute; top: 215px; width: 238px; border-radius: 20px; background: #fff; box-shadow: 0 0 0 1.5px #e3e7f5, 0 30px 60px -30px rgba(40,50,120,.35); animation: nIn .55s var(--po) var(--d) both; }
+.xn { position: absolute; top: 215px; width: 238px; border-radius: 20px; background: #fff; animation: nIn .55s var(--po) var(--d) both; }
 @keyframes nIn { from { opacity: 0; transform: scale(.4) translateY(30px); filter: blur(8px); } }
 .xn .h { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 1.5px solid #eef0f7; font: 600 19px 'Inter', sans-serif; }
 .xn .h b { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 9px; font-size: 15px; } .xn .bd { padding: 14px 16px; }
-.xn .im { height: 175px; border-radius: 12px; } .xn .tp3 { display: flex; gap: 8px; } .xn .tp3 .im { flex: 1; height: 120px; border-radius: 10px; } .xn .sel { box-shadow: 0 0 0 3px var(--b1); }
+.xn .im { height: 175px; border-radius: 12px; } .xn .tp3 { display: flex; gap: 8px; } .xn .tp3 .im { flex: 1; height: 120px; border-radius: 10px; }
 .xn .r { display: flex; justify-content: space-between; margin-top: 8px; padding: 9px 12px; border-radius: 10px; background: #f4f5fa; font: 500 16px 'Inter', sans-serif; } .xn .r:first-child { margin-top: 0; }
 .xn .ln { display: block; height: 12px; margin-top: 10px; border-radius: 6px; background: #e6e9f4; } .xn .ln:first-child { margin-top: 0; width: 90%; background: #cfd9ff; }
+
+/* T · texts & documents */
+.cww { position: absolute; left: 360px; top: 280px; width: 1200px; height: 530px; display: flex; flex-direction: column; gap: 22px; padding: 30px 36px; border-radius: 32px; background: #fff;
+  box-shadow: 0 0 0 2px #d6ddff, 0 60px 120px -40px rgba(59,92,255,.45); animation: aiIn .8s var(--e2) 24.35s both, aiOut .45s var(--e) 28.4s forwards; }
+.cwh { display: flex; align-items: center; gap: 14px; padding-bottom: 20px; border-bottom: 1.5px solid #eceef6; } .cwh b { font: 700 28px 'Inter', sans-serif; margin-right: auto; }
+.cwh .ava { width: 50px; height: 50px; } .cwh span:not(.ava) { padding: 9px 16px; border-radius: 10px; background: #f4f5fa; font: 600 17px 'JetBrains Mono', monospace; color: #6d7290; }
+.cww .ub { animation-delay: 24.75s; font-size: 27px; } .ans { max-width: 92%; padding: 22px 26px; border-radius: 22px 22px 22px 6px; background: #f4f5fa; font: 400 27px/1.45 'Inter', sans-serif; animation: wIn .4s var(--e2) 26.0s both; }
+.fch { display: flex; align-items: center; gap: 16px; align-self: flex-start; padding: 14px 22px 14px 14px; border-radius: 18px; background: #eef2ff; animation: ckPop .45s var(--po) 27.65s both; }
+.fch i { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 12px; background: #3b5cff; color: #fff; font: 700 15px 'Inter', sans-serif; font-style: normal; }
+.fch b { font: 600 23px 'Inter', sans-serif; } .fch small { display: block; font: 400 18px 'Inter', sans-serif; color: var(--mut); }
+.sT .hl > *, .sT .sub { animation-fill-mode: both; } .sT .sub { animation: wIn .5s var(--e2) 24.6s both, wOut .38s var(--e) 28.35s forwards; }
+/* P · Creative Predictor */
+.sP .hl { top: 128px; } .ptop { position: absolute; left: 0; right: 0; top: 52px; text-align: center; animation: ckPop .45s var(--po) 28.65s both, wOut .38s var(--e) 33.05s forwards; }
+.pcs { position: absolute; left: 0; right: 0; top: 270px; display: flex; justify-content: center; gap: 44px; }
+.pc { position: relative; width: 380px; padding: 14px 14px 22px; border-radius: 28px; background: #fff; animation: nIn .55s var(--po) var(--d) both, pcDim .4s var(--e2) 31.35s both, wOut .38s var(--e) 33.05s forwards; }
+@keyframes pcDim { to { opacity: .45; filter: saturate(.4); } } .pc.win { animation: nIn .55s var(--po) var(--d) both, pcWin .5s var(--po) 31.35s both, wOut .38s var(--e) 33.05s forwards; } @keyframes pcWin { to { transform: scale(1.06); } }
+.pc .pim { position: relative; height: 380px; border-radius: 18px; overflow: hidden; } .pc .pim .im { position: absolute; inset: 0; }
+.pc .cap { position: absolute; left: 14px; right: 14px; bottom: 14px; padding: 10px 14px; border-radius: 12px; background: rgba(15,18,34,.78); color: #fff; font: 600 20px 'Inter', sans-serif; }
+.pc .tag { position: absolute; left: 14px; top: 14px; padding: 8px 14px; border-radius: 10px; background: #ff5a4e; color: #fff; font: 700 20px 'Inter', sans-serif; }
+.pc .sc2 { display: flex; align-items: baseline; justify-content: space-between; margin: 18px 8px 10px; } .pc .sc2 > span { font: 500 21px 'Inter', sans-serif; color: var(--mut); }
+.pc .sc2 b { font: 700 46px/1 'Inter', sans-serif; letter-spacing: -.03em; } .pc .sc2 b small { font-size: 22px; color: #b9c2ec; }
+.pc .bar { height: 12px; margin: 0 8px; border-radius: 6px; background: #eceef6; overflow: hidden; } .pc .bar i { display: block; height: 100%; border-radius: 6px; background: linear-gradient(90deg, #3b5cff, #6fb6ff); transform-origin: 0 50%; animation: barF 1s cubic-bezier(.3,.7,.3,1) 30.2s both; }
+@keyframes barF { from { transform: scaleX(0); } }
+.pc .best { position: absolute; left: 50%; top: -24px; padding: 10px 20px; border-radius: 99px; background: linear-gradient(90deg, #16a36a, #34c98a); color: #fff; font: 600 21px 'Inter', sans-serif; white-space: nowrap; transform: translateX(-50%); animation: ckPop .45s var(--po) 31.4s both; }
+.pctl { position: absolute; left: 0; right: 0; top: 890px; display: flex; justify-content: center; align-items: center; gap: 14px; animation: wIn .5s var(--e2) 29.35s both, wOut .38s var(--e) 33.05s forwards; }
+.pctl span { padding: 14px 22px; border-radius: 14px; background: #fff; font: 500 22px 'Inter', sans-serif; color: #6d7290; } .pctl span.on { background: #eef2ff; color: var(--b1); }
+.pctl .go { margin-left: 26px; padding: 16px 40px; border-radius: 16px; background: var(--ink); color: #fff; font: 600 24px 'Inter', sans-serif; animation: adGo .3s var(--e2) 30.0s both; }
 /* N · logo */
 .lg { position: absolute; left: 50%; top: 440px; display: flex; align-items: center; gap: 30px; transform: translateX(-50%); }
 .lg .mk { width: 150px; animation: lgM .6s var(--po) 28.2s both; } @keyframes lgM { from { opacity: 0; transform: scale(.2); filter: blur(10px); } }
@@ -322,10 +368,24 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
 
   <section class="sc sI">__MODELS__<div class="row">__I1__</div></section>
 
-  <section class="sc sJ">__TRENDS__ __HAND_J__</section>
+  <section class="sc sJ"><div class="hl">__J1__</div><div class="hl">__J2__</div>__TRENDS__ __HAND_J__</section>
 
 
-  <section class="sc sX"><div class="row">__X1__</div>
+  <section class="sc sT"><div class="hl">__T1__</div><p class="sub">Описания, посты, контент-планы — сразу в Word, Excel и PowerPoint</p>
+    <div class="cww"><div class="cwh"><span class="ava">__AVA__</span><b>Тексты</b><span>DOCX</span><span>XLSX</span><span>PPTX</span></div>
+      <div class="ub"><span class="tc" data-type="24.9,34" data-txt="SEO-описание для Kaspi: мягкий зайка"></span></div>
+      <div class="ans"><span data-type="26.05,90" data-txt="Мягкая игрушка «Зайка» из нежного плюша с гипоаллергенным наполнителем. Подходит детям с рождения: безопасные материалы, прочные швы."></span></div>
+      <div class="fch"><i>DOCX</i><div><b>Описание_Kaspi.docx</b><small>готово к скачиванию</small></div></div></div></section>
+
+  <section class="sc sP"><div class="ptop"><span class="pill">Creative Predictor</span></div><div class="hl">__P1__</div>
+    <div class="pcs">
+      <div class="pc" style="--d:29.1s"><div class="pim">__PIM1__</div><div class="sc2"><span>Вариант 1</span><b><span data-count="30.2,1,0,64,0">0</span><small>/100</small></b></div><div class="bar"><i style="width:64%"></i></div></div>
+      <div class="pc win" style="--d:29.2s"><div class="pim">__PIM2__<span class="cap">Мягкий зайка · 0+</span></div><div class="sc2"><span>Вариант 2</span><b><span data-count="30.2,1,0,91,0">0</span><small>/100</small></b></div><div class="bar"><i style="width:91%"></i></div><span class="best">★ Лучший для Kaspi</span></div>
+      <div class="pc" style="--d:29.3s"><div class="pim">__PIM3__<span class="cap">Хит продаж</span></div><div class="sc2"><span>Вариант 3</span><b><span data-count="30.2,1,0,77,0">0</span><small>/100</small></b></div><div class="bar"><i style="width:77%"></i></div></div>
+    </div>
+    <div class="pctl"><span class="on">Kaspi</span><span>Instagram</span><span>TikTok</span><span class="go">Оценить</span></div>__HAND_P__</section>
+
+  <section class="sc sX" data-off="__AI_SHIFT__"><div class="row">__X1__</div>
     <div class="aiw"><div class="ch"><div class="chh"><span class="ava">__AVA__</span><div><b>Floko</b><small>● ИИ-ассистент</small></div></div>
       <div class="ub"><span class="tc" data-type="23.8,34" data-txt="Сделай карточки мягкого зайки для Kaspi и сторис"></span></div>
       <div class="ar">Готово, собрал схему:</div>
@@ -336,7 +396,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
     <div class="cvs"><span class="cvh">Холст · Проект «Зайка»</span><span class="auto">✦ Собрано ассистентом</span>
       <svg class="aed2" viewBox="0 0 1100 730" preserveAspectRatio="none"><path pathLength="1" style="--d:25.6s" d="M268 345 C 284 345, 284 345, 300 345"/><path pathLength="1" style="--d:26.2s" d="M538 345 C 554 345, 554 345, 570 345"/><path pathLength="1" style="--d:26.8s" d="M808 345 C 824 345, 824 345, 840 345"/></svg>
       <div class="xn" style="left:30px;--d:25.3s"><div class="h"><b style="background:#e8f3ff;color:#3b8bff">▣</b>Фото товара</div><div class="bd"><i class="im" style="background-image:url(../landing/assets/ol/bunny.webp);background-position:center 30%"></i></div></div>
-      <div class="xn" style="left:300px;--d:25.9s"><div class="h"><b style="background:#fff1e3;color:#d98a2b">✦</b>Шаблон One Launch</div><div class="bd"><div class="tp3"><i class="im sel" style="background-image:url(../landing/assets/ol/pajama.webp)"></i><i class="im" style="background-image:url(../landing/assets/ol/body.webp)"></i></div></div></div>
+      <div class="xn" style="left:300px;--d:25.9s"><div class="h"><b style="background:#fff1e3;color:#d98a2b">✦</b>Шаблон One Launch</div><div class="bd"><div class="tp3"><i class="im" style="background-image:url(../landing/assets/ol/pajama.webp)"></i><i class="im" style="background-image:url(../landing/assets/ol/body.webp)"></i></div></div></div>
       <div class="xn" style="left:570px;--d:26.5s"><div class="h"><b style="background:#efeaff;color:#6b4dff">⌗</b>Адаптация</div><div class="bd"><span class="r"><span>Kaspi</span><span>1125×330</span></span><span class="r"><span>Stories</span><span>1080×1920</span></span><span class="r"><span>Пост</span><span>1080×1080</span></span></div></div>
       <div class="xn" style="left:840px;--d:27.1s"><div class="h"><b style="background:#e9f8f0;color:#16a36a">¶</b>Текст карточки</div><div class="bd"><i class="ln"></i><i class="ln"></i><i class="ln" style="width:70%"></i><i class="ln" style="width:85%"></i></div></div>
     </div></div></section>
@@ -389,12 +449,20 @@ def build():
         '__F1__': w('Готово', 12.42, 13.95, 'bl'), '__CONFETTI__': confetti(), '__CAROUSEL__': carousel(),
         '__ARCHIVE__': archive(), '__HAND_H__': hand(1560, 980, 700, 360, 16.6, 17.2, 17.45),
         '__MODELS__': model_cards(), '__I1__': w('30+', 18.2, 19.85, 'bl') + w('нейросетей', 18.42, 19.88),
-        '__TRENDS__': trends(), '__HAND_J__': hand(1500, 1000, 1100, 330, 20.7, 21.3, 21.6),
+        '__TRENDS__': trends(), '__HAND_J__': hand(1500, 1000, *HJ, 21.05, 21.7, 22.0),
+        '__J1__': w('Автоматический', 19.95, 22.45) + w('анализ', 20.1, 22.47, 'bl') + w('трендов', 20.25, 22.49, 'bl'),
+        '__J2__': w('Адаптируйте', 22.55, 23.95) + w('их под себя', 22.7, 23.97) + w('автоматически', 22.85, 23.99, 'bl'),
+        '__T1__': w('Тексты', 24.15, 28.35) + w('и документы', 24.3, 28.37) + w('за секунды', 24.45, 28.39, 'bl'),
+        '__P1__': w('Лучший креатив', 28.75, 33.05, 'bl') + w('— ещё до запуска рекламы', 28.9, 33.07),
+        '__PIM1__': img('bunny', '', ';background-position:center 20%;filter:saturate(.55) brightness(1.06)'),
+        '__PIM2__': img('bunny', '', ';background-position:center 30%'),
+        '__PIM3__': img('bunny', '', ';background-size:170%;background-position:50% 35%'),
+        '__HAND_P__': hand(1560, 1060, *HP, 29.45, 30.0, 30.3),
         '__HAND_K__': hand(1560, 980, 1010, 548, 22.75, 23.25, 23.7),
         '__BIGMARK__': mark('bm'),
         '__M1__': w('Генерация.', 26.0, 27.95, 'bl') + w('Адаптация.', 26.5, 27.97) + w('Запуск.', 27.0, 28.0, 'bl')
                   + ''.join(f'<span class="spk" style="--d:{d}s;display:inline-block">{mark("mk")}</span>' for d in (27.25,)),
-        '__LOGOMARK__': mark(), '__T__': str(T), '__SHIFT__': str(SHIFT), '__AVA__': mark('mk', '#fff'),
+        '__LOGOMARK__': mark(), '__T__': str(T), '__SHIFT__': str(SHIFT), '__AI_SHIFT__': str(AI_SHIFT), '__AVA__': mark('mk', '#fff'),
         '__X1__': w('ИИ-ассистент', 22.05, 23.3, 'bl') + w('собирает', 22.3, 23.32) + w('пайплайн', 22.5, 23.34, 'bl') + w('за вас', 22.7, 23.36),
     }
     html = HTML

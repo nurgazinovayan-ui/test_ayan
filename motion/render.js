@@ -3,7 +3,7 @@
 const { chromium } = require('/opt/node22/lib/node_modules/playwright');
 const { spawn, execSync } = require('child_process'); const path = require('path'); const fs = require('fs');
 const v = process.argv[2] || 'land', fps = +(process.argv[3] || 30), extra = process.argv[4] || '';
-const clean = v === 'clean', T = clean ? 38.5 : 28;
+const clean = v === 'clean', T = clean ? 49.8 : 28;
 const [w, h] = v === 'port' ? [1080, 1920] : [1920, 1080];
 const ff = execSync('python3 -c "import imageio_ffmpeg as f; print(f.get_ffmpeg_exe())"').toString().trim();
 const outDir = path.join(__dirname, 'out'); fs.mkdirSync(outDir, { recursive: true });

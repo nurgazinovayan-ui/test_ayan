@@ -1,4 +1,4 @@
-"""Light, bright track + UI sound design for oneflow-clean.html (31 s). Synthesized from scratch — no samples, no licensing.
+"""Light, bright track + UI sound design for oneflow-clean.html (49.8 s). Synthesized from scratch — no samples, no licensing.
 
 120 BPM, Fmaj7 – Am7 – Dm7 – C. Soft pluck arpeggios and pads from the start, beat comes in with the 3D corridor (6 s),
 drops out for the brand mark (24 s), final chord under the logo. Ticks on words, clicks on cursor clicks, whooshes on
@@ -12,8 +12,9 @@ import wave
 
 import numpy as np
 
-SR, T, BPM = 44100, 38.5, 120
-S = 7.4  # the AI-assistant scene (22–29.4 s) pushes the launch / brand / logo scenes back by S seconds
+SR, T, BPM = 44100, 49.8, 120
+A = 11.3  # the AI-assistant scene plays A seconds later (longer trends scene, «Тексты» and Creative Predictor come first)
+S = 18.7  # launch / brand / logo scenes play S seconds later
 N = int(SR * T)
 BEAT = 60 / BPM
 rng = np.random.default_rng(21)
@@ -136,7 +137,7 @@ def soft_hit():
 
 # ---------------------------------------------------------------- arrangement
 CH = [(41, [53, 57, 60, 64]), (45, [57, 60, 64, 67]), (38, [50, 53, 57, 60]), (48, [48, 52, 55, 59])]  # Fmaj7 Am7 Dm7 Cmaj7
-for bar in range(20):
+for bar in range(25):
     t0 = bar * 2.0
     if t0 >= T:
         break
@@ -164,12 +165,13 @@ for t in np.arange(4.0, 24.0 + S - 1e-9, BEAT / 4):
     add(shaker(), t, .05 if (t * 4) % 2 else .08, -.3)
 
 # UI sound design
-for t in (.15, .42, 1.5, 1.66, 1.88, 2.9, 3.42, 6.25, 6.5, 6.75, 7.0, 7.95, 8.1, 8.25, 18.2, 18.42, 26.0 + S, 26.5 + S, 27.0 + S, 22.05, 22.3, 22.5, 22.7):
+for t in (.15, .42, 1.5, 1.66, 1.88, 2.9, 3.42, 6.25, 6.5, 6.75, 7.0, 7.95, 8.1, 8.25, 18.2, 18.42, 26.0 + S, 26.5 + S, 27.0 + S, 22.05 + A, 22.3 + A, 22.5 + A, 22.7 + A,
+          19.95, 20.1, 20.25, 22.55, 22.7, 22.85, 24.15, 24.3, 24.45, 28.75, 28.9):
     add(tick(2600), t, .1, pan=.15)
 add(pop(), 3.12, .3)
-for t in (4.02, 17.2, 21.3, 23.25 + S):
+for t in (4.02, 17.2, 21.7, 30.0, 23.25 + S):
     add(click(), t, .35)
-for t, g in ((4.22, .35), (5.62, .25), (5.85, .3), (9.22, .4), (13.95, .3), (16.05, .3), (17.32, .22), (19.95, .3), (21.6, .25), (22.55 + S, .25), (25.3 + S, .4), (23.25, .3), (28.9, .25)):
+for t, g in ((4.22, .35), (5.62, .25), (5.85, .3), (9.22, .4), (13.95, .3), (16.05, .3), (17.32, .22), (20.2, .3), (23.9, .25), (24.35, .3), (28.4, .25), (33.05, .25), (22.55 + S, .25), (25.3 + S, .4), (23.25 + A, .3), (28.9 + A, .25)):
     add(whoosh(), t - .1, g)
 add(riser(1.75), 10.45, .12)
 for k, m in enumerate((72, 76, 79, 84)):
@@ -184,14 +186,36 @@ for k, m in enumerate((65, 69, 72, 77)):
 
 # AI assistant scene: typing, reply, nodes popping onto the canvas, checks, «собрано ассистентом»
 ty = np.random.default_rng(5)
-for k in range(int((25.2 - 23.8) * 34 / 2)):
-    add(tick(ty.uniform(1500, 2100)), 23.8 + k * 2 / 34 + ty.uniform(0, .015), .05, pan=ty.uniform(-.2, .2))
-add(pop(), 25.0, .22)
+
+
+def typing(t0, t1, cps, g=.05):
+    for k in range(int((t1 - t0) * cps / 2)):
+        add(tick(ty.uniform(1500, 2100)), t0 + k * 2 / cps + ty.uniform(0, .015), g, pan=ty.uniform(-.2, .2))
+
+
+typing(23.8 + A, 25.2 + A, 34)
+add(pop(), 25.0 + A, .22)
 for t in (25.3, 25.9, 26.5, 27.1):
-    add(pop(), t, .25)
+    add(pop(), t + A, .25)
 for t, m in ((25.6, 84), (26.2, 88), (26.8, 91)):
-    add(bell(NOTE(m), .9), t, .1)
-add(sparkle(.9), 27.25, .3)
+    add(bell(NOTE(m), .9), t + A, .1)
+add(sparkle(.9), 27.25 + A, .3)
+
+# trends: «Адаптировать» click → adapted scenario card, its three lines
+add(pop(), 21.9, .28)
+for t, m in ((22.1, 79), (22.3, 84), (22.5, 88)):
+    add(bell(NOTE(m), .7), t, .07)
+# texts: typed request, streamed answer, file chip
+typing(24.9, 25.95, 34)
+typing(26.05, 27.55, 90, .025)
+add(pop(), 27.65, .25); add(bell(NOTE(91), .9), 27.7, .08)
+# Creative Predictor: cards pop in, «Оценить» click, scores rise, winner chime
+for t in (29.1, 29.2, 29.3):
+    add(pop(), t, .2)
+add(riser(1.0), 30.2, .1)
+for k, m in enumerate((76, 79, 84)):
+    add(bell(NOTE(m)), 31.35 + k * .07, .13, pan=(k - 1) * .2)
+add(sparkle(), 31.4, .4)
 
 # master
 mix_l, mix_r = L * side, R * side
