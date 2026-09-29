@@ -1,6 +1,7 @@
 """10 · Command Palette — Raycast-like: the whole story is driven from a ⌘K palette. Commands are typed, ↵ is pressed
 (key caps pop in the corner), the palette slides up and the result unfolds below it. Warm red glow on near-black."""
-from lib import FOOT, adapted, an, assistant, formats, img, ln, logo, models, nodes, page, predictor, progress, st, texts, trends, words
+from lib import FOOT, adapted, an, assistant, formats, img, ln, mark, models, nodes, page, predictor, progress, st, texts, trends, words
+from brand import wordmark  # noqa: E402  (lib puts motion/ on sys.path)
 
 NAME, TITLE = 'palette', 'Command Palette — всё из командной строки ⌘K'
 D = 4.4  # extra time for the models showcase (popular video/image models + newest text models)
@@ -26,6 +27,7 @@ THEME = """
 .kc span { display: grid; place-items: center; min-width: 64px; height: 64px; padding: 0 16px; border-radius: 14px; background: #1d1d21; box-shadow: inset 0 -3px 0 rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.12);
   font: 600 26px var(--f-body); color: var(--ink); }
 .ctr { position: absolute; left: 0; right: 0; text-align: center; } .h1 { font-size: 136px; } .cap2 { font-size: 44px; }
+.blogo { position: absolute; display: flex; align-items: center; gap: 34px; color: var(--ink); } .blogo .mk { width: 130px; } .blogo b { display: block; } .blogo .wm { display: block; height: 101px; width: auto; }
 .mcols { position: absolute; left: 110px; right: 110px; top: 270px; display: grid; grid-template-columns: 1fr 1fr; gap: 50px; }
 .mcol h3 { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; font: 600 40px var(--f-disp); letter-spacing: -.03em; }
 .mcol h3 i { display: grid; place-items: center; width: 50px; height: 50px; border-radius: 14px; background: var(--grad); color: #fff; font-style: normal; font-size: 22px; }
@@ -106,7 +108,9 @@ def build():
     b.append(cap('ИИ-ассистент собирает пайплайн <span class=g>за вас.</span>', r[5], OUT[5])
              + assistant(r[5] + .1, f'left:210px;top:270px;width:1500px;height:720px;--d:{r[5]:.2f}s;--o:{OUT[5]}s', cls='an'))
     b.append(f'<div class="ctr disp" style="top:250px;font-size:92px">{words("Генерация. Адаптация. Запуск.", 37.5 + D, step=.25, accent=(0, 2))}</div>')
-    b.append(logo(38.5 + D, 'left:50%;top:430px;transform:translateX(-50%)'))
+    L = 38.5 + D  # brand lockup from the official SVG: pixel mark + ONEFLOW wordmark, one colour
+    b.append(f'<div class="blogo" style="left:50%;top:430px;transform:translateX(-50%)"><span {an(L, i="pi", idur=.7)}>{mark("mk", "currentColor")}</span>'
+             f'<b class="an" style="{st(L + .25, i="wr", idur=.8)}">{wordmark()}</b></div>')
     b.append(f'<div class="ctr" style="top:650px;font:500 34px var(--f-body)"><span {an(39.0 + D, i="fu")}>oneflow.art</span></div>')
     b.append(f'<p class="fnote an" style="{st(39.2 + D, i="fi")}">{FOOT}</p>')
     js = """
