@@ -80,6 +80,17 @@ def build4(theme='light'):
     site_zip(os.path.join(d, 'index.html'), sfx)
 
 
+# /admin: never framed (clickjacking), never indexed or cached, no referrer; the page's own CSP is a <meta> in admin.html
+ADMIN_HEADERS = {'source': '/admin(.html)?', 'headers': [
+    {'key': 'X-Frame-Options', 'value': 'DENY'},
+    {'key': 'Content-Security-Policy', 'value': "frame-ancestors 'none'"},
+    {'key': 'X-Robots-Tag', 'value': 'noindex, nofollow'},
+    {'key': 'Referrer-Policy', 'value': 'no-referrer'},
+    {'key': 'Cache-Control', 'value': 'no-store'},
+    {'key': 'X-Content-Type-Options', 'value': 'nosniff'},
+]}
+
+
 def site_zip(index, sfx=''):
     """Full oneflow.art upload: the previous site archive (app, assets, presets…) with the new index.html and the hero video files."""
     base = os.environ.get('SITE_BASE', '/tmp/claude-0/site-prev.zip')
@@ -91,9 +102,12 @@ def site_zip(index, sfx=''):
     extra['admin.html'] = os.path.join(HERE, '..', 'admin', 'admin.html')  # oneflow.art/admin (vercel.json cleanUrls)
     with zipfile.ZipFile(base) as zi, zipfile.ZipFile(tmp, 'w', zipfile.ZIP_DEFLATED) as zo:
         for it in zi.infolist():
-            if it.filename in ('index.html', *extra):
+            if it.filename in ('index.html', 'vercel.json', *extra):
                 continue
             zo.writestr(it, zi.read(it))
+        cfg = json.loads(zi.read('vercel.json')) if 'vercel.json' in zi.namelist() else {'cleanUrls': True, 'trailingSlash': False}
+        cfg['headers'] = [h for h in cfg.get('headers', []) if h.get('source') != '/admin(.html)?'] + [ADMIN_HEADERS]
+        zo.writestr('vercel.json', json.dumps(cfg, ensure_ascii=False, indent=2) + '\n')
         zo.write(index, 'index.html')
         for name, src in extra.items():
             zo.write(src, name, compress_type=zipfile.ZIP_STORED if name.endswith(('.mp4', '.webm')) else zipfile.ZIP_DEFLATED)

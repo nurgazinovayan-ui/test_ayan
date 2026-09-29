@@ -2,14 +2,15 @@
 // Deploy, then turn "Verify JWT" OFF for this one: landing visitors aren't signed in. No secrets to configure.
 //
 // «Написать в поддержку» form on oneflow.art → one row in support_tickets (admin.sql). Public on purpose, so it guards
-// itself: a hidden honeypot field, length limits, and at most 5 tickets per visitor IP per hour (IP stored only as a
-// SHA-256 hash). Tickets are read and answered in oneflow.art/admin through the admin-api function.
+// itself: a hidden honeypot field, length limits, at most 5 tickets per visitor IP per hour and 100 per hour overall
+// (IP stored only as a SHA-256 hash). Tickets are read and answered in oneflow.art/admin through the admin-api function.
 
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-const PER_HOUR = 5;
+const PER_HOUR = 5;          // per visitor IP
+const ALL_PER_HOUR = 100;    // for everyone together — a safety net if a bot rotates or spoofs IPs
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -35,16 +36,19 @@ Deno.serve(async (req) => {
     if (message.length < 5 || message.length > 4000) return json({ error: 'Опишите вопрос (от 5 до 4000 символов).' }, 400);
 
     const ip = (req.headers.get('x-forwarded-for') ?? '').split(',')[0].trim() || 'unknown';
-    const ipHash = await sha256(ip);
+    const ipHash = await sha256(ip + SERVICE_ROLE_KEY);  // peppered with a server secret: the stored hash can't be reversed by trying all IPs
     const admin = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
     const since = new Date(Date.now() - 3_600_000).toISOString();
     const { count } = await admin.from('support_tickets').select('id', { count: 'exact', head: true }).eq('ip_hash', ipHash).gte('created_at', since);
     if ((count ?? 0) >= PER_HOUR) return json({ error: 'Слишком много обращений. Попробуйте через час.' }, 429);
+    const { count: all } = await admin.from('support_tickets').select('id', { count: 'exact', head: true }).gte('created_at', since);
+    if ((all ?? 0) >= ALL_PER_HOUR) return json({ error: 'Поддержка сейчас перегружена. Попробуйте позже.' }, 429);
 
     const { error } = await admin.from('support_tickets').insert({ name, contact, message, page, ip_hash: ipHash });
     if (error) throw error;
     return json({ ok: true });
   } catch (err) {
-    return json({ error: String(err) }, 500);
+    console.error(err);
+    return json({ error: 'Не удалось отправить. Попробуйте позже.' }, 500);
   }
 });

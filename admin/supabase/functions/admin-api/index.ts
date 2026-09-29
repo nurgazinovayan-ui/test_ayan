@@ -38,7 +38,8 @@ Deno.serve(async (req) => {
     const token = (req.headers.get('Authorization') ?? '').replace(/^Bearer\s+/i, '');
     const { data: callerData } = await admin.auth.getUser(token);
     const caller = callerData.user;
-    if (!caller || caller.email?.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) return json({ error: 'Доступ запрещён.' }, 403);
+    // exactly one account: the admin email, and only once that address is confirmed (Google sign-ins are confirmed by Google)
+    if (!caller || !caller.email_confirmed_at || caller.email?.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) return json({ error: 'Доступ запрещён.' }, 403);
 
     const body = await req.json().catch(() => ({}));
     const action = String(body.action ?? 'overview');
@@ -172,6 +173,7 @@ Deno.serve(async (req) => {
 
     return json({ error: 'Неизвестное действие.' }, 400);
   } catch (err) {
-    return json({ error: String(err) }, 500);
+    console.error(err);
+    return json({ error: 'Ошибка сервера.' }, 500);
   }
 });
