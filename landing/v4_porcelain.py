@@ -263,6 +263,11 @@ footer nav button { border: 0; background: none; font: inherit; color: inherit; 
 dialog.doc { width: min(680px, calc(100% - 24px)); max-height: min(80vh, 760px); margin: auto; padding: 0; border: 0; border-radius: 24px; background: #fff; color: var(--ink); box-shadow: var(--sh2); }
 dialog.doc::backdrop { background: rgba(17,17,20,.35); backdrop-filter: blur(6px); } dialog.doc .in2 { padding: 34px 32px 30px; } dialog.doc h1 { font: 700 26px/1.2 var(--d); letter-spacing: -.03em; }
 dialog.doc h2 { margin: 20px 0 6px; font: 600 16px var(--d); } dialog.doc p, dialog.doc li { font-size: 14.5px; color: var(--ink2); } dialog.doc .updated { margin-top: 6px; font-size: 12.5px; color: var(--muted); }
+.sup { margin-top: 28px; text-align: center; color: var(--muted); } .sup .btn { margin-left: 10px; }
+.sf { display: grid; gap: 14px; margin-top: 18px; } .sf label { display: grid; gap: 6px; font-size: 13px; color: var(--muted); }
+.sf input, .sf textarea { width: 100%; padding: 11px 13px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); color: var(--ink); font: inherit; font-size: 15px; outline: none; }
+.sf input:focus, .sf textarea:focus { border-color: var(--ink); } .sf textarea { min-height: 130px; resize: vertical; } .sf .hp { position: absolute; left: -9999px; }
+.sf .btn { justify-self: start; } .sf .st { min-height: 20px; font-size: 13.5px; color: var(--ink2); }
 dialog.doc .x { position: sticky; top: 0; float: right; width: 40px; height: 40px; margin: 12px 12px 0 0; border: 0; border-radius: 50%; background: var(--bg); font-size: 20px; cursor: pointer; }
 .js .rv { opacity: 0; transform: translateY(18px); transition: opacity .8s var(--e), transform .8s var(--e); } .js .rv.in { opacity: 1; transform: none; }
 @media (max-width: 1000px) { .pg { grid-template-columns: 200px 60px minmax(0, 1fr); } .mods, .tpl { grid-template-columns: repeat(2, minmax(0, 1fr)); } .hr, .as { grid-template-columns: minmax(0, 1fr); } }
@@ -303,6 +308,49 @@ JS = """<script>
   if (w.length < 2 || matchMedia('(prefers-reduced-motion: reduce)').matches) return; let i = 0;
   setInterval(() => { const a = w[i]; i = (i + 1) % w.length; const b = w[i];
     a.classList.remove('on'); a.classList.add('out'); b.classList.remove('out'); b.classList.add('on'); setTimeout(() => a.classList.remove('out'), 700); }, 2600); })();
+// site content from oneflow.art/admin: every leaf text in <header>/<main>/<footer> gets a stable key (section + order);
+// an override {t: new text, o: original} applies only while the original is unchanged, so rebuilding the page never
+// puts an old override on the wrong element. Cached in localStorage to avoid a flash on the next visit.
+(() => {
+  const SB = 'https://ayxmfihtrsacfdhszsri.supabase.co', KEY = 'sb_publishable_xfd5nkUu18qvdzoo-dzhHQ_f5RKq4tS';
+  const SEL = 'h1 .l1, h1 .rw, h1 .gr, h2, h3, h4, p, li, summary, .btn, .k, .pop, .lg, th, td, figcaption, footer nav button, footer nav a, .nav nav a';
+  const SKIP = '.pro-b, .ui, .models, .gens, [data-m], script, style, dialog, .skip, .fnote';
+  const txt = (el) => [...el.childNodes].map((n) => n.nodeType === 3 ? n.nodeValue : n.nodeName === 'BR' ? '\\n' : '').join('').replace(/[ \\t]+/g, ' ').replace(/ ?\\n ?/g, '\\n').trim();
+  const put = (el, v) => { const parts = []; v.split('\\n').forEach((line, i) => { if (i) parts.push(document.createElement('br')); parts.push(document.createTextNode(line)); }); el.replaceChildren(...parts); };
+  const counts = {}, items = [];
+  document.querySelectorAll('header, main > section, main > .wrap > section, footer').forEach((sec) => {
+    const name = (sec.id || sec.classList[0] || sec.tagName).toLowerCase().replace(/[^a-z0-9-]/g, '');
+    const label = (sec.querySelector('h2, h1') ? txt(sec.querySelector('h2, h1')) : '') || name;
+    sec.querySelectorAll(SEL).forEach((el) => {
+      if (el.closest(SKIP) || [...el.children].some((c) => c.nodeName !== 'BR')) return;
+      const t = txt(el); if (t.length < 2) return;
+      counts[name] = (counts[name] || 0) + 1;
+      items.push({ key: name + '.' + counts[name], section: label.split('\\n')[0].slice(0, 60), tag: el.tagName.toLowerCase(), text: t, el });
+    });
+  });
+  window.__ofCMS = items.map(({ key, section, tag, text }) => ({ key, section, tag, text }));
+  const apply = (rows) => { const m = new Map((rows || []).map((r) => [r.key, r.value]));
+    items.forEach((it) => { const raw = m.get(it.key); let v = null; try { v = raw && JSON.parse(raw); } catch (e) {}
+      put(it.el, v && v.o === it.text && typeof v.t === 'string' ? v.t : it.text); }); };
+  try { const c = localStorage.getItem('of-cms'); if (c) apply(JSON.parse(c)); } catch (e) {}
+  fetch(SB + '/rest/v1/site_content?select=key,value', { headers: { apikey: KEY } }).then((r) => r.ok ? r.json() : null).then((rows) => {
+    if (!rows) return; try { localStorage.setItem('of-cms', JSON.stringify(rows)); } catch (e) {} apply(rows); }).catch(() => {});
+
+  // «Написать в поддержку» → support-submit Edge Function → support_tickets (read in the admin)
+  const f = document.getElementById('sf'); if (!f) return;
+  f.addEventListener('submit', async (e) => {
+    e.preventDefault(); const st = f.querySelector('.st'), b = f.querySelector('button[type=submit]'), d = Object.fromEntries(new FormData(f));
+    if ((d.contact || '').trim().length < 3) { st.textContent = 'Укажите email или телефон для ответа.'; return; }
+    if ((d.message || '').trim().length < 5) { st.textContent = 'Опишите вопрос чуть подробнее.'; return; }
+    b.disabled = true; st.textContent = 'Отправляем…';
+    try {
+      const r = await fetch(SB + '/functions/v1/support-submit', { method: 'POST', headers: { apikey: KEY, Authorization: 'Bearer ' + KEY, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...d, page: location.pathname + location.search }) });
+      const j = await r.json().catch(() => ({})); if (!r.ok) throw new Error(j.error || 'Не удалось отправить. Попробуйте позже.');
+      f.reset(); st.textContent = 'Спасибо! Сообщение отправлено — мы свяжемся с вами.';
+    } catch (err) { st.textContent = err.message; } finally { b.disabled = false; }
+  });
+})();
 </script>
 """.replace('__APP__', APP).replace('__REG__', REG).replace("  document.querySelectorAll('.mod .mh')", protos.js() + "  document.querySelectorAll('.mod .mh')")
 
@@ -354,7 +402,7 @@ def build(docs='', theme='light'):
            f'<nav class="mnav" id="mnav" aria-label="Меню" hidden>{links}<div class="row"><a class="in2" data-app="login" href="{APP}">Войти</a>{reg("Регистрация")}</div></nav>')
     fm = lambda c, lb: f'<div class="fm {c}"><i class="ft"></i><span class="lb">{lb}</span></div>'
     hero = (f'<section class="hero"><div class="wrap">'
-            '<h1 aria-label="Больше контента для вашего бизнеса. До 50% дешевле*">Больше контента для<span class="rot" id="rot" aria-hidden="true">'
+            '<h1 aria-label="Больше контента для вашего бизнеса. До 50% дешевле*"><span class="l1">Больше контента для</span><span class="rot" id="rot" aria-hidden="true">'
             + ''.join(f'<span class="rw{" on" if k == 0 else ""}">{n}.</span>' for k, n in enumerate(NICHES)) + '</span><span class="gr">До 50% дешевле*</span></h1>'
             '<p class="sub">Фото, видео и тексты на 30+ нейросетях — и адаптация под любой размер в один клик. Неиспользованный бюджет остаётся с вами.</p>'
             f'<div class="acts">{reg("Начать бесплатно →")}<a class="btn g" href="#how">Как это работает</a></div>'
@@ -424,12 +472,20 @@ def build(docs='', theme='light'):
                '<article class="card plan hot rv"><span class="pop">Популярный</span><h3>Популярный</h3><div class="pr"><span data-m="60" data-y="48">$60</span><small> / мес</small></div><p>Для регулярной работы с генерацией.</p>' + gens(60) + '<ul><li>Всё из бесплатного</li><li>LLM-модели</li><li>Адаптация визуалов</li><li>One Launch</li></ul>' + reg('Выбрать →') + '</article>'
                '<article class="card plan rv"><h3>Максимальный</h3><div class="pr"><span data-m="200" data-y="160">$200</span><small> / мес</small></div><p>Для команд без ограничений.</p>' + gens(200) + '<ul><li>Всё из популярного</li><li>Creative Predictor</li><li>Приоритетная поддержка</li></ul>' + reg('Выбрать', 'btn w') + '</article></div></div></section>')
     faq = ''.join(f'<details{" open" if i == 0 else ""}><summary>{q}</summary><p>{a}</p></details>' for i, (q, a) in enumerate(FAQ))
-    faq = f'<section class="sec" id="faq"><div class="wrap"><div class="sh rv"><span class="k">Вопросы</span><h2>Коротко о главном</h2></div><div class="faq">{faq}</div></div></section>'
+    faq = (f'<section class="sec" id="faq"><div class="wrap"><div class="sh rv"><span class="k">Вопросы</span><h2>Коротко о главном</h2></div><div class="faq">{faq}</div>'
+           '<p class="sup rv">Не нашли ответ? <button type="button" class="btn g" data-doc="support" aria-haspopup="dialog">Написать в поддержку</button></p></div></section>')
     end = ('<div class="wrap"><section class="end rv"><h2>Создавайте больше.<br>Не теряйте ни доллара.</h2><p>Генерация до 50% дешевле*, любой размер одним кликом, бюджет не сгорает в конце месяца.</p>'
            f'<div class="acts">{reg("Начать бесплатно →")}</div></section></div>')
-    fnav = (''.join(f'<button type="button" data-doc="{k}" aria-haspopup="dialog">{t}</button>' for k, t in (('privacy', 'Конфиденциальность'), ('terms', 'Условия'), ('refunds', 'Возврат')))
+    fnav = (''.join(f'<button type="button" data-doc="{k}" aria-haspopup="dialog">{t}</button>' for k, t in (('privacy', 'Конфиденциальность'), ('terms', 'Условия'), ('refunds', 'Возврат'), ('support', 'Поддержка')))
             if docs else '<a href="#">Конфиденциальность</a><a href="#">Условия</a><a href="#">Возврат</a>')
-    footer = f'<footer><div class="wrap"><div class="l"><span class="logo">{MARK}ONEFLOW</span><span>© 2026</span></div><nav aria-label="Документы">{fnav}</nav></div></footer>{docs}'
+    support = ('<dialog class="doc" id="doc-support" aria-label="Поддержка"><button type="button" class="x" aria-label="Закрыть">×</button><div class="in2">'
+               '<h1>Написать в поддержку</h1><p class="updated">Оставьте контакт — ответим на email или по телефону, который вы укажете.</p>'
+               '<form class="sf" id="sf" novalidate><label>Как к вам обращаться<input name="name" maxlength="100" autocomplete="name"></label>'
+               '<label>Email или телефон для ответа<input name="contact" maxlength="200" required autocomplete="email"></label>'
+               '<label>Сообщение<textarea name="message" maxlength="4000" required></textarea></label>'
+               '<label class="hp" aria-hidden="true">Сайт<input name="website" tabindex="-1" autocomplete="off"></label>'
+               '<button type="submit" class="btn p">Отправить</button><p class="st" role="status" aria-live="polite"></p></form></div></dialog>')
+    footer = f'<footer><div class="wrap"><div class="l"><span class="logo">{MARK}ONEFLOW</span><span>© 2026</span></div><nav aria-label="Документы">{fnav}</nav></div></footer>{docs}{support}'
     theme_color, dark_css = ('#0b0b10', DARK) if theme == 'dark' else ('#f7f7fa', '')
     imgvars = ' '.join(f'--img-{n}: url(assets/ol/{n}.webp);' for n in IMGS)
     return ('<!doctype html>\n<html lang="ru">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n'

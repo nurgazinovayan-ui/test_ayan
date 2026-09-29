@@ -88,6 +88,7 @@ def site_zip(index, sfx=''):
     out = os.path.join(HERE, 'out', f'oneflow-art-site{sfx}.zip')
     tmp = out + '.tmp'
     extra = {'oneflow-promo.mp4': os.path.join(HERE, 'assets', 'video', 'oneflow-promo.mp4'), 'oneflow-promo.webm': os.path.join(HERE, 'assets', 'video', 'oneflow-promo.webm')}
+    extra['admin.html'] = os.path.join(HERE, '..', 'admin', 'admin.html')  # oneflow.art/admin (vercel.json cleanUrls)
     with zipfile.ZipFile(base) as zi, zipfile.ZipFile(tmp, 'w', zipfile.ZIP_DEFLATED) as zo:
         for it in zi.infolist():
             if it.filename in ('index.html', *extra):
@@ -95,7 +96,7 @@ def site_zip(index, sfx=''):
             zo.writestr(it, zi.read(it))
         zo.write(index, 'index.html')
         for name, src in extra.items():
-            zo.write(src, name, compress_type=zipfile.ZIP_STORED)
+            zo.write(src, name, compress_type=zipfile.ZIP_STORED if name.endswith(('.mp4', '.webm')) else zipfile.ZIP_DEFLATED)
     os.replace(tmp, out)
     print(out, os.path.getsize(out) // 1024, 'KB')
 
