@@ -13,11 +13,13 @@ import math
 import os
 import random
 import re
+import json
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', 'landing'))
 import v4_porcelain as v  # noqa: E402
+import timeline_clean as tl  # noqa: E402
 
 MARK_D = re.search(r'd="([^"]+)"', v.MARK).group(1)
 IMG = '../landing/assets/ol/'
@@ -340,11 +342,29 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
 .lg b { font: 500 134px/1 'Inter', sans-serif; letter-spacing: -.04em; clip-path: inset(0 0 0 0); animation: lgW .7s var(--e2) 28.55s both; } @keyframes lgW { from { clip-path: inset(0 100% 0 0); transform: translateX(-60px); opacity: 0; } }
 .url { position: absolute; left: 0; right: 0; top: 700px; text-align: center; font: 500 34px 'Inter', sans-serif; color: var(--ink); animation: wIn .6s var(--e2) 29.05s both; }
 .fn { position: absolute; left: 0; right: 0; bottom: 60px; text-align: center; font: 400 20px 'Inter', sans-serif; color: #9ba0b8; animation: fin .5s linear 29.4s both; }
+
+/* beat-synced camera, ambient light, cut flash */
+#cam { position: absolute; inset: 0; transform-origin: 50% 50%; }
+.amb { position: absolute; inset: 0; overflow: hidden; } .amb i { position: absolute; left: 0; top: 0; width: 1100px; height: 1100px; margin: -550px 0 0 -550px; border-radius: 50%; }
+.amb .g1 { background: radial-gradient(circle, rgba(111,150,255,.42), rgba(111,150,255,0) 62%); } .amb .g2 { background: radial-gradient(circle, rgba(120,215,255,.38), rgba(120,215,255,0) 62%); }
+.flash { position: absolute; inset: 0; z-index: 60; background: radial-gradient(ellipse at center, #fff 30%, #eaf0ff); opacity: 0; }
+/* glow */
+.bl { filter: drop-shadow(0 0 22px rgba(77,124,255,.5)); } .wi.bl { filter: blur(0) drop-shadow(0 0 22px rgba(77,124,255,.5)); }
+.gob, .pill, .auto, .fch i { box-shadow: 0 0 36px rgba(59,92,255,.55), 0 10px 30px -8px rgba(59,92,255,.6); } .ava { box-shadow: 0 0 28px rgba(59,92,255,.55); }
+.pc .best { box-shadow: 0 0 36px rgba(22,163,106,.6); } .pc.win .bar i, .st .sp::after { box-shadow: 0 0 18px rgba(59,92,255,.75); }
+@keyframes adGo { to { background: linear-gradient(90deg, #3b5cff, #6fb6ff); box-shadow: 0 0 44px rgba(59,92,255,.75), 0 12px 30px -10px rgba(59,92,255,.8); } }
+@keyframes kbGo { to { background: linear-gradient(90deg, #3b5cff, #6fb6ff); transform: scale(1.08); box-shadow: 0 0 100px rgba(59,92,255,.8), 0 40px 80px -30px rgba(59,92,255,.8); } }
+.rib { box-shadow: 0 0 130px rgba(93,139,255,.6), 0 30px 80px -30px rgba(59,92,255,.6); }
+.ck { box-shadow: 0 0 0 3px #cfd9ff, 0 0 100px rgba(77,124,255,.6), 0 40px 80px -30px rgba(59,92,255,.55); } .ck path { filter: drop-shadow(0 0 10px rgba(77,124,255,.75)); }
+.rip { box-shadow: 0 0 22px rgba(59,92,255,.85), inset 0 0 12px rgba(59,92,255,.6); } .aed path, .aed2 path { filter: drop-shadow(0 0 7px rgba(111,141,255,.85)); }
+.bm { filter: blur(0) drop-shadow(0 40px 60px rgba(59,92,255,.45)) drop-shadow(0 0 46px rgba(111,182,255,.85)); }
+.lg .mk, .spk { filter: blur(0) drop-shadow(0 0 30px rgba(77,124,255,.65)); }
 </style>
 </head>
 <body>
 <div id="st">
   <svg width="0" height="0" style="position:absolute"><defs><linearGradient id="bg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8fc6ff"/><stop offset=".55" stop-color="#4d7cff"/><stop offset="1" stop-color="#3b5cff"/></linearGradient></defs></svg>
+  <div id="cam"><div class="amb"><i class="g1"></i><i class="g2"></i></div>
 
   <section class="sc sA">
     <div class="row">__A1__</div>
@@ -409,15 +429,36 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
 
   <section class="sc sN" data-off="__SHIFT__"><div class="lg">__LOGOMARK__<b>ONEFLOW</b></div><div class="url">oneflow.art</div>
     <p class="fn">* до 50% — в сравнении с оплатой тех же моделей в отдельных сервисах; итог зависит от моделей и объёма. Неизрасходованный бюджет переходит на следующий месяц.</p></section>
+  </div><div class="flash"></div>
 </div>
 <script>
 (function () {
   const T = __T__, q = new URLSearchParams(location.search), st = document.getElementById('st');
+  // beat-synced edit: real video time r → authored time via the anchor map; camera hits on cuts, pulse on every kick
+  const TL = __TL__, B = 60 / TL.bpm, cam = document.getElementById('cam'), fl = st.querySelector('.flash'), g1 = st.querySelector('.amb .g1'), g2 = st.querySelector('.amb .g2');
+  window.DUR = T;
+  const warp = (r) => { const A = TL.anch; for (let i = 1; i < A.length; i++) { const [a, ba] = A[i - 1], [b, bb] = A[i]; if (r <= bb * B) return a + (b - a) * (r / B - ba) / (bb - ba); } return A[A.length - 1][0]; };
+  const kickOn = (bt) => TL.kick.some(([a, b]) => bt >= a && bt < b);
+  const fx = (r) => {
+    const bt = r / B, bi = Math.floor(bt + 1e-6), k = kickOn(bi) ? Math.exp(-(bt - bi) * B * 8) : 0;
+    let s = 1 + k * .006, x = 0, bl = 0, f = 0;
+    for (const [cb, kd] of TL.cuts) {
+      const d = r - cb * B;
+      if (kd === 'whip') { if (Math.abs(d) < .3) { const e = Math.exp(-Math.abs(d) * 16); x += (d < 0 ? -1 : 1) * 760 * e; bl = Math.max(bl, 18 * e); } }
+      else if (d >= 0 && d < .8) { const e = Math.exp(-d * 7); s += (kd === 'flash' ? .07 : .05) * e; bl = Math.max(bl, 6 * Math.exp(-d * 14)); if (kd === 'flash') f = Math.max(f, .8 * Math.exp(-d * 9)); }
+    }
+    cam.style.transform = 'translateX(' + x.toFixed(1) + 'px) scale(' + s.toFixed(4) + ')';
+    cam.style.filter = bl > .3 ? 'blur(' + bl.toFixed(1) + 'px)' : '';
+    fl.style.opacity = f.toFixed(3);
+    g1.style.transform = 'translate(' + (420 + 520 * Math.sin(r * .31)).toFixed(0) + 'px,' + (260 + 220 * Math.cos(r * .23)).toFixed(0) + 'px)'; g1.style.opacity = (.5 + .5 * k).toFixed(3);
+    g2.style.transform = 'translate(' + (1500 - 480 * Math.cos(r * .27)).toFixed(0) + 'px,' + (820 - 240 * Math.sin(r * .37)).toFixed(0) + 'px)'; g2.style.opacity = (.45 + .55 * k).toFixed(3);
+  };
   const counters = [...document.querySelectorAll('[data-count]')], typers = [...document.querySelectorAll('[data-type]')];
   const offOf = (el) => { const s = el && el.closest && el.closest('[data-off]'); return s ? +s.dataset.off : 0; };
   counters.forEach((el) => { el._o = offOf(el); }); typers.forEach((el) => { el._o = offOf(el); });
   let AN = null;
-  window.seek = (t) => {
+  window.seek = (r) => {
+    const t = warp(r); fx(r);
     if (!AN) { AN = document.getAnimations(); AN.forEach((a) => { a.pause(); a._o = offOf(a.effect && a.effect.target); }); }
     AN.forEach((a) => { a.currentTime = (t - a._o) * 1000; });
     counters.forEach((el) => { const [s, d, a, b, dec] = el.dataset.count.split(',').map(Number), p = Math.min(1, Math.max(0, (t - el._o - s) / d)), e = 1 - Math.pow(1 - p, 3);
@@ -462,7 +503,7 @@ def build():
         '__BIGMARK__': mark('bm'),
         '__M1__': w('Генерация.', 26.0, 27.95, 'bl') + w('Адаптация.', 26.5, 27.97) + w('Запуск.', 27.0, 28.0, 'bl')
                   + ''.join(f'<span class="spk" style="--d:{d}s;display:inline-block">{mark("mk")}</span>' for d in (27.25,)),
-        '__LOGOMARK__': mark(), '__T__': str(T), '__SHIFT__': str(SHIFT), '__AI_SHIFT__': str(AI_SHIFT), '__AVA__': mark('mk', '#fff'),
+        '__LOGOMARK__': mark(), '__T__': f'{tl.DUR:.4f}', '__TL__': json.dumps({'bpm': tl.BPM, 'anch': tl.ANCH, 'cuts': tl.CUTS, 'kick': tl.KICK}), '__SHIFT__': str(SHIFT), '__AI_SHIFT__': str(AI_SHIFT), '__AVA__': mark('mk', '#fff'),
         '__X1__': w('ИИ-ассистент', 22.05, 23.3, 'bl') + w('собирает', 22.3, 23.32) + w('пайплайн', 22.5, 23.34, 'bl') + w('за вас', 22.7, 23.36),
     }
     html = HTML
