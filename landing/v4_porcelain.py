@@ -69,6 +69,19 @@ FAQ = [('Есть ли шаблоны для моей ниши?', 'Да, в ра
        ('Можно ли работать командой?', 'Да — пригласите соавтора по почте и общайтесь во встроенном мессенджере.')]
 NAV = [('#why', 'Преимущества'), ('#business', 'Для бизнеса'), ('#assistant', 'Ассистент'), ('#pricing', 'Цены'), ('#faq', 'Вопросы')]
 NICHES = ['магазина на Kaspi', 'вашей кофейни', 'бренда одежды', 'салона красоты', 'вашего стартапа', 'вашего бизнеса']  # hero headline rotates through these (entrepreneur niches)
+KLING_5S = 0.084 * 5          # $ per 5-second Kling 3.0 Standard clip, 720p, no audio (OpenRouter)
+NBP_1K = 1120 * 120 / 1e6     # $ per 1K Nano Banana Pro image (OpenRouter: $120 per 1M image-output tokens)
+
+
+def gens(budget):
+    """Approximate monthly generations for a plan budget; model names shown, the specs live behind the «?»."""
+    n = lambda x: f'{int(budget // x):,}'.replace(',', '\u2009')  # noqa: E731
+    row = lambda cnt, what, model, tip: (f'<li><span><b>≈ {cnt}</b> {what}</span><span class="nw">{model}<span class="qm" tabindex="0" role="note" aria-label="{tip}" data-tip="{tip}">?</span></span></li>')  # noqa: E731
+    return ('<div class="gens"><span>Примерно генераций в месяц</span><ul>'
+            + row(n(KLING_5S), 'видео', 'Kling 3.0', 'Ролик 5 с, 720p, без звука')
+            + row(n(NBP_1K), 'фото', 'Nano Banana Pro', 'Изображение 1K') + '</ul></div>')
+
+
 MODELS = ['GPT Image', 'Nano Banana Pro', 'Seedream', 'Veo 3.1', 'Kling', 'Seedance', 'Hailuo', 'Recraft', 'Flux', '+ ещё 20']
 
 CSS = """
@@ -216,7 +229,18 @@ main { overflow-x: clip; } a { color: inherit; text-decoration: none; } img, svg
 /* pricing */
 .per { display: flex; justify-content: center; margin-top: 32px; } .per div { display: inline-flex; gap: 4px; padding: 4px; border-radius: 12px; background: #fff; box-shadow: var(--sh); }
 .per button { padding: 8px 16px; border: 0; border-radius: 9px; background: none; cursor: pointer; font-weight: 500; font-size: 14px; } .per button.on { background: var(--ink); color: #fff; } .per em { margin-left: 6px; padding: 1px 6px; border-radius: 6px; background: var(--mint); color: var(--green); font-style: normal; font-size: 12px; }
-.plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 26px; align-items: center; } .plan { display: flex; flex-direction: column; padding: 28px; border-radius: 26px; }
+.plans { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-top: 26px; align-items: center; }
+@media (max-width: 1100px) { .plans { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.gens { margin: 16px 0 0; padding: 12px 14px; border-radius: 14px; background: rgba(17,17,20,.04); font-size: 13.5px; } .gens > span { font: 400 11.5px var(--m); color: var(--muted); }
+.gens ul { margin: 8px 0 0 !important; gap: 6px !important; font-size: 13.5px !important; } .gens li::before { display: none; } .gens b { font-weight: 700; } .gens li { display: flex; justify-content: space-between; align-items: center; gap: 8px; white-space: nowrap; } .gens .nw { font-size: 12.5px; color: var(--muted); }
+.plan.hot .gens .nw { color: rgba(255,255,255,.7); }
+.qm { position: relative; display: inline-grid; place-items: center; width: 16px; height: 16px; margin-left: 6px; border-radius: 50%; background: rgba(17,17,20,.1); color: var(--ink);
+  font: 700 10.5px var(--d); vertical-align: 1px; cursor: help; outline: none; }
+.qm::after { content: attr(data-tip); position: absolute; left: 50%; bottom: calc(100% + 8px); z-index: 5; padding: 7px 10px; border-radius: 8px; background: #111114; color: #fff;
+  font: 500 12px var(--d); white-space: nowrap; opacity: 0; pointer-events: none; transform: translate(-50%, 4px); transition: opacity .15s, transform .15s; }
+.qm:hover::after, .qm:focus::after { opacity: 1; transform: translate(-50%, 0); }
+.plan.hot .gens { background: rgba(255,255,255,.1); } .plan.hot .qm { background: rgba(255,255,255,.22); color: #fff; } .plan.hot .gens > span { color: rgba(255,255,255,.65); }
+.plan.hot .qm::after { background: #fff; color: #111114; } .plan { display: flex; flex-direction: column; padding: 28px; border-radius: 26px; }
 .plan h3 { font: 600 16px var(--d); } .plan .pr { margin: 14px 0 6px; font: 700 50px/1 var(--d); letter-spacing: -.05em; } .plan .pr small { font: 400 14px var(--d); letter-spacing: 0; color: var(--muted); }
 .plan > p { font-size: 14px; color: var(--muted); } .plan ul { margin: 18px 0 24px; list-style: none; display: grid; gap: 9px; font-size: 14.5px; } .plan li::before { content: '•'; margin-right: 10px; color: var(--muted); }
 .plan .btn { width: 100%; } .plan .btn.w { background: #fff; color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); }
@@ -303,7 +327,8 @@ html { color-scheme: dark; } .totop { background: #f3f3f6; color: #0b0b10; box-s
 .per div { background: var(--card); } .per button.on { background: #f3f3f6; color: #0b0b10; } .per em { background: rgba(61,220,151,.15); }
 .plan .btn.w { background: rgba(255,255,255,.06); color: var(--ink); box-shadow: inset 0 0 0 1px rgba(255,255,255,.12); }
 .plan.hot { background: linear-gradient(160deg, #f6f4ff, #e8fbf3); color: #0b0b10; box-shadow: 0 40px 80px -30px rgba(140,120,255,.45); } .plan.hot > p, .plan.hot .pr small, .plan.hot li::before { color: rgba(11,11,16,.6); }
-.plan.hot .btn { background: #0b0b10; color: #fff; } .plan .pop { background: rgba(124,92,255,.2); color: #b3a6ff; } .plan.hot .pop { background: #e3dcff; color: #5b3fd6; }
+.plan.hot .btn { background: #0b0b10; color: #fff; } .gens { background: rgba(255,255,255,.05); } .qm { background: rgba(255,255,255,.14); } .qm::after { background: #f3f3f6; color: #0b0b10; }
+.plan.hot .gens { background: rgba(11,11,16,.05); } .plan.hot .qm { background: rgba(11,11,16,.1); color: #0b0b10; } .plan.hot .gens > span { color: rgba(11,11,16,.6); } .plan.hot .qm::after { background: #0b0b10; color: #fff; } .plan.hot .gens .nw { color: rgba(11,11,16,.55); } .plan .pop { background: rgba(124,92,255,.2); color: #b3a6ff; } .plan.hot .pop { background: #e3dcff; color: #5b3fd6; }
 .faq details, .end { background: var(--card); } .gal .t > div { box-shadow: 0 18px 44px -22px rgba(0,0,0,.9); }
 dialog.doc { background: #15151c; } dialog.doc .x { background: rgba(255,255,255,.08); color: var(--ink); } dialog.doc::backdrop { background: rgba(0,0,0,.6); }
 /* smaller corner radii */
@@ -389,8 +414,10 @@ def build(docs='', theme='light'):
     pricing = ('<section class="sec" id="pricing"><div class="wrap"><div class="sh rv"><span class="k">Тарифы</span><h2>Остаток бюджета — всегда ваш</h2><p>На любом тарифе неизрасходованный бюджет переходит на следующий месяц.</p></div>'
                '<div class="per"><div role="group" aria-label="Период оплаты"><button type="button" class="on" id="pm" aria-pressed="true">Месяц</button><button type="button" id="py" aria-pressed="false">Год<em>−20%</em></button></div></div>'
                '<div class="plans"><article class="card plan rv"><h3>Бесплатный</h3><div class="pr">$0</div><p>Попробовать и понять, подходит ли вам.</p><ul><li>Доступ к ONEFLOW</li><li>Бюджет — по желанию</li><li>30+ нейросетей</li><li>ИИ-ассистент</li></ul>' + reg('Начать бесплатно', 'btn w') + '</article>'
-               '<article class="card plan hot rv"><span class="pop">Популярный</span><h3>Популярный</h3><div class="pr"><span data-m="60" data-y="48">$60</span><small> / мес</small></div><p>Для регулярной работы с генерацией.</p><ul><li>Всё из бесплатного</li><li>LLM-модели</li><li>Адаптация визуалов</li><li>One Launch</li></ul>' + reg('Выбрать →') + '</article>'
-               '<article class="card plan rv"><h3>Максимальный</h3><div class="pr"><span data-m="200" data-y="160">$200</span><small> / мес</small></div><p>Для команд без ограничений.</p><ul><li>Всё из популярного</li><li>Creative Predictor</li><li>Приоритетная поддержка</li></ul>' + reg('Выбрать', 'btn w') + '</article></div></div></section>')
+               '<article class="card plan rv"><h3>Стартовый</h3><div class="pr"><span data-m="20" data-y="16">$20</span><small> / мес</small></div><p>Для первых карточек и тестов рекламы.</p>'
+               + gens(20) + '<ul><li>Всё из бесплатного</li><li>LLM-модели</li><li>Адаптация визуалов</li></ul>' + reg('Выбрать', 'btn w') + '</article>'
+               '<article class="card plan hot rv"><span class="pop">Популярный</span><h3>Популярный</h3><div class="pr"><span data-m="60" data-y="48">$60</span><small> / мес</small></div><p>Для регулярной работы с генерацией.</p>' + gens(60) + '<ul><li>Всё из бесплатного</li><li>LLM-модели</li><li>Адаптация визуалов</li><li>One Launch</li></ul>' + reg('Выбрать →') + '</article>'
+               '<article class="card plan rv"><h3>Максимальный</h3><div class="pr"><span data-m="200" data-y="160">$200</span><small> / мес</small></div><p>Для команд без ограничений.</p>' + gens(200) + '<ul><li>Всё из популярного</li><li>Creative Predictor</li><li>Приоритетная поддержка</li></ul>' + reg('Выбрать', 'btn w') + '</article></div></div></section>')
     faq = ''.join(f'<details{" open" if i == 0 else ""}><summary>{q}</summary><p>{a}</p></details>' for i, (q, a) in enumerate(FAQ))
     faq = f'<section class="sec" id="faq"><div class="wrap"><div class="sh rv"><span class="k">Вопросы</span><h2>Коротко о главном</h2></div><div class="faq">{faq}</div></div></section>'
     end = ('<div class="wrap"><section class="end rv"><h2>Создавайте больше.<br>Не теряйте ни доллара.</h2><p>Генерация до 50% дешевле*, любой размер одним кликом, бюджет не сгорает в конце месяца.</p>'
