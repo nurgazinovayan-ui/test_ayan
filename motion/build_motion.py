@@ -13,6 +13,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', 'landing'))
 import v4_porcelain as v  # noqa: E402  (brand mark)
+import styles  # noqa: E402  (alternative looks, ?s=<name>)
 
 MARK_D = re.search(r'd="([^"]+)"', v.MARK).group(1)
 MODELS = ['GPT Image', 'Nano Banana Pro', 'Seedream', 'Veo 3.1', 'Kling', 'Seedance', 'Hailuo', 'Recraft', 'Flux']
@@ -219,7 +220,7 @@ body { color: var(--t); font-family: var(--d-); -webkit-font-smoothing: antialia
 .port .s7 .big { font-size: 330px; } .port .s7 .sub { font-size: 54px; text-align: center; padding: 0 60px; } .port .s7 .a2 { flex-direction: column; gap: 70px; text-align: center; }
 .port .s7 .rt2 h3 { font-size: 96px; } .port .s7 .rt2 p { font-size: 42px; padding: 0 60px; }
 .port .s8 .lg { flex-direction: column; gap: 26px; } .port .s8 .wm { font-size: 130px; } .port .s8 h2 { font-size: 90px; } .port .s8 .cta { flex-direction: column; align-items: center; } .port .s8 .fn { bottom: 90px; padding: 0 70px; font-size: 22px; }
-</style>
+__STYLES__</style>
 </head>
 <body>
 <div id="st">
@@ -301,6 +302,7 @@ body { color: var(--t); font-family: var(--d-); -webkit-font-smoothing: antialia
 (function () {
   const T = 28, q = new URLSearchParams(location.search);
   if (q.get('v') === 'port') document.body.classList.add('port');
+  if (q.get('s')) document.body.classList.add('s-' + q.get('s'));
   const st = document.getElementById('st'), idx = document.getElementById('idx');
   const cuts = [5, 8, 13, 16, 20, 24];
   const counters = [...document.querySelectorAll('[data-count]')], typers = [...document.querySelectorAll('[data-type]')];
@@ -329,7 +331,7 @@ body { color: var(--t); font-family: var(--d-); -webkit-font-smoothing: antialia
 def build():
     html = (HTML.replace('__MARKW__', mark('', False)).replace('__MARK__', mark())
             .replace('__WM1__', letters('ONEFLOW', .45)).replace('__WM2__', letters('ONEFLOW', 24.15, .04))
-            .replace('__ROWS__', rows()).replace('__WALL__', wall()).replace('__FORMATS__', formats()).replace('__TRENDS__', trends()))
+            .replace('__ROWS__', rows()).replace('__WALL__', wall()).replace('__FORMATS__', formats()).replace('__TRENDS__', trends()).replace('__STYLES__', styles.CSS))
     open(os.path.join(HERE, 'oneflow-motion.html'), 'w', encoding='utf-8').write(html)
     print('oneflow-motion.html')
 
