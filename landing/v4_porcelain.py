@@ -246,7 +246,7 @@ main { overflow-x: clip; } a { color: inherit; text-decoration: none; } img, svg
 .qm:hover::after, .qm:focus::after { opacity: 1; transform: translate(-50%, 0); }
 .plan.hot .gens { background: rgba(255,255,255,.1); } .plan.hot .qm { background: rgba(255,255,255,.22); color: #fff; } .plan.hot .gens > span { color: rgba(255,255,255,.65); }
 .plan.hot .qm::after { background: #fff; color: #111114; } .plan { display: flex; flex-direction: column; padding: 28px; border-radius: 26px; }
-.plan h3 { font: 600 16px var(--d); } .plan .pr { margin: 14px 0 6px; font: 700 50px/1 var(--d); letter-spacing: -.05em; } .plan .pr small { font: 400 14px var(--d); letter-spacing: 0; color: var(--muted); }
+.plan h3 { font: 600 16px var(--d); } .plan .pr .dp { display: inline-block; padding: 10px 16px; border-radius: 14px; background: rgba(59,92,255,.1); color: #3b5cff; font: 700 26px/1 var(--d); letter-spacing: -.03em; } .plan .pr { margin: 14px 0 6px; font: 700 50px/1 var(--d); letter-spacing: -.05em; } .plan .pr small { font: 400 14px var(--d); letter-spacing: 0; color: var(--muted); }
 .plan > p { font-size: 14px; color: var(--muted); } .plan ul { margin: 18px 0 24px; list-style: none; display: grid; gap: 9px; font-size: 14.5px; } .plan li::before { content: '•'; margin-right: 10px; color: var(--muted); }
 .plan .btn { width: 100%; } .plan .btn.w { background: #fff; color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); }
 .plan.hot { padding: 36px 28px; background: var(--ink); color: #fff; box-shadow: 0 40px 70px -30px rgba(17,17,20,.6); } .plan.hot > p, .plan.hot .pr small, .plan.hot li::before { color: rgba(255,255,255,.65); }
@@ -281,7 +281,7 @@ dialog.doc .x { position: sticky; top: 0; float: right; width: 40px; height: 40p
 JS = """<script>
 (function () {
   const APP_URL = '__APP__'; // адрес приложения ONEFLOW: все «Войти» / «Регистрация» / «Начать» ведут сюда
-  document.querySelectorAll('[data-app]').forEach((a) => { a.href = APP_URL + (a.dataset.app === 'register' ? '__REG__' : ''); });
+  document.querySelectorAll('[data-app]').forEach((a) => { a.href = APP_URL + (a.dataset.app === 'register' ? '__REG__' : a.dataset.app === 'demo' ? '?demo=1' : ''); });
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const pm = document.getElementById('pm'), py = document.getElementById('py');
   const set = (k) => { pm.classList.toggle('on', k === 'm'); py.classList.toggle('on', k === 'y'); pm.setAttribute('aria-pressed', k === 'm'); py.setAttribute('aria-pressed', k === 'y');
@@ -466,10 +466,10 @@ def build(docs='', theme='light'):
            f'<div class="gal" role="img" aria-label="Примеры карточек: {", ".join(ALT[n] for n in IMGS)}"><div class="t">{cards}{cards}</div></div></section>')
     pricing = ('<section class="sec" id="pricing"><div class="wrap"><div class="sh rv"><span class="k">Тарифы</span><h2>Остаток бюджета — всегда ваш</h2><p>На любом тарифе неизрасходованный бюджет переходит на следующий месяц.</p></div>'
                '<div class="per"><div role="group" aria-label="Период оплаты"><button type="button" class="on" id="pm" aria-pressed="true">Месяц</button><button type="button" id="py" aria-pressed="false">Год<em>−20%</em></button></div></div>'
-               '<div class="plans"><article class="card plan rv"><h3>Бесплатный</h3><div class="pr">$0</div><p>Попробовать и понять, подходит ли вам.</p><ul><li>Доступ к ONEFLOW</li><li>Бюджет — по желанию</li><li>30+ нейросетей</li><li>ИИ-ассистент</li></ul>' + reg('Начать бесплатно', 'btn w') + '</article>'
+               '<div class="plans"><article class="card plan demo rv"><h3>Попробовать</h3><div class="pr"><span class="dp">Демо-режим</span></div><p>Откройте ONEFLOW без регистрации и посмотрите всё изнутри: разделы, ноды, Motion Engine.</p><ul><li>Без регистрации и карты</li><li>Все разделы программы</li><li>Генерации показываются на примерах — ничего не списывается</li><li>Перейти на тариф — в любой момент</li></ul>' + f'<a class="btn w" data-app="demo" href="{APP}?demo=1">Открыть демо →</a>' + '</article>'
                '<article class="card plan rv"><h3>Стартовый</h3><div class="pr"><span data-m="20" data-y="16">$20</span><small> / мес</small></div><p>Для первых карточек и тестов рекламы.</p>'
-               + gens(20) + '<ul><li>Всё из бесплатного</li><li>LLM-модели</li><li>Адаптация визуалов</li></ul>' + reg('Выбрать', 'btn w') + '</article>'
-               '<article class="card plan hot rv"><span class="pop">Популярный</span><h3>Популярный</h3><div class="pr"><span data-m="60" data-y="48">$60</span><small> / мес</small></div><p>Для регулярной работы с генерацией.</p>' + gens(60) + '<ul><li>Всё из бесплатного</li><li>LLM-модели</li><li>Адаптация визуалов</li><li>One Launch</li></ul>' + reg('Выбрать →') + '</article>'
+               + gens(20) + '<ul><li>Все разделы ONEFLOW</li><li>LLM-модели</li><li>Адаптация визуалов</li></ul>' + reg('Выбрать', 'btn w') + '</article>'
+               '<article class="card plan hot rv"><span class="pop">Популярный</span><h3>Популярный</h3><div class="pr"><span data-m="60" data-y="48">$60</span><small> / мес</small></div><p>Для регулярной работы с генерацией.</p>' + gens(60) + '<ul><li>Все разделы ONEFLOW</li><li>LLM-модели</li><li>Адаптация визуалов</li><li>One Launch</li></ul>' + reg('Выбрать →') + '</article>'
                '<article class="card plan rv"><h3>Максимальный</h3><div class="pr"><span data-m="200" data-y="160">$200</span><small> / мес</small></div><p>Для команд без ограничений.</p>' + gens(200) + '<ul><li>Всё из популярного</li><li>Creative Predictor</li><li>Приоритетная поддержка</li></ul>' + reg('Выбрать', 'btn w') + '</article></div></div></section>')
     faq = ''.join(f'<details{" open" if i == 0 else ""}><summary>{q}</summary><p>{a}</p></details>' for i, (q, a) in enumerate(FAQ))
     faq = (f'<section class="sec" id="faq"><div class="wrap"><div class="sh rv"><span class="k">Вопросы</span><h2>Коротко о главном</h2></div><div class="faq">{faq}</div>'
