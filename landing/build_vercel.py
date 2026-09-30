@@ -78,6 +78,8 @@ def build4(theme='light'):
         z.write(os.path.join(d, 'index.html'), 'index.html')
     print(f'site/4-porcelain{sfx}/index.html {len(html.encode()) // 1024} KB, {nf} font faces, fonts used {sorted(used)}')
     site_zip(os.path.join(d, 'index.html'), sfx)
+    if not sfx:
+        sync_app_repo(os.path.join(d, 'index.html'))
 
 
 # /admin: never framed (clickjacking), never indexed or cached, no referrer; the page's own CSP is a <meta> in admin.html
@@ -89,6 +91,19 @@ ADMIN_HEADERS = {'source': '/admin(.html)?', 'headers': [
     {'key': 'Cache-Control', 'value': 'no-store'},
     {'key': 'X-Content-Type-Options', 'value': 'nosniff'},
 ]}
+
+
+def sync_app_repo(index):
+    """Copy the landing, the admin page and the hero video into the app repo, whose Vercel build
+    (scripts/build-vercel.mjs) serves them at /, /admin and /oneflow-promo.* — so a git deploy matches the zip."""
+    if not os.path.isdir(os.path.join(APPREPO, 'landing')):
+        return
+    import shutil
+    shutil.copyfile(index, os.path.join(APPREPO, 'landing', 'index.html'))
+    shutil.copyfile(os.path.join(HERE, '..', 'admin', 'admin.html'), os.path.join(APPREPO, 'landing', 'admin.html'))
+    for ext in ('mp4', 'webm'):
+        shutil.copyfile(os.path.join(HERE, 'assets', 'video', f'oneflow-promo.{ext}'), os.path.join(APPREPO, 'public', f'oneflow-promo.{ext}'))
+    print('synced landing/index.html, landing/admin.html, public/oneflow-promo.* →', APPREPO)
 
 
 def site_zip(index, sfx=''):
