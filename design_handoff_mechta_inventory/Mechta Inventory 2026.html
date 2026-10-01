@@ -1,6 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
+<!-- ==========================================================================
+     НАСТРОЙКА ОТПРАВКИ БРИФА
+
+     1. Получите Access Key на https://web3forms.com — укажите почту, ключ
+        придёт письмом (подтвердите адрес по ссылке из него).
+     2. Вставьте ключ в web3formsKey ниже и сохраните файл.
+     3. Загрузите файл в Тильду: Настройки сайта -> Файлы, затем вставьте
+        iframe из tilda-embed-iframe.txt в блок T123.
+
+     Пока web3formsKey пуст, кнопка «Отправить бриф» открывает почтовый
+     клиент с готовым письмом вместо автоматической отправки.
+     ========================================================================== -->
+<script>
+window.MECHTA_CONFIG = {
+  web3formsKey: '',                      // <- Access Key от web3forms.com
+  emailTo: 'aidyn.argyn@mechta.kz',      // получатель письма и Reply-To
+  webhookUrl: ''                         // необязательно: Make.com / свой эндпоинт
+};
+</script>
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script>
@@ -2401,7 +2421,6 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
         <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #55555F">Бриф собран. Скопируйте текст и отправьте менеджеру — он уже включает выбранные услуги.</p>
         <textarea ref="{{ briefTaRef }}" readonly="" value="{{ briefText }}" style="width: 100%; min-height: 380px; resize: vertical; font-family: inherit; font-size: 13px; line-height: 1.7; color: #0B0B0C; background: #FAFAFB; border: 1px solid #EDEDEF; border-radius: 8px; padding: 18px 20px; outline: none"></textarea>
         <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap">
-          <form ref="{{ formRef }}" class="js-form-proccess t-form" method="POST" action="" data-formactiontype="2" data-formsuccess="popup" style="display: none"></form>
           <button onClick="{{ onSend }}" type="button" style="font-family: inherit; font-size: 13px; font-weight: 700; color: #FFFFFF; background: {{ sendBg }}; border: 0; cursor: pointer; border-radius: 999px; padding: 13px 24px; white-space: nowrap; transition: background 180ms ease" style-hover="background: #0B0B0C">{{ sendLabel }}</button>
           <button onClick="{{ onCopyBrief }}" type="button" style="font-family: inherit; font-size: 13px; font-weight: 700; color: #FFFFFF; background: {{ briefBtnBg }}; border: 0; cursor: pointer; border-radius: 999px; padding: 13px 24px; white-space: nowrap; transition: background 180ms ease" style-hover="background: #FF0080">{{ briefBtnLabel }}</button>
           <sc-if value="{{ hasSendError }}" hint-placeholder-val="{{ false }}">
@@ -2433,7 +2452,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
   </footer>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;webhookUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://hook.eu1.make.com/285o3j38x0rahlrkdtrd9agza589edat&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Отправка брифа&quot;},&quot;web3formsKey&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Отправка брифа&quot;},&quot;emailTo&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;aidyn.argyn@mechta.kz&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Отправка брифа&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;webhookUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Отправка брифа&quot;},&quot;web3formsKey&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Отправка брифа&quot;},&quot;emailTo&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;aidyn.argyn@mechta.kz&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Отправка брифа&quot;}}">
 const PINK = '#FF0080';
 
 const CATS = [
@@ -2549,7 +2568,7 @@ const STEPS = [
 ];
 
 class Component extends DCLogic {
-  state = { cat: 'audience', goal: 'all', q: '', copied: false, picked: [], listCopied: false, step: 0, brief: {}, briefDone: false, briefCopied: false, sending: false, sent: false, sendError: '' };
+  state = { cat: 'audience', goal: 'all', q: '', copied: false, picked: [], listCopied: false, step: 0, brief: {}, briefDone: false, briefCopied: false, sending: false, sent: false, mailed: false, sendError: '' };
 
   setField = (id, value) => {
     this.setState(s => ({ brief: Object.assign({}, s.brief, { [id]: value }) }));
@@ -2609,23 +2628,21 @@ class Component extends DCLogic {
     return lines.join('\n').trim();
   }
 
-  sendBrief = () => {
-    const text = this.briefText();
-    const v = this.state.brief;
-    const to = (this.props.emailTo || 'aidyn.argyn@mechta.kz').trim();
-    const subject = this.briefSubject();
+  // Конфиг берётся из window.MECHTA_CONFIG (блок настройки в автономной
+  // сборке), иначе из props. Так ключ правится в одном видном месте, а не
+  // внутри HTML-экранированного data-props.
+  sendConfig() {
+    const c = (typeof window !== 'undefined' && window.MECHTA_CONFIG) || {};
+    const pick = (a, b) => String(a !== undefined && a !== null && a !== '' ? a : (b || '')).trim();
+    return {
+      web3formsKey: pick(c.web3formsKey, this.props.web3formsKey),
+      webhookUrl: pick(c.webhookUrl, this.props.webhookUrl),
+      emailTo: pick(c.emailTo, this.props.emailTo) || 'aidyn.argyn@mechta.kz'
+    };
+  }
 
-    const payload = Object.assign({}, v, {
-      services: this.state.picked.join('; '),
-      brief_text: text,
-      Name: v.owner || '',
-      subject: subject,
-      formservices: 'Mechta Inventory 2026'
-    });
-
-    this.setState({ sending: true, sendError: '' });
-
-    const post = (url, body) => fetch(url, {
+  postJson(url, body) {
+    return fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify(body)
@@ -2633,39 +2650,47 @@ class Component extends DCLogic {
       if (!r.ok) throw new Error('HTTP ' + r.status);
       return r;
     });
+  }
 
-    const jobs = [];
+  sendBrief = () => {
+    const cfg = this.sendConfig();
+    const v = this.state.brief;
+    const subject = this.briefSubject();
 
-    // 1. Web3Forms — доставляет письмо на почту без своего бэкенда.
-    const key = (this.props.web3formsKey || '').trim();
-    if (key) {
-      jobs.push(
-        post('https://api.web3forms.com/submit', Object.assign({
-          access_key: key,
-          subject: subject,
-          from_name: 'Mechta Inventory 2026',
-          email: to
-        }, payload))
-        .then(r => r.json())
-        .then(d => { if (!d || d.success !== true) throw new Error((d && d.message) || 'web3forms'); })
-      );
-    }
-
-    // 2. Собственный вебхук / Make.com — если настроен.
-    const url = (this.props.webhookUrl || '').trim();
-    if (url) jobs.push(post(url, payload));
-
-    // 3. Ничего не настроено — сразу письмо через почтовый клиент.
-    if (!jobs.length) { this.openMailto(); return; }
-
-    let ok = false;
-    Promise.all(jobs.map(j => j.then(() => { ok = true; }, () => {}))).then(() => {
-      if (ok) this.setState({ sending: false, sent: true });
-      else this.setState(
-        { sending: false, sendError: 'Автоотправка не сработала — открываем письмо, текст брифа уже в буфере.' },
-        this.openMailto
-      );
+    const payload = Object.assign({}, v, {
+      services: this.state.picked.join('; '),
+      brief_text: this.briefText(),
+      Name: v.owner || '',
+      subject: subject,
+      formservices: 'Mechta Inventory 2026'
     });
+
+    this.setState({ sending: true, sent: false, mailed: false, sendError: '' });
+
+    // Вебхук — побочный канал (Make.com / CRM). На статус отправки не влияет:
+    // «Отправлено ✓» должно означать именно «письмо ушло».
+    if (cfg.webhookUrl) this.postJson(cfg.webhookUrl, payload).catch(() => {});
+
+    // Ключ не задан — отправлять письмо нечем, открываем почтовый клиент.
+    if (!cfg.web3formsKey) { this.openMailto(); return; }
+
+    this.postJson('https://api.web3forms.com/submit', Object.assign({
+      access_key: cfg.web3formsKey,
+      subject: subject,
+      from_name: 'Mechta Inventory 2026',
+      email: cfg.emailTo
+    }, payload))
+      .then(r => r.json())
+      .then(d => {
+        // Web3Forms отвечает 200 и success: false на исчерпанный лимит или
+        // неподтверждённый ключ — пустой success здесь так же плох, как 4xx.
+        if (!d || d.success !== true) throw new Error((d && d.message) || 'web3forms');
+        this.setState({ sending: false, sent: true });
+      })
+      .catch(() => this.setState(
+        { sending: false, sendError: 'Письмо не ушло — открываем почтовый клиент, текст брифа в буфере.' },
+        this.openMailto
+      ));
   };
 
   openMailto = () => {
@@ -2674,7 +2699,7 @@ class Component extends DCLogic {
       if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(full);
     } catch (e) {}
     try { window.location.href = this.mailtoHref(); } catch (e) {}
-    this.setState({ sending: false, sent: true });
+    this.setState({ sending: false, mailed: true });
   };
 
   briefSubject() {
@@ -2683,7 +2708,7 @@ class Component extends DCLogic {
   }
 
   mailtoHref() {
-    const to = (this.props.emailTo || 'aidyn.argyn@mechta.kz').trim();
+    const to = this.sendConfig().emailTo;
     const full = this.state.briefDone ? this.briefText() : '';
     // mailto в Windows/Outlook обрезается примерно на 2000 символах — режем сами.
     const body = full.length > 1600
@@ -2825,7 +2850,7 @@ class Component extends DCLogic {
       nextLabel: this.state.step === STEPS.length - 1 ? 'Отправить' : 'Далее →',
       onBack: () => this.setState(s => ({ step: Math.max(0, s.step - 1) })),
       onNext: () => this.setState(s => s.step === STEPS.length - 1 ? { briefDone: true } : { step: s.step + 1 }),
-      onBriefEdit: () => this.setState({ briefDone: false }),
+      onBriefEdit: () => this.setState({ briefDone: false, sent: false, mailed: false, sendError: '' }),
       onCopyBrief: () => {
         const text = this.briefText();
         const ta = this._briefTa;
@@ -2846,10 +2871,12 @@ class Component extends DCLogic {
       },
       briefTaRef: el => { this._briefTa = el; },
       mailtoHref: this.mailtoHref(),
-      formRef: el => { this._tildaForm = el; },
       onSend: this.sendBrief,
-      sendLabel: this.state.sent ? 'Отправлено ✓' : (this.state.sending ? 'Отправляем…' : 'Отправить бриф'),
-      sendBg: this.state.sent ? '#0B0B0C' : '#FF0080',
+      sendLabel: this.state.sent ? 'Отправлено ✓'
+        : this.state.mailed ? 'Открыли письмо ✓'
+        : this.state.sending ? 'Отправляем…'
+        : 'Отправить бриф',
+      sendBg: (this.state.sent || this.state.mailed) ? '#0B0B0C' : '#FF0080',
       sendError: this.state.sendError || '',
       hasSendError: !!this.state.sendError,
       briefBtnLabel: this.state.briefCopied ? 'Скопировано ✓' : 'Скопировать бриф',
