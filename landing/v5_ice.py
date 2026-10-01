@@ -1,6 +1,6 @@
 """Variant 5 · Ice — the dark oneflow.art landing.
 
-Hero with the promo video (unchanged from v4), «Почему ONEFLOW», then every product mode as a tab (editorial
+Hero (headline, buttons, models line, the «до 50%» footnote), then every product mode as a tab (editorial
 «Ноды / Генерация / …» line, mockup D9): the left column states the mode's benefits, the right window plays a short
 looping animation of how the mode works. Pricing, FAQ and the closing card follow. Pricing data, FAQ, the support
 form, legal dialogs, the CMS hook and the header/footer come from v4_porcelain so both versions stay in sync.
@@ -16,7 +16,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 APP, REG, MARK, IMGS = v.APP, v.REG, v.MARK, v.IMGS
 reg = v.reg
 
-NAV = [('#why', 'Преимущества'), ('#modes', 'Возможности'), ('#tpl', 'Для бизнеса'), ('#ai', 'Ассистент'), ('#pricing', 'Цены'), ('#faq', 'Вопросы')]
+NAV = [('#modes', 'Возможности'), ('#tpl', 'Для бизнеса'), ('#ai', 'Ассистент'), ('#pricing', 'Цены'), ('#faq', 'Вопросы')]
 
 # ------------------------------------------------------------------------------------------------ tabs content
 # key, tab label, eyebrow-free headline, lead, four benefits (big value, label, detail)
@@ -255,7 +255,6 @@ TABS_CSS = """
 .ed button:hover { color: var(--ink2); } .ed button[aria-selected="true"] { color: var(--ink); }
 .ed button[aria-selected="true"]::after { content: ''; position: absolute; left: 0; right: 0; bottom: -2px; height: 3px; border-radius: 2px; background: var(--ac); box-shadow: 0 0 14px var(--ac); }
 .ed .sl { margin: 0 .32em; color: var(--s3); font-style: normal; }
-.edh { margin-top: 16px; text-align: center; font: 400 12.5px var(--m); color: var(--muted); }
 .mpanel { margin-top: 44px; padding: 44px; border-radius: 28px; background: rgba(155,232,255,.028); box-shadow: inset 0 0 0 1px var(--line), 0 40px 90px -40px rgba(0,0,0,.8); }
 .tp[hidden] { display: none; }
 .stage { display: grid; grid-template-columns: minmax(0, 1fr) 520px; gap: 48px; align-items: center; min-height: 600px; }
@@ -443,7 +442,7 @@ TABS_CSS = """
   .ed::-webkit-scrollbar { display: none; } .ed .sl { display: none; }
   .ed button { flex: none; scroll-snap-align: start; padding: 10px 14px; border-radius: 12px; background: rgba(255,255,255,.04); box-shadow: inset 0 0 0 1px var(--line); color: var(--ink2); }
   .ed button[aria-selected="true"] { background: var(--ac); color: var(--acink); box-shadow: 0 10px 24px -10px rgba(155,232,255,.5); } .ed button[aria-selected="true"]::after { display: none; }
-  .edh { display: none; } .mpanel { margin-top: 18px; padding: 22px 18px; border-radius: 22px; } .lt .lead { font-size: 15.5px; }
+  .mpanel { margin-top: 18px; padding: 22px 18px; border-radius: 22px; } .lt .lead { font-size: 15.5px; }
   .bens { gap: 18px; } .bens b { font-size: 27px; } .bens small { font-size: 12.5px; } .lt .acts { flex-direction: column; align-items: stretch; } .win { margin-top: 8px; border-radius: 16px; }
 }
 """
@@ -455,7 +454,8 @@ ICE = """
 html { color-scheme: dark; } body { background: var(--bg); }
 .bgfx i { opacity: .5; } .bgfx .a { background: #123a4e; } .bgfx .b { background: #1d2a3e; } .bgfx .c { background: #0e3a3a; } .bgfx .d { background: #16314a; opacity: .35; }
 .btn.p { background: var(--ac); color: var(--acink); box-shadow: 0 12px 30px -12px rgba(155,232,255,.5); } .btn.g { background: rgba(255,255,255,.05); }
-.nav .in { background: rgba(12,19,24,.72); box-shadow: inset 0 0 0 1px var(--line), 0 10px 30px -18px rgba(0,0,0,.8); } .mnav { background: rgba(12,19,24,.97); }
+.nav .in { background: none; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; }
+.fnote { margin-top: 26px; text-align: center; font-size: 12.5px; color: var(--muted); } .mnav { background: rgba(12,19,24,.97); }
 .hero h1 .gr { background: linear-gradient(95deg, #ffffff 20%, #9be8ff 58%, #7ee0c3); -webkit-background-clip: text; background-clip: text; }
 .pill { background: rgba(255,255,255,.06); color: var(--ink2); } .pill b { background: var(--ac); color: var(--acink); }
 .panel { background: rgba(17,26,32,.6); } .src, .fm { background: var(--s2); } .chip { background: rgba(23,34,42,.95); }
@@ -473,7 +473,7 @@ dialog.doc { background: var(--card); } .sf input, .sf textarea { background: va
 :focus-visible { outline-color: var(--ac); }
 """
 
-WHY_FRAMES = ''.join(f'<span style="width:{w}px;height:{h}px">{t}</span>' for t, w, h in (('9:16', 30, 54), ('4:5', 40, 50), ('1:1', 46, 46), ('16:9', 62, 35), ('3:1', 72, 24)))
+FNOTE = '* До 50% — в сравнении с оплатой тех же моделей в отдельных сервисах; итог зависит от моделей и объёма.'
 
 JS_TABS = """<script>
 // modes: one tab open at a time; arrows/Home/End move between tabs; #nodes … #team (or a nav link to one) opens it
@@ -512,15 +512,18 @@ def build(docs=''):
     # keep v4's hero, why, pricing, faq and closing card; everything in between becomes the modes tabs
     sections = re.split(r'(?=<section class="sec"|<div class="wrap"><section class="end)', main_old)
     hero = sections[0].replace('href="#how"', 'href="#modes"')
+    # no promo video and no adaptation panel under the headline — the models line follows the buttons, then the footnote
+    hero = re.sub(r'<div class="hvid">.*?(?=<div class="models")', '', hero, count=1, flags=re.S)
+    hero = hero.replace('</div></div></section>', f'</div><p class="fnote">{FNOTE}</p></div></section>', 1)
     pick = lambda pat: next(s for s in sections if pat in s)  # noqa: E731
-    why, pricing, faq, end = pick('id="why"'), pick('id="pricing"'), pick('id="faq"'), pick('class="end')
+    pricing, faq, end = pick('id="pricing"'), pick('id="faq"'), pick('class="end')
     buttons = '<i class="sl" aria-hidden="true">/</i>'.join(
         f'<button type="button" role="tab" id="{k}" aria-controls="p-{k}" aria-selected="{"true" if i == 0 else "false"}" tabindex="{0 if i == 0 else -1}">{lb}</button>'
         for i, (k, lb, *_x) in enumerate(TABS))
     modes = ('<section class="sec" id="modes"><div class="wrap"><div class="sh rv"><span class="k">Возможности</span><h2>Всё для контента — в одном окне</h2></div>'
-             f'<div class="ed" role="tablist" aria-label="Режимы ONEFLOW">{buttons}</div><p class="edh">Нажмите на режим — ниже покажем, как он работает</p>'
+             f'<div class="ed" role="tablist" aria-label="Режимы ONEFLOW">{buttons}</div>'
              '<div class="mpanel">' + ''.join(tab_panel(i, *t) for i, t in enumerate(TABS)) + '</div></div></section>')
-    main = f'<main id="main">{hero}{why}{modes}{pricing}{faq}{end}</main>'
+    main = f'<main id="main">{hero}{modes}{pricing}{faq}{end}</main>'
     # nav: new anchors; theme colour; styles; no v4 feature-card demos
     links = ''.join(f'<a href="{h}">{t}</a>' for h, t in NAV)
     head = re.sub(r'(<nav aria-label="Разделы">).*?(</nav>)', lambda m: m.group(1) + links + m.group(2), head, count=1, flags=re.S)
