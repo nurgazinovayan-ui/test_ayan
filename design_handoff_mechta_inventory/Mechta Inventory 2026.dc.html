@@ -326,6 +326,7 @@ const STEPS = [
   [
     { id: 'limits', label: 'Ограничения вендора', placeholder: 'бренд-гайды, запреты (если есть)' },
     { id: 'owner', label: 'Ответственный', placeholder: 'имя / контакт' },
+    { id: 'contact_email', label: 'Email для связи', type: 'email', hint: 'на него менеджер ответит по брифу', placeholder: 'name@company.kz' },
     { id: 'comment', label: 'Комментарий', placeholder: 'дополнительные условия (если есть)' }
   ]
 ];
@@ -437,12 +438,24 @@ class Component extends DCLogic {
     // Ключ не задан — отправлять письмо нечем, открываем почтовый клиент.
     if (!cfg.web3formsKey) { this.openMailto(); return; }
 
-    this.postJson('https://api.web3forms.com/submit', Object.assign({
+    // Служебные поля идут поверх payload: иначе одноимённое поле брифа
+    // перетёрло бы access_key или subject.
+    const w3 = Object.assign({}, payload, {
       access_key: cfg.web3formsKey,
       subject: subject,
-      from_name: 'Mechta Inventory 2026',
-      email: cfg.emailTo
-    }, payload))
+      from_name: 'Mechta Inventory 2026'
+    });
+
+    // Web3Forms кладёт поле email в Reply-To. Подставлять туда адрес
+    // получателя нельзя: письмо приходит на mechta.kz, в Reply-To стоит
+    // mechta.kz, а отправляет его сторонний сервер — для корпоративной
+    // антиспуфинг-защиты (DMARC, Microsoft 365 / Google Workspace) это
+    // подделка своего домена, и письмо тихо уходит в карантин. Поэтому
+    // Reply-To ставим только на реальный адрес вендора из брифа.
+    const replyTo = String(v.contact_email || '').trim();
+    if (replyTo) w3.email = replyTo;
+
+    this.postJson('https://api.web3forms.com/submit', w3)
       .then(r => r.json())
       .then(d => {
         // Web3Forms отвечает 200 и success: false на исчерпанный лимит или
