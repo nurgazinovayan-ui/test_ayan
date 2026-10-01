@@ -458,9 +458,7 @@ class Component extends DCLogic {
 
   openMailto = () => {
     const full = this.briefText();
-    try {
-      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(full);
-    } catch (e) {}
+    this.copyToClipboard(full);
     try { window.location.href = this.mailtoHref(); } catch (e) {}
     this.setState({ sending: false, mailed: true });
   };
@@ -482,45 +480,49 @@ class Component extends DCLogic {
       + '&body=' + encodeURIComponent(body);
   }
 
+  // В iframe (вставка в Тильду) navigator.clipboard существует, но
+  // writeText отклоняется permissions policy. Поэтому сначала пробуем
+  // execCommand через временную textarea — он в iframe работает, — и только
+  // затем асинхронный API. Прежний код считал отказ writeText успехом
+  // (.then(done, done)) и показывал «Скопировано ✓», ничего не скопировав.
+  copyToClipboard(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.cssText = 'position:fixed;top:-1000px;left:-1000px;opacity:0';
+    document.body.appendChild(ta);
+    let ok = false;
+    try {
+      ta.removeAttribute('readonly');
+      ta.select();
+      ta.setSelectionRange(0, ta.value.length);
+      ok = document.execCommand('copy');
+    } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+    if (ok) return Promise.resolve(true);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(text).then(() => true, () => false);
+    }
+    return Promise.resolve(false);
+  }
+
   copyText = (text) => {
-    const done = () => {
+    this.copyToClipboard(text).then(() => {
       this.setState({ listCopied: true });
       clearTimeout(this._t2);
       this._t2 = setTimeout(() => this.setState({ listCopied: false }), 2000);
-    };
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(done, done);
-    } else {
-      const ta = document.createElement('textarea');
-      ta.value = text;
-      document.body.appendChild(ta);
-      ta.select();
-      try { document.execCommand('copy'); } catch (e) {}
-      document.body.removeChild(ta);
-      done();
-    }
+    });
   };
 
   componentWillUnmount() { clearTimeout(this._t); }
 
   copyEmail = () => {
-    const email = 'aidyn.argyn@mechta.kz';
-    const done = () => {
+    const email = this.sendConfig().emailTo;
+    this.copyToClipboard(email).then(() => {
       this.setState({ copied: true });
       clearTimeout(this._t);
       this._t = setTimeout(() => this.setState({ copied: false }), 2000);
-    };
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(email).then(done, done);
-    } else {
-      const ta = document.createElement('textarea');
-      ta.value = email;
-      document.body.appendChild(ta);
-      ta.select();
-      try { document.execCommand('copy'); } catch (e) {}
-      document.body.removeChild(ta);
-      done();
-    }
+    });
   };
 
   visible(catId) {

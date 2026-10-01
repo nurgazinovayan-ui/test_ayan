@@ -1,21 +1,50 @@
-<!-- Вариант 2 (рекомендуется): загрузите "Mechta Inventory 2026.html" в файлы Тильды
-     (Настройки сайта → Файлы, или любое хранилище) и вставьте этот код в блок T123 «HTML-код».
-     Замените ССЫЛКА_НА_ФАЙЛ на полученный URL. -->
+================================================================================
+ВСТАВКА В ТИЛЬДУ
+
+В блок T123 идёт ТОЛЬКО этот код (~1 КБ). Сам файл
+"Mechta Inventory 2026.html" в блок вставлять нельзя: в T123 лимит около
+100 000 байт, а файл — 262 КБ, Тильда ответит «слишком много контента
+в блоке». Файл нужно разместить на хостинге и дать сюда ссылку на него.
+
+ГДЕ РАЗМЕСТИТЬ ФАЙЛ
+  Тильда не хранит произвольные .html — своего файлового хостинга под это
+  у неё нет. Варианты:
+
+  1. Netlify Drop — быстрее всего, без аккаунта и без гита:
+     открыть https://app.netlify.com/drop и перетащить туда файл.
+     Ссылка вида https://<случайное-имя>.netlify.app/ готова сразу.
+
+  2. GitHub Pages — если файл ведётся в репозитории:
+     он уже лежит в docs/index.html. Включить в репозитории
+     Settings -> Pages -> Source: ветка main, папка /docs.
+     Ссылка: https://<логин>.github.io/<репозиторий>/
+
+  3. Любой свой хостинг / S3 / Cloudflare Pages.
+
+  НЕ подойдут Google Drive и Яндекс.Диск: публичная ссылка отдаёт файл
+  на скачивание или страницу-просмотрщик, а не сам HTML, — в iframe
+  это не работает.
+
+Ниже заменить ССЫЛКА_НА_ФАЙЛ на полученный URL.
+================================================================================
+
 <div style="width:100%">
   <iframe src="ССЫЛКА_НА_ФАЙЛ" title="Mechta Inventory 2026"
-          style="width:100%;border:0;display:block;min-height:1200px" id="mechta-inv-frame"></iframe>
+          id="mechta-inv-frame" allow="clipboard-write"
+          style="width:100%;border:0;display:block;min-height:1200px"></iframe>
 </div>
 <script>
-(function(){
+(function () {
   var f = document.getElementById('mechta-inv-frame');
-  function fit(){
-    try {
-      var d = f.contentDocument; if (!d || !d.body) return;
-      var h = Math.max(d.body.scrollHeight, d.documentElement.scrollHeight);
-      if (h > 200) f.style.height = (h + 24) + 'px';
-    } catch(e){}
-  }
-  f.addEventListener('load', function(){ fit(); setTimeout(fit, 400); });
-  setInterval(fit, 700);
+
+  // Страница сама сообщает свою высоту через postMessage: читать
+  // contentDocument нельзя — файл лежит на другом домене, и браузер
+  // запретит доступ (именно на этом молча ломался прежний вариант).
+  window.addEventListener('message', function (e) {
+    var d = e.data;
+    if (!d || typeof d.__mechtaHeight !== 'number') return;
+    if (f.contentWindow && e.source !== f.contentWindow) return;  // чужой iframe
+    f.style.height = (d.__mechtaHeight + 24) + 'px';
+  });
 })();
-<\/script>
+</script>

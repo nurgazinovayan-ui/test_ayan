@@ -38,6 +38,67 @@ window.MECHTA_CONFIG = {
 """
 
 
+# Хост-страница (Тильда) не может прочитать contentDocument чужого домена,
+# поэтому высоту сообщаем сами через postMessage. Парный слушатель —
+# в tilda-embed-iframe.txt.
+HEIGHT_REPORTER = """
+<script>
+(function () {
+  if (window.parent === window) return;   // открыт напрямую, не в iframe
+
+  // Мерить documentElement.scrollHeight нельзя: рантайм ставит
+  // html,body,#dc-root{height:100%} (support.js, FULL_PAGE_CSS), поэтому
+  // scrollHeight не может стать меньше высоты самого iframe — высота росла
+  // бы и не возвращалась назад, когда контента становится меньше (поиск,
+  // смена категории). Поэтому измеряем реальный контент: низ самого
+  // нижнего из блоков страницы.
+  function contentHeight() {
+    var host = document.querySelector('#dc-root > .sc-host')
+            || document.getElementById('dc-root');
+    var max = 0;
+    if (host) {
+      for (var i = 0; i < host.children.length; i++) {
+        var bottom = host.children[i].getBoundingClientRect().bottom;
+        if (bottom > max) max = bottom;
+      }
+      max += window.scrollY || 0;
+    }
+    // Разметка ещё не смонтирована — отдаём хоть что-то, чтобы не схлопнуть блок.
+    if (max < 1) max = document.documentElement.scrollHeight;
+    return Math.ceil(max);
+  }
+
+  var last = 0;
+  function send() {
+    var h = contentHeight();
+    if (!h || Math.abs(h - last) < 8) return;   // дребезг на ±1px не слать
+    last = h;
+    // targetOrigin '*': наружу уходит только число высоты, домен хоста
+    // заранее неизвестен (Тильда, кастомный домен, превью).
+    window.parent.postMessage({ __mechtaHeight: h }, '*');
+  }
+
+  window.addEventListener('load', send);
+  window.addEventListener('resize', send);
+  if (window.ResizeObserver) new ResizeObserver(send).observe(document.documentElement);
+  setInterval(send, 500);   // перерисовки React-рантайма ResizeObserver не всегда ловит
+})();
+</script>
+"""
+
+
+# support.js (строка ~158) при отсутствии window.__resources до-загружает
+# собственный URL ещё раз и перезаписывает шаблон результатом разбора —
+# механика hot-reload редактора. В автономной сборке это ломает страницу:
+# по file:// запрос рубит CORS и всё работает случайно, а по http(s) —
+# то есть на любом реальном хостинге — fetch удаётся, разбор инлайненного
+# файла даёт пустой шаблон, и страница рендерится пустой.
+# Пустой объект отключает это и безопасен: все обращения к __resources
+# в рантайме — это res ? res[url] : undefined.
+RESOURCES_GUARD = """
+<script>window.__resources = {};</script>
+"""
+
 def inline(path):
     js = io.open(path, encoding="utf-8").read()
     # </script> внутри строки закрыл бы тег и оборвал скрипт.
@@ -50,6 +111,7 @@ def main():
     # support.js требует window.React / window.ReactDOM — инлайним обе перед ним,
     # чтобы файл открывался офлайн и с file://, без CDN.
     scripts = "\n".join([
+        RESOURCES_GUARD,
         inline(os.path.join(HERE, "vendor", "react.js")),
         inline(os.path.join(HERE, "vendor", "react-dom.js")),
         inline(os.path.join(HERE, "support.js")),
@@ -63,7 +125,7 @@ def main():
     head = "<head>"
     if head not in html:
         raise SystemExit("не найден <head> в " + SRC)
-    html = html.replace(head, head + CONFIG, 1)
+    html = html.replace(head, head + CONFIG + HEIGHT_REPORTER, 1)
 
     io.open(OUT, "w", encoding="utf-8").write(html)
     print("собрано: %s (%.0f КБ)" % (os.path.basename(OUT), len(html.encode()) / 1024))
