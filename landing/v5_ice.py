@@ -254,7 +254,8 @@ TABS_CSS = """
 .ed button { border: 0; padding: 0; background: none; font: inherit; letter-spacing: inherit; color: var(--dim); cursor: pointer; white-space: nowrap; position: relative; transition: color .25s; }
 .ed button:hover { color: var(--ink2); } .ed button[aria-selected="true"] { color: var(--ink); }
 .ed button[aria-selected="true"]::after { content: ''; position: absolute; left: 0; right: 0; bottom: -2px; height: 3px; border-radius: 2px; background: var(--ac); box-shadow: 0 0 14px var(--ac); }
-.ed .sl { margin: 0 .32em; color: var(--s3); font-style: normal; }
+.ed .dv { display: inline-block; width: 7px; height: 7px; margin: 0 .55em; border-radius: 50%; background: rgba(155,232,255,.22); box-shadow: 0 0 10px rgba(155,232,255,.25); vertical-align: middle; transform: translateY(-.12em); }
+.models .t { animation-duration: 80s; }
 .mpanel { margin-top: 44px; padding: 44px; border-radius: 28px; background: rgba(155,232,255,.028); box-shadow: inset 0 0 0 1px var(--line), 0 40px 90px -40px rgba(0,0,0,.8); }
 .tp[hidden] { display: none; }
 .stage { display: grid; grid-template-columns: minmax(0, 1fr) 520px; gap: 48px; align-items: center; min-height: 600px; }
@@ -439,7 +440,7 @@ TABS_CSS = """
 @media (max-width: 1060px) { .stage { grid-template-columns: minmax(0, 1fr); min-height: 0; } .win { max-width: 560px; } }
 @media (max-width: 760px) {
   .ed { display: flex; gap: 8px; overflow-x: auto; scroll-snap-type: x mandatory; margin: 0 -16px; padding: 4px 16px 10px; font-size: 15px; letter-spacing: -.01em; scrollbar-width: none; }
-  .ed::-webkit-scrollbar { display: none; } .ed .sl { display: none; }
+  .ed::-webkit-scrollbar { display: none; } .ed .dv { display: none; }
   .ed button { flex: none; scroll-snap-align: start; padding: 10px 14px; border-radius: 12px; background: rgba(255,255,255,.04); box-shadow: inset 0 0 0 1px var(--line); color: var(--ink2); }
   .ed button[aria-selected="true"] { background: var(--ac); color: var(--acink); box-shadow: 0 10px 24px -10px rgba(155,232,255,.5); } .ed button[aria-selected="true"]::after { display: none; }
   .mpanel { margin-top: 18px; padding: 22px 18px; border-radius: 22px; } .lt .lead { font-size: 15.5px; }
@@ -473,6 +474,15 @@ dialog.doc { background: var(--card); } .sf input, .sf textarea { background: va
 :focus-visible { outline-color: var(--ac); }
 """
 
+# Every model the app calls (supabase/functions + src/types.ts). The Motion Engine storyboard model is shown as
+# ONEFLOW Motion Engine and stays off this list by the owner's choice.
+AI = [('Фото', ['Nano Banana Pro', 'Nano Banana 2', 'Nano Banana 2 Lite', 'GPT Image 2', 'GPT Image 2.5 Sunburst', 'GPT Image 2.5 Flare',
+                'Seedream 5 Pro', 'Seedream 5.0 Lite', 'Recraft V4 Styles Pro', 'Grok Imagine Image 2.0', 'Krea 2 Large']),
+      ('Видео', ['Kling 3.0', 'Veo 3.1 Fast', 'Seedance 2.5', 'Seedance 2.0', 'Seedance 2.0 Mini', 'MiniMax Hailuo 3 Max', 'FLUX.3 Video']),
+      ('Вектор', ['Recraft V4 Vector']), ('Музыка', ['Lyria 3 Pro']), ('Голос', ['Gemini 3.1 Flash TTS']),
+      ('Тексты и аналитика', ['GPT-5.6', 'GPT-4.1', 'GPT-4.1 mini']), ('Инструменты', ['Real-ESRGAN (апскейлер)', 'Background Remover (удаление фона)'])]
+AI_ALL = [m for _, ms in AI for m in ms]
+FAQ_AI = ('Какие нейросети входят в ONEFLOW?', '<br>'.join(f'{g}: {", ".join(ms)}.' for g, ms in AI))
 FNOTE = '* До 50% — в сравнении с оплатой тех же моделей в отдельных сервисах; итог зависит от моделей и объёма.'
 
 JS_TABS = """<script>
@@ -489,7 +499,11 @@ JS_TABS = """<script>
     document.getElementById('modes').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); };
   // windows are drawn on a 520×440 canvas and scaled to the column
   const fit = () => document.querySelectorAll('.tp:not([hidden]) .vw').forEach((w) => w.style.setProperty('--k', Math.min(1, w.clientWidth / 520)));
-  addEventListener('resize', fit); addEventListener('hashchange', fromHash); fromHash(); fit();
+  // a dot never ends or starts a line of the wrapped tab list
+  const dots = () => document.querySelectorAll('.ed .dv').forEach((d) => { d.style.visibility = '';
+    const a = d.previousElementSibling, b = d.nextElementSibling; if (a && b && a.offsetTop !== b.offsetTop) d.style.visibility = 'hidden'; });
+  addEventListener('resize', () => { fit(); dots(); }); addEventListener('hashchange', fromHash); fromHash(); fit(); dots();
+  if (document.fonts) document.fonts.ready.then(dots);
 })();
 </script>
 """
@@ -517,7 +531,11 @@ def build(docs=''):
     hero = hero.replace('</div></div></section>', f'</div><p class="fnote">{FNOTE}</p></div></section>', 1)
     pick = lambda pat: next(s for s in sections if pat in s)  # noqa: E731
     pricing, faq, end = pick('id="pricing"'), pick('id="faq"'), pick('class="end')
-    buttons = '<i class="sl" aria-hidden="true">/</i>'.join(
+    hero = re.sub(r'<div class="models".*?</div></div>', lambda m: (f'<div class="models" role="img" aria-label="Нейросети в ONEFLOW: {", ".join(AI_ALL)}"><div class="t">'
+                  + ''.join(f'<span>{n}</span>' for n in AI_ALL) * 2 + '</div></div>'), hero, count=1, flags=re.S)
+    q, a = FAQ_AI  # right after the first question: «какие нейросети» is the most common pre-sale question
+    faq = faq.replace('</details>', f'</details><details><summary>{q}</summary><p>{a}</p></details>', 1)
+    buttons = '<i class="dv" aria-hidden="true"></i>'.join(
         f'<button type="button" role="tab" id="{k}" aria-controls="p-{k}" aria-selected="{"true" if i == 0 else "false"}" tabindex="{0 if i == 0 else -1}">{lb}</button>'
         for i, (k, lb, *_x) in enumerate(TABS))
     modes = ('<section class="sec" id="modes"><div class="wrap"><div class="sh rv"><span class="k">Возможности</span><h2>Всё для контента — в одном окне</h2></div>'
