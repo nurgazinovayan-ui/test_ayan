@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Проверка Web3Forms</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font: 15px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+         color: #0B0B0C; background: #FFFFFF; padding: 40px 24px 80px; }
+  .wrap { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 26px; font-weight: 800; letter-spacing: -0.02em; }
+  p.lead { color: #55555F; margin-top: 10px; }
+  label { display: block; font-weight: 700; font-size: 14px; margin: 24px 0 8px; }
+  input { width: 100%; font: inherit; padding: 13px 16px; border: 1.5px solid #E4E4E8;
+          border-radius: 8px; outline: none; }
+  input:focus { border-color: #0B0B0C; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
+  button { font: inherit; font-weight: 700; font-size: 14px; color: #FFFFFF; background: #FF0080;
+           border: 0; border-radius: 8px; padding: 14px 22px; cursor: pointer; }
+  button.alt { background: #0B0B0C; }
+  button:disabled { background: #C6C6CE; cursor: default; }
+  pre { margin-top: 24px; background: #FAFAFB; border: 1px solid #EDEDEF; border-radius: 8px;
+        padding: 18px; font: 13px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace;
+        white-space: pre-wrap; word-break: break-word; min-height: 120px; }
+  .hint { color: #8A8A93; font-size: 13px; margin-top: 6px; }
+  .ok { color: #0A7A3D; font-weight: 700; }
+  .bad { color: #C2005F; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Проверка Web3Forms</h1>
+  <p class="lead">Эта страница ни от чего не зависит: ни от Тильды, ни от iframe, ни от лендинга.
+  Она отправляет запрос прямо в Web3Forms и показывает их ответ целиком.
+  Так видно, на каком шаге теряется письмо.</p>
+
+  <label for="key">Access Key</label>
+  <input id="key" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" autocomplete="off">
+  <p class="hint">Тот же ключ, что вписан в лендинг.</p>
+
+  <div class="row">
+    <button id="min">1. Минимальный тест</button>
+    <button id="full" class="alt">2. Тест как настоящий бриф</button>
+  </div>
+  <p class="hint">Сначала первый. Если письмо от него приходит, а от второго нет — дело в составе
+  полей брифа, и это уже моя часть работы.</p>
+
+  <pre id="out">Ответ появится здесь.</pre>
+</div>
+
+<script>
+(function () {
+  var out = document.getElementById('out');
+  var keyEl = document.getElementById('key');
+
+  function log(s) { out.textContent = s; }
+
+  function send(payload, label, btn) {
+    var key = keyEl.value.trim();
+    if (!key) { log('Сначала вставьте Access Key.'); keyEl.focus(); return; }
+    payload.access_key = key;
+
+    btn.disabled = true;
+    log(label + '\nОтправляем…');
+    var started = Date.now();
+
+    fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+      .then(function (r) {
+        return r.text().then(function (t) { return { status: r.status, ok: r.ok, text: t }; });
+      })
+      .then(function (res) {
+        var pretty = res.text;
+        try { pretty = JSON.stringify(JSON.parse(res.text), null, 2); } catch (e) {}
+        var verdict;
+        try {
+          verdict = JSON.parse(res.text).success === true
+            ? 'ПРИНЯТО — Web3Forms говорит, что письмо отправлено.\nЕсли оно не придёт, теряется уже в почте: смотрите спам и карантин.'
+            : 'ОТКАЗ — Web3Forms не принял заявку. Причина в message ниже.';
+        } catch (e) { verdict = 'Ответ не похож на JSON — смотрите текст ниже.'; }
+
+        log(label + '\n\n' +
+            'HTTP ' + res.status + '   (' + (Date.now() - started) + ' мс)\n' +
+            verdict + '\n\n' +
+            'Полный ответ:\n' + pretty + '\n\n' +
+            'Отправленные поля: ' + Object.keys(payload).join(', '));
+      })
+      .catch(function (e) {
+        log(label + '\n\nЗапрос не дошёл до Web3Forms: ' + e.message +
+            '\n\nЭто сеть, блокировщик рекламы или расширение браузера — не сервис.' +
+            '\nПопробуйте другой браузер или режим инкогнито с отключёнными расширениями.');
+      })
+      .then(function () { btn.disabled = false; });
+  }
+
+  document.getElementById('min').onclick = function () {
+    send({
+      subject: 'Тест 1 — минимальный',
+      message: 'Проверка доставки Web3Forms. Если это письмо пришло, сервис и адрес работают.'
+    }, 'Тест 1 — минимальный (3 поля)', this);
+  };
+
+  document.getElementById('full').onclick = function () {
+    // Тот же набор и объём полей, что отправляет лендинг.
+    var longText = 'БРИФ КАМПАНИИ — Mechta 2026\n\n';
+    for (var i = 1; i <= 24; i++) longText += 'Вопрос ' + i + ': значение для проверки объёма письма\n';
+    var payload = {
+      subject: 'Тест 2 — как настоящий бриф',
+      from_name: 'Mechta Inventory 2026',
+      campaign: 'Тестовая кампания', vendor: 'Тестовый вендор', focus: 'Категория',
+      goal: 'Продажи', date_start: '2026-10-01', date_end: '2026-10-31',
+      budget: '1 000 000 ₸', margin: '12', aov: '250 000',
+      audience: 'клиентская база', geo: 'вся страна', segments: 'RFM',
+      channels: 'digital, CRM', content: 'есть', offer: 'рассрочка 0-0-12',
+      message: 'Ключевое сообщение', result: 'продажи, шт',
+      limits: 'бренд-гайды', owner: 'Тест Тестов', comment: '—',
+      services: 'DMP — first-party аудитории; WhatsApp-рассылка',
+      brief_text: longText,
+      formservices: 'Mechta Inventory 2026'
+    };
+    // +1 к счётчику — access_key добавляется в send().
+    var kb = Math.round(JSON.stringify(payload).length / 1024);
+    send(payload, 'Тест 2 — как настоящий бриф (' + (Object.keys(payload).length + 1) +
+         ' полей, ~' + kb + ' КБ)', this);
+  };
+})();
+</script>
+</body>
+</html>
