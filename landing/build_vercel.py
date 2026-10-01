@@ -62,26 +62,48 @@ def build4(theme='light'):
 
 
 def build5():
-    """The current oneflow.art landing: dark «Лёд» with the modes as tabs (v5_ice.py)."""
+    """The current oneflow.art landing (v5_ice.py): English at / (index.html), Russian at /ru (ru.html)."""
     sys.path.insert(0, HERE)
-    import v5_ice
-    finish(v5_ice.build(docs=legal_dialogs()), '5-ice', 'ONEFLOW-5-Ice-vercel.zip', '', sync=True)
+    import v5_ice, v5_en
+    pages = {'index.html': v5_ice.build(docs=v5_en.legal_en(), lang='en'), 'ru.html': v5_ice.build(docs=legal_dialogs(), lang='ru')}
+    finish_pages(pages, '5-ice', 'ONEFLOW-5-Ice-vercel.zip')
 
 
-def finish(html, slug, zipname, sfx, sync):
+def process(html, slug):
+    """Inline the fonts the page renders, its images and the favicon; check nothing points outside the page."""
     tmp = os.path.join(HERE, slug + '.full.html'); open(tmp, 'w', encoding='utf-8').write(html)
     used = set(json.loads(subprocess.check_output(['node', os.path.join(HERE, 'fontsused.js'), tmp], cwd=HERE)))
     os.remove(tmp)
     html, nf = inline_fonts(html, used)
-    for d_, n in sorted(set(re.findall(r'assets/(ol|ui)/([\w-]+)\.webp', html))):
+    for d_, n in sorted(set(re.findall(r'assets/(ol|ui|hero)/([\w-]+)\.webp', html))):
         html = html.replace(f'assets/{d_}/{n}.webp', uri(os.path.join(HERE, 'assets', d_, f'{n}.webp'), 'image/webp'))
     # hero promo video stays a separate file next to index.html (served from the site root); the poster is inlined
     html = html.replace('assets/video/oneflow-promo.jpg', uri(os.path.join(HERE, 'assets', 'video', 'oneflow-promo.jpg'), 'image/jpeg'))
     html = html.replace('src="assets/video/oneflow-promo.', 'src="/oneflow-promo.')
     html = html.replace('<meta name="theme-color"', f'<link rel="icon" href="{uri(os.path.join(APPREPO, "public", "favicon.svg"), "image/svg+xml")}" type="image/svg+xml">\n<meta name="theme-color"', 1)
     assert 'assets/' not in html and 'fonts/' not in html
-    bad = r'(?<![\w-])(?:src|href)="(?!data:|#|/app(?:\?|\")|https://oneflow\.art/\"|/oneflow-promo\.(?:mp4|webm)\")'
+    bad = r'(?<![\w-])(?:src|href)="(?!data:|#|/app(?:\?|\")|/\"|/ru\"|https://oneflow\.art/(?:ru)?\"|/oneflow-promo\.(?:mp4|webm)\")'
     assert not re.search(bad, html), re.findall(r'.{40}' + bad + r'.{30}', html)[:3]
+    return html, nf, used
+
+
+def finish_pages(pages, slug, zipname):
+    d = os.path.join(HERE, 'site', slug); os.makedirs(d, exist_ok=True)
+    for name, html in pages.items():
+        html, nf, used = process(html, slug)
+        open(os.path.join(d, name), 'w', encoding='utf-8').write(html)
+        print(f'site/{slug}/{name} {len(html.encode()) // 1024} KB, {nf} font faces, fonts used {sorted(used)}')
+    os.makedirs(os.path.join(HERE, 'out'), exist_ok=True)
+    with zipfile.ZipFile(os.path.join(HERE, 'out', zipname), 'w', zipfile.ZIP_DEFLATED) as z:
+        for name in pages:
+            z.write(os.path.join(d, name), name)
+    extra = {n: os.path.join(d, n) for n in pages if n != 'index.html'}
+    site_zip(os.path.join(d, 'index.html'), '', extra_pages=extra)
+    sync_app_repo(os.path.join(d, 'index.html'), extra_pages=extra)
+
+
+def finish(html, slug, zipname, sfx, sync):
+    html, nf, used = process(html, slug)
     d = os.path.join(HERE, 'site', slug); os.makedirs(d, exist_ok=True)
     open(os.path.join(d, 'index.html'), 'w', encoding='utf-8').write(html)
     os.makedirs(os.path.join(HERE, 'out'), exist_ok=True)
@@ -104,20 +126,22 @@ ADMIN_HEADERS = {'source': '/admin(.html)?', 'headers': [
 ]}
 
 
-def sync_app_repo(index):
+def sync_app_repo(index, extra_pages=None):
     """Copy the landing, the admin page and the hero video into the app repo, whose Vercel build
     (scripts/build-vercel.mjs) serves them at /, /admin and /oneflow-promo.* — so a git deploy matches the zip."""
     if not os.path.isdir(os.path.join(APPREPO, 'landing')):
         return
     import shutil
     shutil.copyfile(index, os.path.join(APPREPO, 'landing', 'index.html'))
+    for name, src in (extra_pages or {}).items():  # e.g. ru.html → oneflow.art/ru (scripts/build-vercel.mjs copies landing/*.html)
+        shutil.copyfile(src, os.path.join(APPREPO, 'landing', name))
     shutil.copyfile(os.path.join(HERE, '..', 'admin', 'admin.html'), os.path.join(APPREPO, 'landing', 'admin.html'))
     for ext in ('mp4', 'webm'):
         shutil.copyfile(os.path.join(HERE, 'assets', 'video', f'oneflow-promo.{ext}'), os.path.join(APPREPO, 'public', f'oneflow-promo.{ext}'))
     print('synced landing/index.html, landing/admin.html, public/oneflow-promo.* →', APPREPO)
 
 
-def site_zip(index, sfx=''):
+def site_zip(index, sfx='', extra_pages=None):
     """Full oneflow.art upload: the previous site archive (app, assets, presets…) with the new index.html and the hero video files."""
     base = os.environ.get('SITE_BASE', '/tmp/claude-0/site-prev.zip')
     if not os.path.exists(base):
@@ -126,6 +150,7 @@ def site_zip(index, sfx=''):
     tmp = out + '.tmp'
     extra = {'oneflow-promo.mp4': os.path.join(HERE, 'assets', 'video', 'oneflow-promo.mp4'), 'oneflow-promo.webm': os.path.join(HERE, 'assets', 'video', 'oneflow-promo.webm')}
     extra['admin.html'] = os.path.join(HERE, '..', 'admin', 'admin.html')  # oneflow.art/admin (vercel.json cleanUrls)
+    extra.update(extra_pages or {})
     with zipfile.ZipFile(base) as zi, zipfile.ZipFile(tmp, 'w', zipfile.ZIP_DEFLATED) as zo:
         for it in zi.infolist():
             if it.filename in ('index.html', 'vercel.json', *extra):

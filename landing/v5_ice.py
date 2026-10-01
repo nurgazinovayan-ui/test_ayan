@@ -519,20 +519,56 @@ def tab_panel(i, key, label, h, lead, bens):
             f'<div class="vw"><div class="cv">{inner}</div></div></div></div></div>')
 
 
-def build(docs=''):
+HERO_CSS = """
+/* hero: the campaign photo full-bleed under the menu, text pinned bottom-left, the bottom blurs and fades into the page */
+.hero { position: relative; isolation: isolate; display: flex; align-items: flex-end; min-height: clamp(640px, 56vw, 980px); margin-top: -72px; padding: 130px 0 72px; text-align: left; overflow: hidden; }
+.hbg { position: absolute; inset: 0; z-index: -1; background: var(--img-hero) 88% 30% / cover no-repeat;
+  -webkit-mask-image: linear-gradient(180deg, #000 64%, transparent 100%); mask-image: linear-gradient(180deg, #000 64%, transparent 100%); }
+.hbg::before { content: ''; position: absolute; inset: 0; -webkit-backdrop-filter: blur(22px); backdrop-filter: blur(22px);
+  -webkit-mask-image: linear-gradient(180deg, transparent 48%, #000 86%); mask-image: linear-gradient(180deg, transparent 48%, #000 86%); }
+.hbg::after { content: ''; position: absolute; inset: 0;
+  background: linear-gradient(90deg, rgba(9,14,18,.74) 0%, rgba(9,14,18,.36) 36%, rgba(9,14,18,0) 62%), linear-gradient(180deg, rgba(9,14,18,0) 38%, rgba(9,14,18,.62) 72%, rgba(9,14,18,.75) 100%); }
+.hero h1 { margin-top: 0; max-width: 820px; font-size: clamp(40px, 5.6vw, 80px); text-shadow: 0 2px 30px rgba(0,0,0,.28); }
+.hero .sub { margin: 22px 0 0; max-width: 560px; color: #d3e3ec; } .hero .acts { justify-content: flex-start; margin-top: 30px; }
+.mrow { padding-top: 34px; } .mrow .models { margin-top: 0; }
+/* the menu sits on the light top of the photo: dark ink */
+.nav .logo, .nav .lg { color: #0a1822; } .nav nav a { color: rgba(10,24,34,.78); } .nav nav a:hover { color: #0a1822; }
+.nav .logo, .nav .lg, .nav nav a { text-shadow: 0 0 10px rgba(225,240,250,.9), 0 0 2px rgba(225,240,250,.8); }
+.nav nav { margin-left: auto; } .nav .sp { display: none; }
+.nav .btn.p { background: #0a1822; color: #fff; box-shadow: 0 10px 24px -12px rgba(10,24,34,.6); } .burger i { background: #0a1822; }
+.lang { display: inline-flex; gap: 2px; padding: 3px; border-radius: 9px; background: rgba(10,24,34,.07); box-shadow: inset 0 0 0 1px rgba(10,24,34,.16); }
+.lang a { padding: 4px 9px; border-radius: 7px; font: 600 12px/1.2 var(--d); color: rgba(10,24,34,.66); } .lang a:hover { color: #0a1822; }
+.lang a[aria-current] { background: #0a1822; color: #fff; }
+@media (max-width: 760px) { .hero { min-height: clamp(600px, 92svh, 820px); padding-bottom: 48px; } .hbg { background-position: 70% 30%; }
+  .hbg::after { background: linear-gradient(180deg, rgba(9,14,18,0) 30%, rgba(9,14,18,.7) 62%, rgba(9,14,18,.8) 100%); } .nav .lang { margin-left: auto; } .hero .acts { flex-direction: column; align-items: stretch; } }
+"""
+
+JS_LANG = """<script>
+// language: the choice made with the EN/RU switch is remembered (and passed on to the app); the English page sends a
+// visitor who picked Russian before to /ru. CMS edits are kept per language: English keys carry an «en:» prefix.
+(() => { const ru = document.documentElement.lang === 'ru';
+  try { if (!localStorage.getItem('oneflow-language')) localStorage.setItem('oneflow-language', ru ? 'ru' : 'en'); } catch (e) {}
+  document.querySelectorAll('.lang a').forEach((a) => a.addEventListener('click', () => { try { localStorage.setItem('of-lang', a.hreflang); localStorage.setItem('oneflow-language', a.hreflang); } catch (e) {} }));
+})();
+</script>
+"""
+
+
+def build(docs='', lang='ru'):
     html = v.build(docs=docs, theme='dark')
     head, rest = html.split('<main id="main">', 1)
     main_old, tail = rest.split('</main>', 1)
-    # keep v4's hero, why, pricing, faq and closing card; everything in between becomes the modes tabs
+    # keep v4's hero texts, pricing, faq and closing card; everything in between becomes the modes tabs
     sections = re.split(r'(?=<section class="sec"|<div class="wrap"><section class="end)', main_old)
-    hero = sections[0].replace('href="#how"', 'href="#modes"')
-    # no promo video and no adaptation panel under the headline — the models line follows the buttons, then the footnote
-    hero = re.sub(r'<div class="hvid">.*?(?=<div class="models")', '', hero, count=1, flags=re.S)
-    hero = hero.replace('</div></div></section>', f'</div><p class="fnote">{FNOTE}</p></div></section>', 1)
+    hero_old = sections[0].replace('href="#how"', 'href="#modes"')
     pick = lambda pat: next(s for s in sections if pat in s)  # noqa: E731
     pricing, faq, end = pick('id="pricing"'), pick('id="faq"'), pick('class="end')
-    hero = re.sub(r'<div class="models".*?</div></div>', lambda m: (f'<div class="models" role="img" aria-label="Нейросети в ONEFLOW: {", ".join(AI_ALL)}"><div class="t">'
-                  + ''.join(f'<span>{n}</span>' for n in AI_ALL) * 2 + '</div></div>'), hero, count=1, flags=re.S)
+    grab = lambda pat: re.search(pat, hero_old, re.S).group(0)  # noqa: E731
+    h1, sub, acts = grab(r'<h1.*?</h1>'), grab(r'<p class="sub">.*?</p>'), grab(r'<div class="acts">.*?</div>')
+    models = (f'<div class="models" role="img" aria-label="Нейросети в ONEFLOW: {", ".join(AI_ALL)}"><div class="t">'
+              + ''.join(f'<span>{n}</span>' for n in AI_ALL) * 2 + '</div></div>')
+    hero = (f'<section class="hero"><div class="hbg" aria-hidden="true"></div><div class="wrap">{h1}{sub}{acts}</div></section>'
+            f'<div class="mrow"><div class="wrap">{models}<p class="fnote">{FNOTE}</p></div></div>')
     q, a = FAQ_AI  # right after the first question: «какие нейросети» is the most common pre-sale question
     faq = faq.replace('</details>', f'</details><details><summary>{q}</summary><p>{a}</p></details>', 1)
     buttons = '<i class="dv" aria-hidden="true"></i>'.join(
@@ -542,17 +578,37 @@ def build(docs=''):
              f'<div class="ed" role="tablist" aria-label="Режимы ONEFLOW">{buttons}</div>'
              '<div class="mpanel">' + ''.join(tab_panel(i, *t) for i, t in enumerate(TABS)) + '</div></div></section>')
     main = f'<main id="main">{hero}{modes}{pricing}{faq}{end}</main>'
-    # nav: new anchors; theme colour; styles; no v4 feature-card demos
+    # nav: new anchors + EN/RU switch; head: language alternates; theme colour; styles; no v4 feature-card demos
     links = ''.join(f'<a href="{h}">{t}</a>' for h, t in NAV)
+    cur = lambda l: ' aria-current="page"' if l == lang else ''  # noqa: E731
+    switch = ('<div class="lang" role="group" aria-label="Язык / Language">'
+              f'<a href="/" hreflang="en" lang="en"{cur("en")}>EN</a><a href="/ru" hreflang="ru" lang="ru"{cur("ru")}>RU</a></div>')
     head = re.sub(r'(<nav aria-label="Разделы">).*?(</nav>)', lambda m: m.group(1) + links + m.group(2), head, count=1, flags=re.S)
+    head = head.replace('<span class="sp"></span>', '<span class="sp"></span>' + switch, 1)
     head = re.sub(r'(<nav class="mnav" id="mnav" aria-label="Меню" hidden>).*?(<div class="row">)', lambda m: m.group(1) + links + m.group(2), head, count=1, flags=re.S)
     head = head.replace('<meta name="theme-color" content="#0b0b10">', '<meta name="theme-color" content="#090e12">')
+    url = 'https://oneflow.art/' + ('ru' if lang == 'ru' else '')
+    head = head.replace('<link rel="canonical" href="https://oneflow.art/">', f'<link rel="canonical" href="{url}">').replace('<meta property="og:url" content="https://oneflow.art/">', f'<meta property="og:url" content="{url}">')
+    head = head.replace('<link rel="canonical"', '<link rel="alternate" hreflang="en" href="https://oneflow.art/">\n<link rel="alternate" hreflang="ru" href="https://oneflow.art/ru">\n'
+                        '<link rel="alternate" hreflang="x-default" href="https://oneflow.art/">\n<link rel="canonical"', 1)
+    if lang == 'en':  # a visitor who chose Russian before goes straight to /ru (never inside the /admin text editor)
+        head = head.replace("<script>document.documentElement.classList.add('js')</script>",
+                            "<script>document.documentElement.classList.add('js');try{if(localStorage.getItem('of-lang')==='ru'&&!/cms-edit/.test(location.search))location.replace('/ru'+location.hash)}catch(e){}</script>", 1)
     head = head.replace(protos.CSS, '').replace(protos.DARK, '')
-    head = head.replace('</style>', ICE + TABS_CSS.replace('ANIM', '\n  '.join(ANIM)) + '</style>', 1)
-    tail = tail.replace(protos.js(), '').replace('</body>', JS_TABS + '</body>')
-    return head + main + tail
+    head = head.replace('</style>', ICE + TABS_CSS.replace('ANIM', '\n  '.join(ANIM)) + HERO_CSS + '</style>', 1)
+    head = head.replace(':root {', ':root { --img-hero: url(assets/hero/oneflow-hero.webp);', 1)
+    tail = tail.replace(protos.js(), '').replace('</body>', JS_TABS + JS_LANG + '</body>')
+    tail = tail.replace("key: name + '.' + counts[name]", "key: (document.documentElement.lang === 'en' ? 'en:' : '') + name + '.' + counts[name]")
+    html = head + main + tail
+    if lang == 'en':
+        import v5_en
+        html = v5_en.translate(html)
+    return html
 
 
 if __name__ == '__main__':
     open(os.path.join(HERE, 'v5-ice.html'), 'w', encoding='utf-8').write(build())
     print('v5-ice.html')
+    if os.path.exists(os.path.join(HERE, 'v5_en.py')):
+        open(os.path.join(HERE, 'v5-ice-en.html'), 'w', encoding='utf-8').write(build(lang='en'))
+        print('v5-ice-en.html')

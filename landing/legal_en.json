@@ -1,0 +1,199 @@
+{
+ "privacy": {
+  "title": "Privacy Policy",
+  "updated": "Last updated: September 1, 2026",
+  "intro": "This Privacy Policy explains what data ONEFLOW (the \"Service\") collects, how it is used, who it is shared with, and what rights you have over your data.",
+  "sections": [
+   {
+    "heading": "1. What we collect",
+    "paragraphs": [
+     "Account data: your email address and authentication data, processed by our infrastructure provider (Supabase) when you sign up and sign in.",
+     "Payment data: when you pay for a tariff, your card details are entered directly on our payment partner LemonSqueezy’s interface — the Service never sees or stores them. We only receive the fact and amount of the payment, used to credit your balance.",
+     "Usage data: your generation request history (model used, cost, timestamp) — needed to deduct your balance and show your generation history.",
+     "Generation content: prompts and images/video you upload are sent to third-party AI model providers (see Section 3) to perform the generation.",
+     "Integration data: if you connect Yandex Disk backup, we store the OAuth access token securely — used only to upload your own generations to your own Disk folder.",
+     "Local data: some interface preferences and usage statistics are stored locally in your browser (localStorage) and never sent to our servers."
+    ]
+   },
+   {
+    "heading": "2. How we use it",
+    "paragraphs": [
+     "To provide the Service: running generations, crediting/deducting your balance, showing your history and profile.",
+     "To communicate with you: payment notifications, support responses.",
+     "To keep the Service secure: preventing abuse and unauthorized account access.",
+     "We do not sell your personal data to third parties or use it for advertising outside the Service itself."
+    ]
+   },
+   {
+    "heading": "3. Third parties we share data with",
+    "paragraphs": [
+     "Supabase — database hosting and user authentication.",
+     "Replicate — runs the AI generations; your prompts and uploaded images are sent to their servers solely to process the request and are not used by us for any other purpose.",
+     "LemonSqueezy — processes payments as the merchant of record; fully responsible for payment data security under PCI DSS.",
+     "Yandex Disk — only if you connect the backup integration yourself.",
+     "We do not share your data with any other third party except where required by law."
+    ]
+   },
+   {
+    "heading": "4. Storage and security",
+    "paragraphs": [
+     "Access to data is restricted at the database level via Row Level Security — every user can only see their own records.",
+     "Data is kept for as long as your account exists. When you delete your account, we delete the associated data except information we’re required to keep by law (e.g. payment records)."
+    ]
+   },
+   {
+    "heading": "5. Your rights",
+    "paragraphs": [
+     "You can request a copy of your data, a correction, or full account deletion by contacting the support address in the Contacts section.",
+     "You can disconnect Yandex Disk backup at any time from the Service — the access token is deleted immediately."
+    ]
+   },
+   {
+    "heading": "6. Changes to this policy",
+    "paragraphs": [
+     "We may update this Policy from time to time. We will notify you of material changes through the Service interface or by email."
+    ]
+   },
+   {
+    "heading": "7. Contact",
+    "paragraphs": [
+     "For any questions about how we handle personal data, write to nurgazinov.ayan@gmail.com."
+    ]
+   }
+  ]
+ },
+ "terms": {
+  "title": "Terms of Service",
+  "updated": "Last updated: September 1, 2026",
+  "intro": "By using ONEFLOW (the \"Service\") you agree to these Terms. If you disagree with any part of them, please do not use the Service.",
+  "sections": [
+   {
+    "heading": "1. Description of the Service",
+    "paragraphs": [
+     "ONEFLOW is a node-based editor for generating and adapting advertising photos, video, and audio using third-party AI models, plus tools for preparing creatives for ad platforms (Kaspi, GDN, YAN, BYYD, Discovery, and others).",
+     "Actual content generation is performed by third-party AI model providers (primarily Replicate) — the Service acts as an interface and does not guarantee uninterrupted availability of any specific model, since that depends on those third parties."
+    ]
+   },
+   {
+    "heading": "2. Account",
+    "paragraphs": [
+     "Using the Service requires registration. You are responsible for keeping your login credentials safe and for all activity under your account.",
+     "One account is intended for one user or organization; sharing access with third parties without the Service’s knowledge is not permitted."
+    ]
+   },
+   {
+    "heading": "3. Tariffs and balance",
+    "paragraphs": [
+     "Paying for a tariff through LemonSqueezy credits your Service balance with 85% of the amount actually charged (the Service and payment partner retain a 15% margin).",
+     "The balance is a one-time top-up: it never expires and never resets at the start of a new month — it is spent down as you use the Service until it runs out.",
+     "The cost of each generation is deducted from your balance at the actual price of the model used at the time of the request. If your balance is insufficient, the generation request will be declined — top up your tariff to continue.",
+     "A new account with no successful payment has a $0 balance — the free tier gives access to the Service’s interface but does not include any generations funded by the Service."
+    ]
+   },
+   {
+    "heading": "4. Acceptable use",
+    "paragraphs": [
+     "You may not use the Service to create illegal content, content infringing third-party rights (copyright, trademarks, right of publicity), or offensive, discriminatory, or misleading content.",
+     "Automated attempts to bypass balance limits, exploit Service vulnerabilities, or place excessive load on the infrastructure are prohibited.",
+     "We reserve the right to suspend or terminate account access for violations of these Terms."
+    ]
+   },
+   {
+    "heading": "5. Intellectual property",
+    "paragraphs": [
+     "Rights to content you create with the Service belong to you, to the extent permitted by the terms of use of the underlying third-party AI models.",
+     "The Service does not guarantee that generated content will be unique or free from similarity to output produced by other users of the same AI models."
+    ]
+   },
+   {
+    "heading": "6. Limitation of liability",
+    "paragraphs": [
+     "The Service is provided \"as is\". We do not guarantee that generated content will be fully accurate, fit for a particular purpose, or error-free.",
+     "We are not liable for outages of third-party providers (Replicate, LemonSqueezy, Yandex Disk, etc.) that are outside our control."
+    ]
+   },
+   {
+    "heading": "7. Changes and termination",
+    "paragraphs": [
+     "We may change the Service’s functionality, pricing, and these Terms. We will give advance notice of material changes through the Service interface or by email."
+    ]
+   },
+   {
+    "heading": "8. Contact",
+    "paragraphs": [
+     "For any questions, write to nurgazinov.ayan@gmail.com."
+    ]
+   }
+  ]
+ },
+ "refund": {
+  "title": "Refund Policy",
+  "updated": "Last updated: September 1, 2026",
+  "intro": "This policy describes when and how you can get a refund for a paid ONEFLOW tariff.",
+  "sections": [
+   {
+    "heading": "1. General rule",
+    "paragraphs": [
+     "Paying for a tariff tops up your Service balance and is a prepayment for future generations. Funds already deducted from your balance for completed generations are non-refundable — you received the service you paid for."
+    ]
+   },
+   {
+    "heading": "2. Refund of an unused balance",
+    "paragraphs": [
+     "You can request a refund of the unspent portion of your balance within 14 days of payment by writing to support at nurgazinov.ayan@gmail.com.",
+     "Only the portion of the amount not yet spent on generations at the time your request is reviewed is eligible for a refund."
+    ]
+   },
+   {
+    "heading": "3. Technical failures",
+    "paragraphs": [
+     "If a generation fails due to a fault of the Service or the AI model used, but your balance was still deducted, that amount is credited back to your balance. If this doesn’t happen automatically, contact support with the request details (model, time, amount deducted)."
+    ]
+   },
+   {
+    "heading": "4. Refund method",
+    "paragraphs": [
+     "Refunds are processed through LemonSqueezy (our payment partner and merchant of record) using the same method you paid with. The time to receive the funds depends on your bank or payment provider."
+    ]
+   },
+   {
+    "heading": "5. Exceptions",
+    "paragraphs": [
+     "No refund is given if the account was suspended for violating the Terms of Service, or if the refund request is submitted more than 14 days after payment."
+    ]
+   }
+  ]
+ },
+ "help": {
+  "title": "Help",
+  "updated": "Last updated: September 1, 2026",
+  "intro": "A short guide to ONEFLOW. If you can’t find what you need here, contact support from your profile inside the app once you’re signed in.",
+  "sections": [
+   {
+    "heading": "1. What ONEFLOW is",
+    "paragraphs": [
+     "ONEFLOW is a node-based ad creative builder: chain a prompt, image/video generation, and platform adaptation (BYYD, Discovery, GDN, Kaspi, Yandex Ads) into a finished asset without a designer."
+    ]
+   },
+   {
+    "heading": "2. Getting started",
+    "paragraphs": [
+     "After signing in, pick a template for your niche (\"Templates\" → the right category) or start from a blank canvas and add your first node (\"Prompt\" or \"Photo\") manually.",
+     "Your balance and generation limit are shown in the top bar; top up with the \"Upgrade\" button."
+    ]
+   },
+   {
+    "heading": "3. Saving and projects",
+    "paragraphs": [
+     "\"File → Save project\" saves the current canvas to a file, \"Open project\" loads it back. Every generation is also saved to the project archive automatically."
+    ]
+   },
+   {
+    "heading": "4. Support",
+    "paragraphs": [
+     "If something isn't working or you have questions, message the developer from the \"Profile\" section inside the app."
+    ]
+   }
+  ]
+ }
+}
