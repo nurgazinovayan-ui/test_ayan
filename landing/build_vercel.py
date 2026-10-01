@@ -1,6 +1,7 @@
 """Single-file Vercel build: inline fonts (only rendered family/weight pairs and the unicode subsets the text needs),
 images (assets/… → data URIs, each stored once via CSS variables), favicon and legal-document dialogs.
 
+python3 build_vercel.py 5        →  site/5-ice/index.html + out/ONEFLOW-5-Ice-vercel.zip (current oneflow.art landing; synced into the app repo)
 python3 build_vercel.py 4        →  site/4-porcelain/index.html + out/ONEFLOW-4-Porcelain-vercel.zip
 python3 build_vercel.py 4 dark   →  site/4-porcelain-dark/index.html + out/ONEFLOW-4-Porcelain-dark-vercel.zip
 """
@@ -56,9 +57,19 @@ def inline_fonts(html, used):
 def build4(theme='light'):
     sys.path.insert(0, HERE)
     import v4_porcelain as v
-    html = v.build(docs=legal_dialogs(), theme=theme)
     sfx = '-dark' if theme == 'dark' else ''
-    tmp = os.path.join(HERE, 'v4-porcelain.full.html'); open(tmp, 'w', encoding='utf-8').write(html)
+    finish(v.build(docs=legal_dialogs(), theme=theme), '4-porcelain' + sfx, f'ONEFLOW-4-Porcelain{sfx}-vercel.zip', sfx, sync=not sfx)
+
+
+def build5():
+    """The current oneflow.art landing: dark «Лёд» with the modes as tabs (v5_ice.py)."""
+    sys.path.insert(0, HERE)
+    import v5_ice
+    finish(v5_ice.build(docs=legal_dialogs()), '5-ice', 'ONEFLOW-5-Ice-vercel.zip', '', sync=True)
+
+
+def finish(html, slug, zipname, sfx, sync):
+    tmp = os.path.join(HERE, slug + '.full.html'); open(tmp, 'w', encoding='utf-8').write(html)
     used = set(json.loads(subprocess.check_output(['node', os.path.join(HERE, 'fontsused.js'), tmp], cwd=HERE)))
     os.remove(tmp)
     html, nf = inline_fonts(html, used)
@@ -71,14 +82,14 @@ def build4(theme='light'):
     assert 'assets/' not in html and 'fonts/' not in html
     bad = r'(?<![\w-])(?:src|href)="(?!data:|#|/app(?:\?|\")|https://oneflow\.art/\"|/oneflow-promo\.(?:mp4|webm)\")'
     assert not re.search(bad, html), re.findall(r'.{40}' + bad + r'.{30}', html)[:3]
-    d = os.path.join(HERE, 'site', '4-porcelain' + sfx); os.makedirs(d, exist_ok=True)
+    d = os.path.join(HERE, 'site', slug); os.makedirs(d, exist_ok=True)
     open(os.path.join(d, 'index.html'), 'w', encoding='utf-8').write(html)
     os.makedirs(os.path.join(HERE, 'out'), exist_ok=True)
-    with zipfile.ZipFile(os.path.join(HERE, 'out', f'ONEFLOW-4-Porcelain{sfx}-vercel.zip'), 'w', zipfile.ZIP_DEFLATED) as z:
+    with zipfile.ZipFile(os.path.join(HERE, 'out', zipname), 'w', zipfile.ZIP_DEFLATED) as z:
         z.write(os.path.join(d, 'index.html'), 'index.html')
-    print(f'site/4-porcelain{sfx}/index.html {len(html.encode()) // 1024} KB, {nf} font faces, fonts used {sorted(used)}')
+    print(f'site/{slug}/index.html {len(html.encode()) // 1024} KB, {nf} font faces, fonts used {sorted(used)}')
     site_zip(os.path.join(d, 'index.html'), sfx)
-    if not sfx:
+    if sync:
         sync_app_repo(os.path.join(d, 'index.html'))
 
 
@@ -131,4 +142,4 @@ def site_zip(index, sfx=''):
 
 
 if __name__ == '__main__':
-    {'4': build4}[sys.argv[1] if len(sys.argv) > 1 else '4'](*sys.argv[2:3])
+    {'4': build4, '5': build5}[sys.argv[1] if len(sys.argv) > 1 else '5'](*sys.argv[2:3])
