@@ -80,9 +80,10 @@ def process(html, slug):
     # hero promo video stays a separate file next to index.html (served from the site root); the poster is inlined
     html = html.replace('assets/video/oneflow-promo.jpg', uri(os.path.join(HERE, 'assets', 'video', 'oneflow-promo.jpg'), 'image/jpeg'))
     html = html.replace('src="assets/video/oneflow-promo.', 'src="/oneflow-promo.')
+    html = html.replace('src="assets/hero/oneflow-hero.', 'src="/oneflow-hero.')  # hero video: separate files at the site root
     html = html.replace('<meta name="theme-color"', f'<link rel="icon" href="{uri(os.path.join(APPREPO, "public", "favicon.svg"), "image/svg+xml")}" type="image/svg+xml">\n<meta name="theme-color"', 1)
     assert 'assets/' not in html and 'fonts/' not in html
-    bad = r'(?<![\w-])(?:src|href)="(?!data:|#|/app(?:\?|\")|/\"|/ru\"|https://oneflow\.art/(?:ru)?\"|/oneflow-promo\.(?:mp4|webm)\")'
+    bad = r'(?<![\w-])(?:src|href)="(?!data:|#|/app(?:\?|\")|/\"|/ru\"|https://oneflow\.art/(?:ru)?\"|/oneflow-(?:promo|hero)\.(?:mp4|webm)\")'
     assert not re.search(bad, html), re.findall(r'.{40}' + bad + r'.{30}', html)[:3]
     return html, nf, used
 
@@ -138,7 +139,8 @@ def sync_app_repo(index, extra_pages=None):
     shutil.copyfile(os.path.join(HERE, '..', 'admin', 'admin.html'), os.path.join(APPREPO, 'landing', 'admin.html'))
     for ext in ('mp4', 'webm'):
         shutil.copyfile(os.path.join(HERE, 'assets', 'video', f'oneflow-promo.{ext}'), os.path.join(APPREPO, 'public', f'oneflow-promo.{ext}'))
-    print('synced landing/index.html, landing/admin.html, public/oneflow-promo.* →', APPREPO)
+        shutil.copyfile(os.path.join(HERE, 'assets', 'hero', f'oneflow-hero.{ext}'), os.path.join(APPREPO, 'public', f'oneflow-hero.{ext}'))
+    print('synced landing/index.html, landing/admin.html, public/oneflow-promo.*, public/oneflow-hero.* →', APPREPO)
 
 
 def site_zip(index, sfx='', extra_pages=None):
@@ -150,6 +152,8 @@ def site_zip(index, sfx='', extra_pages=None):
     tmp = out + '.tmp'
     extra = {'oneflow-promo.mp4': os.path.join(HERE, 'assets', 'video', 'oneflow-promo.mp4'), 'oneflow-promo.webm': os.path.join(HERE, 'assets', 'video', 'oneflow-promo.webm')}
     extra['admin.html'] = os.path.join(HERE, '..', 'admin', 'admin.html')  # oneflow.art/admin (vercel.json cleanUrls)
+    for ext in ('mp4', 'webm'):  # hero video of the v5 landing
+        extra[f'oneflow-hero.{ext}'] = os.path.join(HERE, 'assets', 'hero', f'oneflow-hero.{ext}')
     extra.update(extra_pages or {})
     with zipfile.ZipFile(base) as zi, zipfile.ZipFile(tmp, 'w', zipfile.ZIP_DEFLATED) as zo:
         for it in zi.infolist():

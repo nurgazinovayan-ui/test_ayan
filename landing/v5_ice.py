@@ -520,12 +520,15 @@ def tab_panel(i, key, label, h, lead, bens):
 
 
 HERO_CSS = """
-/* hero: the campaign photo under the menu at its natural proportions (never zoomed in on desktop), a soft dark band
-   under the menu, text pinned bottom-left, and the bottom of the photo dissolving into the page */
-.hero { position: relative; isolation: isolate; display: flex; align-items: flex-end; min-height: max(640px, calc(max(100vw, 1180px) * .424 + 60px));
+/* hero: the campaign video (1470×630, looped, muted) under the menu at its natural proportions (never zoomed in on
+   desktop), a soft dark band under the menu, text pinned bottom-left, and the bottom of the video dissolving into the page */
+.hero { position: relative; isolation: isolate; display: flex; align-items: flex-end; min-height: max(640px, calc(max(100vw, 1180px) * .4286 + 60px));
   margin-top: -72px; padding: 130px 0 72px; text-align: left; overflow: hidden; }
-.hbg { position: absolute; left: 0; right: 0; top: 0; height: calc(max(100vw, 1180px) * .424); z-index: -1; background: var(--img-hero) 50% 0 / max(100%, 1180px) auto no-repeat;
+.hbg { position: absolute; left: 0; right: 0; top: 0; height: calc(max(100vw, 1180px) * .4286); z-index: -1; overflow: hidden; background: #0c1318;
   -webkit-mask-image: linear-gradient(180deg, #000 50%, transparent 100%); mask-image: linear-gradient(180deg, #000 50%, transparent 100%); }
+.hbg video { position: absolute; left: 50%; top: 0; width: max(100%, 1180px); height: auto; aspect-ratio: 1470 / 630; transform: translateX(-50%);
+  object-fit: cover; pointer-events: none; }
+.hbg video::-webkit-media-controls, .hbg video::-webkit-media-controls-start-playback-button { display: none !important; -webkit-appearance: none; }
 .hbg::after { content: ''; position: absolute; inset: 0;
   background: linear-gradient(180deg, rgba(9,14,18,.62) 0%, rgba(9,14,18,.28) 9%, rgba(9,14,18,0) 20%),
     linear-gradient(90deg, rgba(9,14,18,.72) 0%, rgba(9,14,18,.34) 36%, rgba(9,14,18,0) 62%); }
@@ -536,13 +539,16 @@ HERO_CSS = """
 .lang { display: inline-flex; gap: 2px; padding: 3px; border-radius: 9px; background: rgba(255,255,255,.06); box-shadow: inset 0 0 0 1px rgba(255,255,255,.16); }
 .lang a { padding: 4px 9px; border-radius: 7px; font: 600 12px/1.2 var(--d); color: rgba(238,247,251,.7); } .lang a:hover { color: #fff; }
 .lang a[aria-current] { background: var(--ac); color: var(--acink); }
-@media (max-width: 760px) { .hero { min-height: clamp(600px, 92svh, 820px); padding-bottom: 48px; } .hbg { height: auto; bottom: 0; background-size: cover; background-position: 70% 30%; }
+@media (max-width: 760px) { .hero { min-height: clamp(600px, 92svh, 820px); padding-bottom: 48px; } .hbg { height: auto; bottom: 0; }
+  .hbg video { left: 0; width: 100%; height: 100%; transform: none; aspect-ratio: auto; object-position: 62% 50%; }
   .hero .acts { flex-direction: column; align-items: stretch; } .nav .lang { margin-left: auto; } }
 """
 
 JS_LANG = """<script>
 // language: the choice made with the EN/RU switch is remembered (and passed on to the app); the English page sends a
 // visitor who picked Russian before to /ru. CMS edits are kept per language: English keys carry an «en:» prefix.
+(() => { const v = document.querySelector('.hbg video');
+  if (v && matchMedia('(prefers-reduced-motion: reduce)').matches) { v.removeAttribute('autoplay'); v.pause(); } })();
 (() => { const ru = document.documentElement.lang === 'ru';
   try { if (!localStorage.getItem('oneflow-language')) localStorage.setItem('oneflow-language', ru ? 'ru' : 'en'); } catch (e) {}
   document.querySelectorAll('.lang a').forEach((a) => a.addEventListener('click', () => { try { localStorage.setItem('of-lang', a.hreflang); localStorage.setItem('oneflow-language', a.hreflang); } catch (e) {} }));
@@ -564,7 +570,9 @@ def build(docs='', lang='ru'):
     h1, sub, acts = grab(r'<h1.*?</h1>'), grab(r'<p class="sub">.*?</p>'), grab(r'<div class="acts">.*?</div>')
     models = (f'<div class="models" role="img" aria-label="Нейросети в ONEFLOW: {", ".join(AI_ALL)}"><div class="t">'
               + ''.join(f'<span>{n}</span>' for n in AI_ALL) * 2 + '</div></div>')
-    hero = (f'<section class="hero"><div class="hbg" aria-hidden="true"></div><div class="wrap">{h1}{sub}{acts}</div></section>'
+    hero = (f'<section class="hero"><div class="hbg" aria-hidden="true"><video poster="assets/hero/oneflow-hero-poster.webp" autoplay muted loop playsinline preload="auto" '
+            'disablepictureinpicture disableremoteplayback tabindex="-1"><source src="assets/hero/oneflow-hero.webm" type="video/webm">'
+            f'<source src="assets/hero/oneflow-hero.mp4" type="video/mp4"></video></div><div class="wrap">{h1}{sub}{acts}</div></section>'
             f'<div class="mrow"><div class="wrap">{models}<p class="fnote">{FNOTE}</p></div></div>')
     q, a = FAQ_AI  # right after the first question: «какие нейросети» is the most common pre-sale question
     faq = faq.replace('</details>', f'</details><details><summary>{q}</summary><p>{a}</p></details>', 1)
@@ -593,7 +601,6 @@ def build(docs='', lang='ru'):
                             "<script>document.documentElement.classList.add('js');try{if(localStorage.getItem('of-lang')==='ru'&&!/cms-edit/.test(location.search))location.replace('/ru'+location.hash)}catch(e){}</script>", 1)
     head = head.replace(protos.CSS, '').replace(protos.DARK, '')
     head = head.replace('</style>', ICE + TABS_CSS.replace('ANIM', '\n  '.join(ANIM)) + HERO_CSS + '</style>', 1)
-    head = head.replace(':root {', ':root { --img-hero: url(assets/hero/oneflow-hero.webp);', 1)
     tail = tail.replace(protos.js(), '').replace('</body>', JS_TABS + JS_LANG + '</body>')
     tail = tail.replace("key: name + '.' + counts[name]", "key: (document.documentElement.lang === 'en' ? 'en:' : '') + name + '.' + counts[name]")
     html = head + main + tail
