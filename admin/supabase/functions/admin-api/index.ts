@@ -11,6 +11,11 @@
 //   ticket-update { id, status?, reply? } → change status; a reply is also delivered in-app (admin_messages) when the
 //                                      ticket's contact is the email of a registered account
 //   content-save  { key, value }     → upsert a landing text override; value null/'' deletes it (back to default)
+//   banners-save  { slides }         → validate + store the app home-screen banners (site_content 'app.home.banners');
+//                                      an empty list deletes the row, so the app shows its built-in banners again
+//   media-upload-url { name, type, size } → one-time signed upload URL for a banner image/video in the public
+//                                      'site-media' bucket (admin.sql); the page uploads the file straight to Storage
+//   media-delete  { path }           → remove a banner file from that bucket (only home-banners/<uuid>.<ext>)
 
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
@@ -20,6 +25,71 @@ const ADMIN_EMAIL = 'nurgazinov.ayan@gmail.com';
 const ONLINE_WINDOW_MINUTES = 3;
 const STATS_DAYS = 30;
 const MAX_LOG_ROWS = 50000;
+
+// ---- app home-screen banners -------------------------------------------------------------------
+const BANNERS_KEY = 'app.home.banners';
+const MEDIA_BUCKET = 'site-media';
+const MEDIA_DIR = 'home-banners';
+const MAX_SLIDES = 12;
+const APP_MODES = ['canvas', 'generate', 'text', 'trends', 'evaluate', 'onelaunch', 'musicaudio', 'motion', 'strategy'];
+const MEDIA_TYPES: Record<string, { ext: string; max: number }> = {
+  'image/jpeg': { ext: 'jpg', max: 10 * 1024 * 1024 },
+  'image/png': { ext: 'png', max: 10 * 1024 * 1024 },
+  'image/webp': { ext: 'webp', max: 10 * 1024 * 1024 },
+  'image/gif': { ext: 'gif', max: 10 * 1024 * 1024 },
+  'video/mp4': { ext: 'mp4', max: 50 * 1024 * 1024 },
+  'video/webm': { ext: 'webm', max: 50 * 1024 * 1024 },
+};
+const MEDIA_PATH_RE = new RegExp(`^${MEDIA_DIR}/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\\.(jpg|png|webp|gif|mp4|webm)$`);
+
+// Strips control characters and caps the length; non-strings become ''.
+const cleanText = (v: unknown, max: number) =>
+  typeof v === 'string' ? v.replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g, '').trim().slice(0, max) : '';
+
+class BadInput extends Error {}
+
+// Banner media: a file in our own public bucket, or a same-origin path shipped with the app.
+function cleanMedia(v: unknown, publicPrefix: string, required: boolean): string {
+  const s = cleanText(v, 1000);
+  if (!s) {
+    if (required) throw new BadInput('У каждого баннера должна быть картинка или видео.');
+    return '';
+  }
+  if (s.startsWith(publicPrefix) && MEDIA_PATH_RE.test(s.slice(publicPrefix.length))) return s;
+  if (/^\/[A-Za-z0-9._\-/]+$/.test(s) && !s.startsWith('//') && !s.includes('..')) return s;
+  throw new BadInput('Недопустимый адрес файла баннера.');
+}
+
+// Banner link: one of the app's modes ('mode:<id>') or an https:// URL.
+function cleanLink(v: unknown): string {
+  const s = cleanText(v, 1000);
+  if (!s) return '';
+  if (s.startsWith('mode:') && APP_MODES.includes(s.slice(5))) return s;
+  try {
+    const u = new URL(s);
+    if (u.protocol === 'https:' && !u.username && !u.password) return u.toString();
+  } catch {
+    // fall through
+  }
+  throw new BadInput('Ссылка должна быть режимом приложения или адресом https://');
+}
+
+function cleanSlides(input: unknown, publicPrefix: string) {
+  if (!Array.isArray(input)) throw new BadInput('Неверный формат баннеров.');
+  if (input.length > MAX_SLIDES) throw new BadInput(`Не больше ${MAX_SLIDES} баннеров.`);
+  return input.map((raw, i) => {
+    const x = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
+    const type = x.type === 'video' ? 'video' : 'image';
+    const lang = (l: unknown) => {
+      const o = (l && typeof l === 'object' ? l : {}) as Record<string, unknown>;
+      return { tag: cleanText(o.tag, 60), title: cleanText(o.title, 140), text: cleanText(o.text, 400), button: cleanText(o.button, 40) };
+    };
+    const ru = lang(x.ru), en = lang(x.en);
+    if (!ru.title && !en.title) throw new BadInput(`Баннер ${i + 1}: добавьте заголовок.`);
+    const id = cleanText(x.id, 64).replace(/[^A-Za-z0-9_-]/g, '') || crypto.randomUUID();
+    return { id, type, media: cleanMedia(x.media, publicPrefix, true), poster: type === 'video' ? cleanMedia(x.poster, publicPrefix, false) : '', link: cleanLink(x.link), ru, en };
+  });
+}
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -155,9 +225,54 @@ Deno.serve(async (req) => {
       return json({ ok: true, deliveredInApp: delivered });
     }
 
+    const publicPrefix = `${SUPABASE_URL}/storage/v1/object/public/${MEDIA_BUCKET}/`;
+
+    if (action === 'banners-save') {
+      let slides;
+      try {
+        slides = cleanSlides(body.slides, publicPrefix);
+      } catch (e) {
+        if (e instanceof BadInput) return json({ error: e.message }, 400);
+        throw e;
+      }
+      if (!slides.length) {
+        const { error } = await admin.from('site_content').delete().eq('key', BANNERS_KEY);
+        if (error) throw error;
+        return json({ ok: true, reset: true });
+      }
+      const value = JSON.stringify({ v: 1, slides });
+      const { error } = await admin.from('site_content')
+        .upsert({ key: BANNERS_KEY, value, updated_at: new Date().toISOString(), updated_by: caller.email });
+      if (error) throw error;
+      return json({ ok: true, value });
+    }
+
+    if (action === 'media-upload-url') {
+      const type = String(body.type ?? '');
+      const size = Number(body.size ?? 0);
+      const spec = MEDIA_TYPES[type];
+      if (!spec) return json({ error: 'Поддерживаются JPG, PNG, WebP, GIF, MP4 и WebM.' }, 400);
+      if (!Number.isFinite(size) || size <= 0 || size > spec.max) {
+        return json({ error: `Файл слишком большой: максимум ${Math.round(spec.max / 1024 / 1024)} МБ.` }, 400);
+      }
+      const path = `${MEDIA_DIR}/${crypto.randomUUID()}.${spec.ext}`;
+      const { data, error } = await admin.storage.from(MEDIA_BUCKET).createSignedUploadUrl(path);
+      if (error || !data) throw error ?? new Error('signed upload url');
+      return json({ path, signedUrl: data.signedUrl, publicUrl: publicPrefix + path });
+    }
+
+    if (action === 'media-delete') {
+      const path = String(body.path ?? '');
+      if (!MEDIA_PATH_RE.test(path)) return json({ error: 'Неверный путь файла.' }, 400);
+      const { error } = await admin.storage.from(MEDIA_BUCKET).remove([path]);
+      if (error) throw error;
+      return json({ ok: true });
+    }
+
     if (action === 'content-save') {
       const key = String(body.key ?? '').trim();
       if (!/^[a-z0-9._-]{1,120}$/.test(key)) return json({ error: 'Неверный ключ.' }, 400);
+      if (key === BANNERS_KEY) return json({ error: 'Баннеры сохраняются отдельно.' }, 400);
       const value = typeof body.value === 'string' ? body.value : null;
       if (value === null || value.trim() === '') {
         const { error } = await admin.from('site_content').delete().eq('key', key);

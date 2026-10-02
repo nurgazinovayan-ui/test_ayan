@@ -6,6 +6,8 @@
 -- support_tickets — «Написать в поддержку» form on the landing. No policies at all for anon/authenticated: the
 --                  support-submit Edge Function inserts (service role), admin-api reads and updates.
 --
+-- site-media     — public Storage bucket for the app banners (see the end of this file).
+--
 -- Also required (already created earlier for the app): generation_log, presence, admin_messages.
 
 create table if not exists public.site_content (
@@ -40,3 +42,15 @@ alter table public.support_tickets enable row level security;
 
 create index if not exists support_tickets_created_at_idx on public.support_tickets (created_at desc);
 create index if not exists support_tickets_ip_idx on public.support_tickets (ip_hash, created_at desc);
+
+-- site-media — public Storage bucket for the app's home-screen banners (images/videos uploaded from the admin page).
+-- Public = files are readable by their URL (the app shows them to everyone); nothing can be listed or written by
+-- anon/authenticated users: there are no storage.objects policies for this bucket. The admin-api Edge Function
+-- (service role) hands out one-time signed upload URLs and deletes files. Type and size are also enforced here.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('site-media', 'site-media', true, 52428800,
+        array['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'video/mp4', 'video/webm'])
+on conflict (id) do update
+  set public = excluded.public,
+      file_size_limit = excluded.file_size_limit,
+      allowed_mime_types = excluded.allowed_mime_types;
