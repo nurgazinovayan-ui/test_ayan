@@ -431,42 +431,61 @@ class Component extends DCLogic {
 
     this.setState({ sending: true, sent: false, mailed: false, sendError: '' });
 
-    // Вебхук — побочный канал (Make.com / CRM). На статус отправки не влияет:
-    // «Отправлено ✓» должно означать именно «письмо ушло».
-    if (cfg.webhookUrl) this.postJson(cfg.webhookUrl, payload).catch(() => {});
+    // Каналы в порядке приоритета: первый успешный решает исход.
+    // «Отправлено ✓» ставится только тем каналом, который реально
+    // доставляет письмо, — иначе статус врёт.
+    const channels = [];
 
-    // Ключ не задан — отправлять письмо нечем, открываем почтовый клиент.
-    if (!cfg.web3formsKey) { this.openMailto(); return; }
+    // 1. Вебхук (Make.com и подобное) — основной канал. Сценарий на
+    //    приёмной стороне отправляет письмо через SMTP самой Яндекс-почты,
+    //    поэтому отправитель для Яндекса свой, а не сторонний сервис, и
+    //    письмо не уходит в карантин.
+    if (cfg.webhookUrl) {
+      channels.push(() => this.postJson(cfg.webhookUrl, payload));
+    }
 
-    // Служебные поля идут поверх payload: иначе одноимённое поле брифа
-    // перетёрло бы access_key или subject.
-    const w3 = Object.assign({}, payload, {
-      access_key: cfg.web3formsKey,
-      subject: subject,
-      from_name: 'Mechta Inventory 2026'
-    });
+    // 2. Web3Forms — запас, если вебхука нет.
+    if (cfg.web3formsKey) {
+      channels.push(() => {
+        // Служебные поля идут поверх payload: иначе одноимённое поле брифа
+        // перетёрло бы access_key или subject.
+        const w3 = Object.assign({}, payload, {
+          access_key: cfg.web3formsKey,
+          subject: subject,
+          from_name: 'Mechta Inventory 2026'
+        });
+        // Web3Forms кладёт поле email в Reply-To. Адрес получателя туда
+        // ставить нельзя: письмо на свой же домен от стороннего сервера
+        // антиспуфинг-защита считает подделкой. Только адрес вендора.
+        const replyTo = String(v.contact_email || '').trim();
+        if (replyTo) w3.email = replyTo;
+        return this.postJson('https://api.web3forms.com/submit', w3)
+          .then(r => r.json())
+          .then(d => {
+            // 200 с success: false — это отказ (лимит, неподтверждённый
+            // адрес), а не отправка.
+            if (!d || d.success !== true) throw new Error((d && d.message) || 'web3forms');
+          });
+      });
+    }
 
-    // Web3Forms кладёт поле email в Reply-To. Подставлять туда адрес
-    // получателя нельзя: письмо приходит на mechta.kz, в Reply-To стоит
-    // mechta.kz, а отправляет его сторонний сервер — для корпоративной
-    // антиспуфинг-защиты (DMARC, Microsoft 365 / Google Workspace) это
-    // подделка своего домена, и письмо тихо уходит в карантин. Поэтому
-    // Reply-To ставим только на реальный адрес вендора из брифа.
-    const replyTo = String(v.contact_email || '').trim();
-    if (replyTo) w3.email = replyTo;
+    if (!channels.length) { this.openMailto(); return; }
 
-    this.postJson('https://api.web3forms.com/submit', w3)
-      .then(r => r.json())
-      .then(d => {
-        // Web3Forms отвечает 200 и success: false на исчерпанный лимит или
-        // неподтверждённый ключ — пустой success здесь так же плох, как 4xx.
-        if (!d || d.success !== true) throw new Error((d && d.message) || 'web3forms');
-        this.setState({ sending: false, sent: true });
-      })
-      .catch(() => this.setState(
-        { sending: false, sendError: 'Письмо не ушло — открываем почтовый клиент, текст брифа в буфере.' },
-        this.openMailto
-      ));
+    // Пробуем по очереди, пока какой-нибудь не сработает.
+    const attempt = (i) => {
+      if (i >= channels.length) {
+        this.setState(
+          { sending: false, sendError: 'Письмо не ушло — открываем почтовый клиент, текст брифа в буфере.' },
+          this.openMailto
+        );
+        return;
+      }
+      channels[i]().then(
+        () => this.setState({ sending: false, sent: true }),
+        () => attempt(i + 1)
+      );
+    };
+    attempt(0);
   };
 
   openMailto = () => {

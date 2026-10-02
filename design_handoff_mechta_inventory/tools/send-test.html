@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Проверка отправки брифа</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font: 15px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+         color: #0B0B0C; background: #FFFFFF; padding: 40px 24px 80px; }
+  .wrap { max-width: 780px; margin: 0 auto; }
+  h1 { font-size: 26px; font-weight: 800; letter-spacing: -0.02em; }
+  h2 { font-size: 18px; font-weight: 800; margin-top: 44px; }
+  p.lead { color: #55555F; margin-top: 10px; }
+  .note { background: #FFEAF3; border-left: 2px solid #FF0080; padding: 14px 18px;
+          margin-top: 20px; font-size: 14px; }
+  label { display: block; font-weight: 700; font-size: 14px; margin: 20px 0 8px; }
+  input { width: 100%; font: inherit; padding: 13px 16px; border: 1.5px solid #E4E4E8;
+          border-radius: 8px; outline: none; }
+  input:focus { border-color: #0B0B0C; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+  button { font: inherit; font-weight: 700; font-size: 14px; color: #FFFFFF; background: #FF0080;
+           border: 0; border-radius: 8px; padding: 14px 22px; cursor: pointer; }
+  button.alt { background: #0B0B0C; }
+  button:disabled { background: #C6C6CE; cursor: default; }
+  pre { margin-top: 20px; background: #FAFAFB; border: 1px solid #EDEDEF; border-radius: 8px;
+        padding: 18px; font: 13px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace;
+        white-space: pre-wrap; word-break: break-word; min-height: 110px; }
+  .hint { color: #8A8A93; font-size: 13px; margin-top: 6px; }
+  hr { border: 0; border-top: 1px solid #EDEDEF; margin: 44px 0 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Проверка отправки брифа</h1>
+  <p class="lead">Страница ни от чего не зависит: ни от Тильды, ни от iframe, ни от лендинга.
+  Отправляет запрос напрямую и печатает ответ целиком — видно, на каком шаге теряется письмо.</p>
+
+  <div class="note">
+    Почта на Яндексе, а он жёстко фильтрует сторонних отправителей. Письмо должно уходить
+    через SMTP самой Яндекс-почты — за это отвечает сценарий Make.com.
+    Проверка 1 — основная.
+  </div>
+
+  <h2>1. Вебхук Make.com — основной канал</h2>
+  <label for="hook">URL вебхука</label>
+  <input id="hook" placeholder="https://hook.eu1.make.com/..." autocomplete="off">
+  <p class="hint">Отправится тот же набор полей, что и у лендинга, — Make на первом запросе
+  как раз определяет структуру данных для сценария.</p>
+  <div class="row">
+    <button id="hookBtn">Проверить вебхук</button>
+  </div>
+  <pre id="hookOut">Ответ появится здесь.</pre>
+
+  <hr>
+
+  <h2>2. Web3Forms — запасной канал</h2>
+  <label for="key">Access Key</label>
+  <input id="key" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" autocomplete="off">
+  <div class="row">
+    <button id="min" class="alt">Минимальный тест</button>
+    <button id="full" class="alt">Тест в объёме брифа</button>
+  </div>
+  <p class="hint">Нужны, только если вебхука нет. Если Web3Forms отвечает «принято», а письма
+  всё равно нет — значит его режет Яндекс, и это подтверждает, что нужен путь через Make.</p>
+  <pre id="w3Out">Ответ появится здесь.</pre>
+</div>
+
+<script>
+(function () {
+  function briefPayload() {
+    var longText = 'БРИФ КАМПАНИИ — Mechta 2026\n\n';
+    for (var i = 1; i <= 24; i++) longText += 'Вопрос ' + i + ': значение для проверки объёма\n';
+    return {
+      subject: 'Тест — бриф кампании Mechta 2026',
+      campaign: 'Тестовая кампания', vendor: 'Тестовый вендор', focus: 'Категория',
+      goal: 'Продажи', date_start: '2026-10-01', date_end: '2026-10-31',
+      budget: '1 000 000 ₸', margin: '12', aov: '250 000',
+      audience: 'клиентская база', geo: 'вся страна', segments: 'RFM',
+      channels: 'digital, CRM', content: 'есть', offer: 'рассрочка 0-0-12',
+      message: 'Ключевое сообщение', result: 'продажи, шт',
+      limits: 'бренд-гайды', owner: 'Тест Тестов',
+      contact_email: 'vendor@example.com', comment: '—',
+      services: 'DMP — first-party аудитории; WhatsApp-рассылка',
+      brief_text: longText,
+      Name: 'Тест Тестов',
+      formservices: 'Mechta Inventory 2026'
+    };
+  }
+
+  function post(url, payload, outEl, label, btn, judge) {
+    btn.disabled = true;
+    outEl.textContent = label + '\nОтправляем…';
+    var started = Date.now();
+
+    fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+      .then(function (r) {
+        return r.text().then(function (t) { return { status: r.status, ok: r.ok, text: t }; });
+      })
+      .then(function (res) {
+        var pretty = res.text;
+        try { pretty = JSON.stringify(JSON.parse(res.text), null, 2); } catch (e) {}
+        outEl.textContent = label + '\n\nHTTP ' + res.status +
+          '   (' + (Date.now() - started) + ' мс)\n' +
+          judge(res) + '\n\nОтвет сервера:\n' + (pretty || '(пустой)') +
+          '\n\nОтправлено полей: ' + Object.keys(payload).length +
+          ', размер ' + Math.round(JSON.stringify(payload).length / 1024) + ' КБ';
+      })
+      .catch(function (e) {
+        outEl.textContent = label + '\n\nЗапрос не дошёл: ' + e.message +
+          '\n\nДве возможные причины:\n' +
+          '1. CORS — сервер не разрешает запрос из браузера. Для Make.com это\n' +
+          '   значит, что сценарий выключен или вебхук не принимает запросы\n' +
+          '   с другого домена.\n' +
+          '2. Блокировщик рекламы или расширение браузера. Проверьте в режиме\n' +
+          '   инкогнито с отключёнными расширениями.';
+      })
+      .then(function () { btn.disabled = false; });
+  }
+
+  var hookOut = document.getElementById('hookOut');
+  var w3Out = document.getElementById('w3Out');
+
+  document.getElementById('hookBtn').onclick = function () {
+    var url = document.getElementById('hook').value.trim();
+    if (!url) { hookOut.textContent = 'Вставьте URL вебхука.'; return; }
+    post(url, briefPayload(), hookOut, 'Вебхук Make.com', this, function (res) {
+      return res.ok
+        ? 'ПРИНЯТО — Make получил данные. Дальше смотрите историю сценария\n' +
+          'в Make: дошло ли до шага Email и что он ответил.'
+        : 'ОТКАЗ — Make вернул ошибку. Обычно это выключенный сценарий\n' +
+          'или неверный URL вебхука.';
+    });
+  };
+
+  function w3(payload, label, btn) {
+    var key = document.getElementById('key').value.trim();
+    if (!key) { w3Out.textContent = 'Вставьте Access Key.'; return; }
+    payload.access_key = key;
+    post('https://api.web3forms.com/submit', payload, w3Out, label, btn, function (res) {
+      try {
+        return JSON.parse(res.text).success === true
+          ? 'ПРИНЯТО — Web3Forms отправил письмо. Если оно не придёт,\n' +
+            'его режет Яндекс: это и есть причина перехода на Make.'
+          : 'ОТКАЗ — заявка не принята, причина в message выше.';
+      } catch (e) { return 'Ответ не похож на JSON — смотрите текст выше.'; }
+    });
+  }
+
+  document.getElementById('min').onclick = function () {
+    w3({ subject: 'Тест 1 — минимальный',
+         message: 'Проверка доставки. Если письмо пришло, сервис и адрес работают.' },
+       'Web3Forms — минимальный тест (3 поля)', this);
+  };
+  document.getElementById('full').onclick = function () {
+    w3(briefPayload(), 'Web3Forms — в объёме брифа', this);
+  };
+})();
+</script>
+</body>
+</html>
