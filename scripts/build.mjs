@@ -494,6 +494,12 @@ function build() {
   fs.rmSync(DIST, { recursive: true, force: true });
   copyDir(SRC, DIST, (n) => n === 'index.template.html' || n === '.gitkeep' || n === '.DS_Store');
 
+  // Admin login goes through api/auth on the production domain (Vercel sets VERCEL_PROJECT_PRODUCTION_URL)
+  const cmsBase = process.env.CMS_BASE_URL ||
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL ? 'https://' + process.env.VERCEL_PROJECT_PRODUCTION_URL : SITE_URL);
+  const cfgPath = path.join(DIST, 'admin/config.yml');
+  fs.writeFileSync(cfgPath, fs.readFileSync(cfgPath, 'utf8').replace(/^(\s+base_url:).*$/m, '$1 ' + cmsBase.replace(/\/+$/, '')));
+
   // Admin panel: Decap CMS bundle from node_modules (self-hosted, no CDN needed)
   const cms = path.join(ROOT, 'node_modules/decap-cms/dist/decap-cms.js');
   if (fs.existsSync(cms)) fs.copyFileSync(cms, path.join(DIST, 'admin/decap-cms.js'));

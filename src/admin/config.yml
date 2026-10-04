@@ -1,11 +1,15 @@
 # Админка nurgazinov.com (Decap CMS).
-# Каждое сохранение = коммит в GitHub → Netlify пересобирает сайт за ~1 минуту.
+# Каждое сохранение = коммит в GitHub → Vercel пересобирает сайт за ~1 минуту.
+# Вход через GitHub обслуживают функции api/auth.js и api/callback.js.
 # Документация по полям: https://decapcms.org/docs/widgets/
 
 backend:
   name: github
   repo: nurgazinovayan-ui/test_ayan
   branch: main
+  # base_url подставляется при сборке (scripts/build.mjs) — адрес боевого домена Vercel
+  base_url: https://nurgazinov.com
+  auth_endpoint: api/auth
   commit_messages:
     create: "Админка: добавлено «{{slug}}» ({{collection}})"
     update: "Админка: изменено «{{slug}}» ({{collection}})"

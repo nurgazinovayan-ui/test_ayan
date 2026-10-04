@@ -23,44 +23,54 @@
 У каждого поля загрузки в админке написано, какого формата, размера и веса должен быть файл.
 
 **Как это работает:** админка ([Decap CMS](https://decapcms.org)) сохраняет изменения коммитом в этот
-GitHub-репозиторий, Netlify замечает коммит и за ~1 минуту пересобирает сайт. Сервер и база данных не нужны.
+GitHub-репозиторий, Vercel замечает коммит и за ~1 минуту пересобирает сайт. Сервер и база данных не нужны;
+вход в админку через GitHub обслуживают две маленькие функции `api/auth.js` и `api/callback.js`.
 
 ---
 
-## Деплой на nurgazinov.com (один раз)
+## Деплой на Vercel + nurgazinov.com (один раз)
 
 ### 1. Слить код в `main`
-Админка пишет в ветку `main`, а Netlify публикует её же. Слейте ветку с этими изменениями в `main`.
+Админка пишет в ветку `main`, а Vercel публикует её же. Слейте ветку с этими изменениями в `main`.
 
-### 2. Создать сайт на Netlify
-1. Зарегистрируйтесь на https://app.netlify.com (удобнее всего через GitHub).
-2. **Add new project → Import an existing project → GitHub** → выберите репозиторий `nurgazinovayan-ui/test_ayan`.
-3. Ветка — `main`. Настройки сборки подтянутся из `netlify.toml` сами
+### 2. Создать проект на Vercel
+1. Зарегистрируйтесь на https://vercel.com через GitHub.
+2. **Add New… → Project** → выберите репозиторий `nurgazinovayan-ui/test_ayan` → **Import**
+   (если репозитория нет в списке — нажмите **Adjust GitHub App Permissions** и дайте доступ к нему).
+3. Framework Preset: **Other**. Остальные настройки подтянутся из `vercel.json`
    (`npm run build`, папка `dist`). Нажмите **Deploy**.
-4. Через пару минут сайт откроется по адресу вида `something.netlify.app` — проверьте его.
+4. Через пару минут сайт откроется по адресу вида `test-ayan.vercel.app` — проверьте его.
 
 ### 3. Подключить домен nurgazinov.com
-1. В Netlify: **Domain management → Add a domain** → `nurgazinov.com` (www добавится сам).
-2. У регистратора домена пропишите DNS одним из двух способов:
-   - **Проще:** сменить NS-серверы домена на те 4, что покажет Netlify (Netlify DNS);
-   - **или** оставить DNS у регистратора и добавить записи:
-     - `A` для `@` → `75.2.60.5`
-     - `CNAME` для `www` → `<ваш-сайт>.netlify.app`
-3. Подождите, пока DNS обновится (от 10 минут до суток). HTTPS-сертификат Netlify выпустит автоматически
-   (**Domain management → HTTPS**).
+1. Vercel → проект → **Settings → Domains → Add** → `nurgazinov.com`. Согласитесь добавить и `www.nurgazinov.com`
+   с переадресацией на `nurgazinov.com`.
+2. Vercel покажет, какие DNS-записи прописать у регистратора домена. Обычно это:
+   - `A` для `@` → `76.76.21.21`
+   - `CNAME` для `www` → `cname.vercel-dns.com`
+
+   (если Vercel показывает другие значения — используйте их). Старые `A`/`CNAME`-записи для `@` и `www` удалите.
+3. Подождите, пока напротив домена появится **Valid Configuration** (от 10 минут до суток).
+   HTTPS-сертификат Vercel выпустит сам.
 
 ### 4. Включить вход в админку (через GitHub)
 1. GitHub → **Settings → Developer settings → OAuth Apps → New OAuth App**:
    - Application name: `nurgazinov.com admin`
    - Homepage URL: `https://nurgazinov.com`
-   - Authorization callback URL: `https://api.netlify.com/auth/done`
+   - Authorization callback URL: `https://nurgazinov.com/api/callback`
 
    Создайте, затем нажмите **Generate a new client secret**. Скопируйте Client ID и Client Secret.
-2. Netlify → ваш сайт → **Project configuration → Access & security → OAuth → Install provider → GitHub**,
-   вставьте Client ID и Client Secret.
-3. Откройте https://nurgazinov.com/admin/ → **Войти через GitHub**. Готово.
+2. Vercel → проект → **Settings → Environment Variables**, добавьте две переменные (окружение Production):
+   - `GITHUB_CLIENT_ID` = Client ID
+   - `GITHUB_CLIENT_SECRET` = Client Secret
+3. **Deployments** → у последнего деплоя **⋯ → Redeploy** (чтобы переменные и домен подхватились).
+4. Откройте https://nurgazinov.com/admin/ → **Войти через GitHub**. Готово.
 
 Войти может только тот, у кого есть права на запись в репозиторий — посторонние ничего не изменят.
+
+> Хотите сначала попробовать админку на `*.vercel.app`, до подключения домена? Укажите в OAuth App
+> callback `https://<ваш-проект>.vercel.app/api/callback` и сделайте Redeploy. После подключения домена
+> поменяйте callback на `https://nurgazinov.com/api/callback` и снова Redeploy.
+> Админку открывайте на основном домене: на preview-адресах Vercel вход не сработает (так задумано для безопасности).
 
 ---
 
@@ -103,7 +113,8 @@ src/                        ← код и оформление
   assets/uploads/           файлы, загруженные через админку
 scripts/build.mjs           сборка: content + src → dist/
 scripts/serve.mjs           локальный сервер для dist/
-netlify.toml                настройки Netlify
+api/auth.js, api/callback.js  вход в админку через GitHub (функции Vercel)
+vercel.json                 настройки Vercel
 ```
 
 ### Заметки
