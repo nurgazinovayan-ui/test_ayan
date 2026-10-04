@@ -70,8 +70,6 @@ a:hover{color:var(--muted)}
 .mono{font-family:'Archivo','Helvetica Neue',Helvetica,sans-serif;font-size:12px;line-height:1.4;letter-spacing:.05em;text-transform:uppercase;font-weight:500;font-stretch:100%;font-variant-numeric:tabular-nums}
 .disp{font-family:'Archivo','Arial Black','Helvetica Neue',sans-serif;font-stretch:125%;font-weight:800;text-transform:uppercase;letter-spacing:-.035em}
 .serif{font-family:'Archivo','Helvetica Neue',Helvetica,sans-serif;font-stretch:125%;font-style:normal;font-weight:200;letter-spacing:-.04em;text-transform:none}
-@font-face{font-family:'Dx Burst';src:url(../assets/fonts/DxBurst-Regular.woff2) format('woff2'),url(../assets/fonts/DxBurst-Regular.otf) format('opentype');font-weight:400;font-style:normal;font-display:swap}
-@font-face{font-family:'Dx Playhigh';src:url(../assets/fonts/DxPlayhigh-Expanded.woff2) format('woff2'),url(../assets/fonts/DxPlayhigh-Expanded.otf) format('opentype');font-weight:400;font-style:normal;font-display:swap}
 .brush{font-family:'Dx Burst','Caveat','Bradley Hand',cursive;font-weight:400;text-transform:uppercase;letter-spacing:0}
 .play{font-family:'Dx Playhigh','Arial Narrow',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:0.01em}
 .mtxt{font-family:'Archivo','Helvetica Neue',Helvetica,sans-serif;font-stretch:112%;font-weight:400;letter-spacing:-.01em}

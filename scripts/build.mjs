@@ -432,9 +432,8 @@ ${head({
     description: p.summary || seo.description || '',
     url, image: p.cover || seo.og_image, type: 'article'
   })}
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Caveat:wght@600..700&display=swap">
+<link rel="preload" href="/assets/fonts/Archivo-Variable-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/css/fonts.css">
 <link rel="stylesheet" href="/css/styles.css">
 <script defer src="/js/main.js"></script>
 </head>

@@ -1,0 +1,5 @@
+/* All fonts are self-hosted (no Google Fonts request). Archivo and Caveat are the Latin subsets. */
+@font-face{font-family:'Archivo';src:url(../assets/fonts/Archivo-Variable-latin.woff2) format('woff2');font-weight:100 900;font-stretch:62% 125%;font-style:normal;font-display:swap}
+@font-face{font-family:'Caveat';src:url(../assets/fonts/Caveat-Variable-latin.woff2) format('woff2');font-weight:400 700;font-style:normal;font-display:swap}
+@font-face{font-family:'Dx Playhigh';src:url(../assets/fonts/DxPlayhigh-Expanded.woff2) format('woff2'),url(../assets/fonts/DxPlayhigh-Expanded.otf) format('opentype');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'Dx Burst';src:url(../assets/fonts/DxBurst-Regular.woff2) format('woff2'),url(../assets/fonts/DxBurst-Regular.otf) format('opentype');font-weight:400;font-style:normal;font-display:swap}
