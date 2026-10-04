@@ -1,0 +1,31 @@
+{
+  "title": "Made by Hand",
+  "url": "made-by-hand",
+  "published": true,
+  "order": 70,
+  "client": "Takumi",
+  "category": "Identity / Print",
+  "year": "2021",
+  "role": "Art direction",
+  "cover": "",
+  "cover_video": "",
+  "summary": "Placeholder project. Replace the client, title, cover and text in the admin panel (/admin → Projects).",
+  "credits": [
+    {
+      "role": "Art director",
+      "name": "Name Surname"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "text",
+      "heading": "The brief",
+      "body": "Describe the task: what the brand needed, who the audience was and what people should *feel*."
+    },
+    {
+      "type": "text",
+      "heading": "The idea",
+      "body": "Explain the core idea and how it shaped every frame."
+    }
+  ]
+}

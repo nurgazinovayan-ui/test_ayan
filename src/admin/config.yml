@@ -1,0 +1,331 @@
+# Админка nurgazinov.com (Decap CMS).
+# Каждое сохранение = коммит в GitHub → Netlify пересобирает сайт за ~1 минуту.
+# Документация по полям: https://decapcms.org/docs/widgets/
+
+backend:
+  name: github
+  repo: nurgazinovayan-ui/test_ayan
+  branch: main
+  commit_messages:
+    create: "Админка: добавлено «{{slug}}» ({{collection}})"
+    update: "Админка: изменено «{{slug}}» ({{collection}})"
+    delete: "Админка: удалено «{{slug}}» ({{collection}})"
+    uploadMedia: "Админка: загружен файл {{path}}"
+    deleteMedia: "Админка: удалён файл {{path}}"
+
+# Локальная разработка без GitHub: `npm run cms` + `npm run dev`, затем http://localhost:8080/admin/
+local_backend: true
+
+locale: ru
+site_url: https://nurgazinov.com
+display_url: https://nurgazinov.com
+
+media_folder: src/assets/uploads
+public_folder: /assets/uploads
+
+slug:
+  encoding: ascii
+  clean_accents: true
+  sanitize_replacement: "-"
+
+collections:
+
+  # ----------------------------------------------------------------- Главная
+  - name: settings
+    label: "Главная страница"
+    description: "Видео на первом экране, блок «Обо мне», контакты и SEO."
+    editor: { preview: false }
+    files:
+
+      - name: hero
+        label: "1. Видео на первом экране (хиро)"
+        file: content/settings/hero.json
+        fields:
+          - label: "Видео шоурила"
+            name: video
+            widget: file
+            media_folder: /src/assets/uploads/hero
+            public_folder: /assets/uploads/hero
+            hint: >-
+              Формат: MP4 (H.264), без звука — на сайте оно всё равно играет без звука.
+              Размер кадра: 1920×784 px (пропорция 2.45:1, как экран в кинозале).
+              Видео 16:9 (1920×1080) тоже подойдёт — оно автоматически обрежется сверху и снизу, ничего не растянется.
+              Длительность 20–60 сек, зациклено. Вес: до 15 МБ (лучше 8–12 МБ) — сайт ждёт загрузки видео
+              на экране «Loading», тяжёлый файл = долгая загрузка.
+          - label: "Постер (кадр до загрузки видео)"
+            name: poster
+            widget: image
+            required: false
+            media_folder: /src/assets/uploads/hero
+            public_folder: /assets/uploads/hero
+            hint: >-
+              JPG или WebP, 1920×784 px (те же пропорции, что у видео), до 300 КБ.
+              Обычно — самый красивый кадр из шоурила. Показывается, пока видео грузится.
+
+      - name: about
+        label: "2. Обо мне"
+        file: content/settings/about.json
+        fields:
+          - { label: "Имя и фамилия", name: name, widget: string, hint: "Латиницей, как на сайте: в тексте, в подвале и в большом логотипе внизу. Например: Ayan Nurgazinov" }
+          - label: "Портрет"
+            name: portrait
+            widget: image
+            required: false
+            media_folder: /src/assets/uploads/about
+            public_folder: /assets/uploads/about
+            hint: "Вертикальное фото 3:4 — 1200×1600 px, JPG или WebP, до 400 КБ. Пока поле пустое, на сайте серая плашка."
+          - { label: "Текст о себе", name: text, widget: text, hint: "Абзацы разделяйте пустой строкой. Оптимально 300–500 знаков." }
+          - { label: "Лет опыта", name: years, widget: number, value_type: int, min: 1, max: 60, default: 10, hint: "Цифра, которая «досчитывается» при прокрутке и стоит в заголовке «10+ years»." }
+          - { label: "Просмотры", name: views, widget: string, required: false, hint: "Например: Millions across campaigns" }
+          - { label: "Фокус", name: focus, widget: string, required: false, hint: "Например: Campaigns, Key visuals, Packaging, AI film" }
+          - { label: "Город, страна", name: city, widget: string, hint: "Например: Almaty, Kazakhstan. Показывается в «Обо мне» и в подвале." }
+
+      - name: contact
+        label: "3. Контакты"
+        file: content/settings/contact.json
+        fields:
+          - { label: "E-mail", name: email, widget: string, required: false, pattern: ['^$|^[^@\s]+@[^@\s]+\.[^@\s]+$', "Похоже, это не e-mail"] }
+          - { label: "Телефон", name: phone, widget: string, required: false, hint: "В международном формате, например +7 701 000 00 00. Пустое поле — телефон не показывается." }
+          - { label: "Открыт к", name: open_to, widget: string, required: false, hint: "Например: Campaigns, Key visuals, AI films" }
+          - label: "Соцсети"
+            name: socials
+            widget: list
+            label_singular: "соцсеть"
+            summary: "{{fields.label}} — {{fields.url}}"
+            hint: "Соцсети с пустой ссылкой на сайте не показываются. Порядок меняется перетаскиванием."
+            fields:
+              - { label: "Название", name: label, widget: string, hint: "Instagram, Behance, Vimeo, LinkedIn, Telegram…" }
+              - { label: "Ссылка", name: url, widget: string, required: false, hint: "Полная ссылка с https://, например https://www.behance.net/username" }
+
+      - name: seo
+        label: "4. SEO и превью ссылок"
+        file: content/settings/seo.json
+        fields:
+          - { label: "Заголовок страницы", name: title, widget: string, hint: "Виден во вкладке браузера и в Google. До 60 знаков." }
+          - { label: "Описание", name: description, widget: text, hint: "Текст под ссылкой в Google и в превью мессенджеров. 120–160 знаков." }
+          - label: "Картинка для превью ссылки"
+            name: og_image
+            widget: image
+            required: false
+            media_folder: /src/assets/uploads/seo
+            public_folder: /assets/uploads/seo
+            hint: "Показывается, когда ссылкой делятся в Telegram, WhatsApp, Facebook. JPG, 1200×630 px, до 500 КБ."
+
+  # ----------------------------------------------------------------- Фильмы
+  - name: films
+    label: "AI-фильмы"
+    description: "Раздел «Short films made with AI». Добавляйте, удаляйте и меняйте порядок фильмов."
+    editor: { preview: false }
+    files:
+      - name: films
+        label: "Список фильмов"
+        file: content/films.json
+        fields:
+          - label: "Фильмы"
+            name: films
+            widget: list
+            label_singular: "фильм"
+            summary: "{{fields.title}} ({{fields.year}})"
+            hint: "Первый фильм в списке открыт по умолчанию. Порядок меняется перетаскиванием за ⋮⋮, удалить — крестик справа."
+            fields:
+              - { label: "Название", name: title, widget: string }
+              - { label: "Год", name: year, widget: string, pattern: ['^\d{4}$', "Год из 4 цифр, например 2025"] }
+              - label: "Видео фильма"
+                name: video
+                widget: file
+                media_folder: /src/assets/uploads/films
+                public_folder: /assets/uploads/films
+                hint: >-
+                  MP4 (H.264 + AAC), 1920×1080 px (16:9), со звуком. Вес до 20 МБ —
+                  больше GitHub может не принять; длинный фильм лучше выложить на Vimeo/YouTube,
+                  а сюда загрузить тизер и указать ссылку в поле «Ссылка на полный фильм».
+              - label: "Постер"
+                name: poster
+                widget: image
+                required: false
+                media_folder: /src/assets/uploads/films
+                public_folder: /assets/uploads/films
+                hint: "Кадр, который видно до нажатия Play. JPG или WebP, 1920×1080 px (16:9), до 300 КБ."
+              - { label: "Длительность", name: duration, widget: string, required: false, pattern: ['^$|^\d{1,2}:\d{2}$', "Формат мм:сс, например 01:45"], hint: "мм:сс, например 00:16. Можно оставить пустым — сайт сам возьмёт длительность из видео." }
+              - { label: "Логлайн", name: logline, widget: text, required: false, hint: "1–2 предложения о сюжете, на английском." }
+              - label: "Инструменты"
+                name: tools
+                widget: list
+                required: false
+                label_singular: "инструмент"
+                field: { label: "Инструмент", name: tool, widget: string }
+                hint: "Например: Midjourney, Kling, Runway, Premiere Pro."
+              - { label: "Ссылка на полный фильм", name: link, widget: string, required: false, hint: "Vimeo / YouTube. Если пусто — кнопка «Watch the full film» не показывается." }
+
+  # ----------------------------------------------------------------- Проекты
+  - name: projects
+    label: "Проекты (Selected work)"
+    label_singular: "проект"
+    description: >-
+      Каждый проект — плитка в разделе «Selected work» на главной и своя страница с подробным описанием
+      по адресу nurgazinov.com/projects/адрес-страницы/. Порядок на главной — по полю «Порядок».
+    folder: content/projects
+    extension: json
+    format: json
+    create: true
+    delete: true
+    slug: "{{fields.url}}"
+    identifier_field: title
+    summary: "{{order}} · {{title}} — {{client}}, {{year}}"
+    sortable_fields: ["order", "title", "client", "year"]
+    editor: { preview: false }
+    fields:
+      - { label: "Название проекта", name: title, widget: string, hint: "Например: The Quiet Hour" }
+      - label: "Адрес страницы"
+        name: url
+        widget: string
+        pattern: ['^[a-z0-9]+(-[a-z0-9]+)*$', "Только латиница в нижнем регистре, цифры и дефисы, например samsung-galaxy-s25"]
+        hint: "Часть ссылки: nurgazinov.com/projects/ЭТО/. Латиница, цифры, дефисы. Задаётся при создании — потом лучше не менять, иначе старая ссылка перестанет работать."
+      - { label: "Показывать на сайте", name: published, widget: boolean, default: true, hint: "Выключите, чтобы скрыть проект, не удаляя его." }
+      - { label: "Порядок", name: order, widget: number, value_type: int, default: 100, hint: "Чем меньше число, тем выше проект в списке. Удобно шагом 10: 10, 20, 30… — тогда новый проект легко вставить между." }
+      - { label: "Клиент / бренд", name: client, widget: string, hint: "Например: Samsung" }
+      - { label: "Категория", name: category, widget: string, hint: "Например: Campaign / Key visual" }
+      - { label: "Год", name: year, widget: string, pattern: ['^\d{4}$', "Год из 4 цифр"] }
+      - { label: "Моя роль", name: role, widget: string, required: false, hint: "Например: Art direction, Concept" }
+      - label: "Обложка"
+        name: cover
+        widget: image
+        required: false
+        media_folder: /src/assets/uploads/projects
+        public_folder: /assets/uploads/projects
+        hint: >-
+          Картинка плитки на главной и первый кадр на странице проекта.
+          JPG или WebP, 2400×1500 px (16:10), до 600 КБ.
+          Плитки на главной бывают разной формы (16:10, 4:5, 1:1, 3:2, 12:5, 4:3) — изображение обрезается автоматически,
+          поэтому держите главное ближе к центру кадра.
+      - label: "Видео-обложка (необязательно)"
+        name: cover_video
+        widget: file
+        required: false
+        media_folder: /src/assets/uploads/projects
+        public_folder: /assets/uploads/projects
+        hint: "Короткий зацикленный ролик вместо картинки: MP4 (H.264), без звука, 1920×1200 или 1920×1080, 5–10 сек, до 6 МБ. Обложку-картинку всё равно загрузите — она станет постером."
+      - { label: "Короткое описание", name: summary, widget: text, required: false, hint: "Вводный абзац на странице проекта (и описание для Google). 2–4 предложения." }
+      - label: "Команда / кредиты"
+        name: credits
+        widget: list
+        required: false
+        label_singular: "участника"
+        summary: "{{fields.role}}: {{fields.name}}"
+        fields:
+          - { label: "Роль", name: role, widget: string, hint: "Например: Agency, Photographer, 3D" }
+          - { label: "Имя / компания", name: name, widget: string }
+      - label: "Содержимое страницы проекта"
+        name: blocks
+        widget: list
+        required: false
+        label_singular: "блок"
+        hint: "Собирайте страницу из блоков: текст, изображение, галерея, видео, цитата. Порядок — перетаскиванием."
+        typeKey: type
+        types:
+          - label: "Текст"
+            name: text
+            summary: "{{fields.heading}}"
+            fields:
+              - { label: "Подзаголовок", name: heading, widget: string, required: false, hint: "Короткий, например: The brief / The idea / Result" }
+              - label: "Текст"
+                name: body
+                widget: markdown
+                buttons: ["bold", "italic", "link", "heading-three", "bulleted-list", "numbered-list"]
+                editor_components: []
+          - label: "Изображение"
+            name: image
+            summary: "{{fields.caption}}"
+            fields:
+              - label: "Изображение"
+                name: image
+                widget: image
+                media_folder: /src/assets/uploads/projects
+                public_folder: /assets/uploads/projects
+                hint: "JPG, WebP, PNG или GIF. Во всю ширину — 2400 px по ширине; по центру — 1800 px. Любая высота. До 800 КБ (GIF до 5 МБ)."
+              - label: "Размер"
+                name: size
+                widget: select
+                default: full
+                options:
+                  - { label: "Во всю ширину", value: full }
+                  - { label: "По центру (уже)", value: inset }
+              - { label: "Подпись", name: caption, widget: string, required: false }
+              - { label: "Описание для незрячих (alt)", name: alt, widget: string, required: false, hint: "Что изображено — для доступности и SEO." }
+          - label: "Галерея"
+            name: gallery
+            summary: "{{fields.caption}}"
+            fields:
+              - label: "Изображения"
+                name: images
+                widget: list
+                label_singular: "изображение"
+                field:
+                  label: "Изображение"
+                  name: image
+                  widget: image
+                  media_folder: /src/assets/uploads/projects
+                  public_folder: /assets/uploads/projects
+                hint: "JPG или WebP, 1600 px по длинной стороне, до 500 КБ каждое. Лучше одинаковой пропорции — тогда сетка ровная."
+              - label: "Колонок"
+                name: columns
+                widget: select
+                default: "2"
+                options: ["2", "3", "4"]
+              - { label: "Подпись", name: caption, widget: string, required: false }
+          - label: "Видео"
+            name: video
+            summary: "{{fields.caption}}"
+            fields:
+              - { label: "Ссылка YouTube / Vimeo", name: embed, widget: string, required: false, hint: "Для длинных роликов. Если заполнено — файл ниже не нужен." }
+              - label: "…или видеофайл"
+                name: video
+                widget: file
+                required: false
+                media_folder: /src/assets/uploads/projects
+                public_folder: /assets/uploads/projects
+                hint: "MP4 (H.264), 1920×1080 px, до 20 МБ."
+              - label: "Постер видео"
+                name: poster
+                widget: image
+                required: false
+                media_folder: /src/assets/uploads/projects
+                public_folder: /assets/uploads/projects
+                hint: "JPG, тот же размер, что у видео, до 300 КБ."
+              - { label: "Как GIF (без звука, зациклено, автоплей)", name: loop, widget: boolean, default: false, hint: "Только для видеофайла. Выключено — обычный плеер с кнопками и звуком." }
+              - { label: "Подпись", name: caption, widget: string, required: false }
+          - label: "Цитата"
+            name: quote
+            summary: "{{fields.text}}"
+            fields:
+              - { label: "Текст", name: text, widget: text }
+              - { label: "Автор", name: author, widget: string, required: false }
+
+  # ----------------------------------------------------------------- Логотипы
+  - name: logos
+    label: "Логотипы клиентов"
+    description: "Бегущая строка «Selected clients» под первым экраном."
+    editor: { preview: false }
+    files:
+      - name: logos
+        label: "Список логотипов"
+        file: content/logos.json
+        fields:
+          - label: "Логотипы"
+            name: logos
+            widget: list
+            label_singular: "логотип"
+            summary: "{{fields.name}}"
+            hint: "Порядок в бегущей строке — как в списке, меняется перетаскиванием."
+            fields:
+              - { label: "Название бренда", name: name, widget: string, hint: "Для незрячих и поисковиков, на сайте не видно." }
+              - label: "Файл логотипа"
+                name: file
+                widget: image
+                media_folder: /src/assets/uploads/logos
+                public_folder: /assets/uploads/logos
+                hint: >-
+                  Лучше всего SVG; можно PNG. Обязательно ПРОЗРАЧНЫЙ фон, без белой подложки и без полей вокруг.
+                  Цвет не важен — сайт сам перекрасит логотип в один цвет по его силуэту (фон-плашка тоже станет сплошной).
+                  PNG — не меньше 600 px по ширине. До 100 КБ.
+              - { label: "Высота на сайте, px", name: height, widget: number, value_type: int, default: 36, min: 16, max: 80, hint: "Подбирайте на глаз, чтобы логотипы выглядели одного «веса»: вытянутые надписи 26–32, квадратные знаки 46–54." }

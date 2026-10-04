@@ -1,0 +1,69 @@
+{
+  "logos": [
+    {
+      "name": "Samsung",
+      "file": "/assets/logos/samsung.svg",
+      "height": 28
+    },
+    {
+      "name": "Huawei",
+      "file": "/assets/logos/huawei.svg",
+      "height": 38
+    },
+    {
+      "name": "Logitech",
+      "file": "/assets/logos/logitech.svg",
+      "height": 40
+    },
+    {
+      "name": "Dreame",
+      "file": "/assets/logos/dreame.svg",
+      "height": 26
+    },
+    {
+      "name": "Haier",
+      "file": "/assets/logos/haier.svg",
+      "height": 38
+    },
+    {
+      "name": "OPPO",
+      "file": "/assets/logos/oppo.svg",
+      "height": 36
+    },
+    {
+      "name": "Midea",
+      "file": "/assets/logos/midea.svg",
+      "height": 46
+    },
+    {
+      "name": "Honor",
+      "file": "/assets/logos/honor.svg",
+      "height": 28
+    },
+    {
+      "name": "De’Longhi",
+      "file": "/assets/logos/delonghi.svg",
+      "height": 42
+    },
+    {
+      "name": "Tefal",
+      "file": "/assets/logos/tefal.svg",
+      "height": 28
+    },
+    {
+      "name": "Stihl",
+      "file": "/assets/logos/stihl.svg",
+      "height": 32
+    },
+    {
+      "name": "Samruk-Kazyna",
+      "file": "/assets/logos/samruk.svg",
+      "height": 52
+    },
+    {
+      "name": "Dunhill",
+      "file": "/assets/logos/dunhill.svg",
+      "height": 54
+    }
+  ]
+}

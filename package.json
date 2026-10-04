@@ -1,0 +1,20 @@
+{
+  "name": "nurgazinov-portfolio",
+  "private": true,
+  "version": "1.0.0",
+  "description": "nurgazinov.com — art director portfolio with a Decap CMS admin panel",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "node scripts/build.mjs && node scripts/serve.mjs",
+    "cms": "decap-server"
+  },
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "decap-cms": "^3.16.3",
+    "marked": "^18.0.14"
+  },
+  "devDependencies": {
+    "decap-server": "^3.11.3"
+  }
+}

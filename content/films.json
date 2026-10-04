@@ -1,0 +1,24 @@
+{
+  "films": [
+    {
+      "title": "Lara",
+      "year": "2025",
+      "duration": "00:16",
+      "video": "/assets/video/film-01-lara.mp4",
+      "poster": "/assets/img/film-01-lara.jpg",
+      "logline": "Deep in the jungle, by the ruins of an old temple, a lone fighter takes on the men guarding it.",
+      "tools": ["Midjourney", "Kling", "Runway", "Premiere Pro"],
+      "link": ""
+    },
+    {
+      "title": "Night Road",
+      "year": "2025",
+      "duration": "00:18",
+      "video": "/assets/video/film-02-night-road.mp4",
+      "poster": "/assets/img/film-02-night-road.jpg",
+      "logline": "An empty steppe highway after midnight. A man drives alone, an ancient stone guardian swinging from his car key.",
+      "tools": ["Midjourney", "Kling", "Runway", "Premiere Pro"],
+      "link": ""
+    }
+  ]
+}

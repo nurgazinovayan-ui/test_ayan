@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--@head-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Caveat:wght@600..700&display=swap">
+<link rel="stylesheet" href="/css/styles.css">
+<script async src="/assets/js/three.min.js"></script>
+<script defer src="/js/main.js"></script>
+</head>
+<body>
+<div id="top" class="site dark" style="background: var(--bg); color: var(--ink); font-family: 'Archivo', 'Helvetica Neue', Helvetica, sans-serif; font-stretch: 100%">
+
+
+<div data-ref="loader" class="loader " role="status" aria-live="polite" aria-label="Loading 0 percent">
+<div class="ld-half ld-l"></div>
+<div class="ld-half ld-r"></div>
+<div class="ld-in">
+<div class="ld-top" style="position: absolute; top: 24px; left: 32px; right: 32px; display: flex; justify-content: space-between; gap: 16px">
+<span class="mono">nurgazinov.com</span>
+<span class="mono" style="color: #9C9B95">Loading the theatre</span>
+</div>
+<div style="position: relative; width: min(64vw, 300px); aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center">
+<svg class="ld-leader" viewBox="0 0 300 300" aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%">
+<line x1="150" y1="0" x2="150" y2="300" stroke="#3A3835" stroke-width="1"></line>
+<line x1="0" y1="150" x2="300" y2="150" stroke="#3A3835" stroke-width="1"></line>
+<circle cx="150" cy="150" r="146" fill="none" stroke="#3A3835" stroke-width="1"></circle>
+<circle cx="150" cy="150" r="118" fill="none" stroke="#3A3835" stroke-width="1"></circle>
+<circle data-ref="loadArc" class="ld-arc" cx="150" cy="150" r="132" fill="none" stroke="#C8FF2E" stroke-width="10" pathLength="100" stroke-dasharray="100" style="stroke-dashoffset: 100" transform="rotate(-90 150 150)"></circle>
+<line class="ld-sweep" x1="150" y1="150" x2="150" y2="34" stroke="#F3EDE2" stroke-width="1.5"></line>
+</svg>
+<div style="position: relative; display: flex; align-items: flex-start; line-height: 0.8">
+<span data-ref="loadPct" class="play" style="font-size: clamp(72px, 14vw, 132px); font-variant-numeric: tabular-nums">000</span>
+<span class="mono" style="margin-top: 6px; margin-left: 4px; font-size: 14px">%</span>
+</div>
+</div>
+<ul style="list-style: none; margin: 40px 0 0; padding: 0 24px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 28px">
+
+<li class="mono ldp" data-k="Fonts" style="display: flex; gap: 8px; color: #9C9B95"><span>Fonts</span><span class="ldv" style="font-variant-numeric: tabular-nums">0%</span></li>
+
+<li class="mono ldp" data-k="Theatre engine" style="display: flex; gap: 8px; color: #9C9B95"><span>Theatre engine</span><span class="ldv" style="font-variant-numeric: tabular-nums">0%</span></li>
+
+<li class="mono ldp" data-k="3D hall" style="display: flex; gap: 8px; color: #9C9B95"><span>3D hall</span><span class="ldv" style="font-variant-numeric: tabular-nums">0%</span></li>
+
+<li class="mono ldp" data-k="Showreel" style="display: flex; gap: 8px; color: #9C9B95"><span>Showreel</span><span class="ldv" style="font-variant-numeric: tabular-nums">0%</span></li>
+
+<li class="mono ldp" data-k="Posters" style="display: flex; gap: 8px; color: #9C9B95"><span>Posters</span><span class="ldv" style="font-variant-numeric: tabular-nums">0%</span></li>
+
+</ul>
+<p data-ref="loadLine" class="hand" style="margin: 28px 0 0; font-size: 30px; color: #C8FF2E; transform: rotate(-4deg)">finding your seat…</p>
+</div>
+</div>
+
+
+<header class="hero" style="position: relative; isolation: isolate; height: min(100vh, 880px); min-height: 520px; background: #050404; color: #FFFFFF; overflow: hidden; box-sizing: border-box">
+<nav class="blend" style="position: absolute; top: 24px; left: 32px; right: 32px; z-index: 3; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px 32px">
+<a href="#top" class="disp" style="position: relative; font-size: 20px; letter-spacing: -0.02em; text-transform: none">nurgazinov<span class="ldot">.<span data-ref="logo" class="lens " aria-hidden="true"></span></span>com</a>
+<div style="display: flex; flex-wrap: wrap; gap: 8px 32px">
+<a class="mono nl" href="#about">About<svg class="scrib" viewBox="0 0 100 14" preserveAspectRatio="none" aria-hidden="true"><path d="M0 7 L100 7" pathLength="1"></path></svg></a>
+<a class="mono nl" href="#films">AI Films<svg class="scrib" viewBox="0 0 100 14" preserveAspectRatio="none" aria-hidden="true"><path d="M0 7 L100 7" pathLength="1"></path></svg></a>
+<a class="mono nl" href="#work">Work<svg class="scrib" viewBox="0 0 100 14" preserveAspectRatio="none" aria-hidden="true"><path d="M0 7 L100 7" pathLength="1"></path></svg></a>
+<a class="mono nl" href="#contact">Contact<svg class="scrib" viewBox="0 0 100 14" preserveAspectRatio="none" aria-hidden="true"><path d="M0 7 L100 7" pathLength="1"></path></svg></a>
+</div>
+</nav>
+<div class="stage3d " style="position: absolute; inset: 0">
+<video data-ref="video" class="hvid" src="{{hero.video}}" poster="{{hero.poster}}" muted="" loop="" playsinline="" preload="auto" aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block"></video>
+<canvas data-ref="canvas" aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%; display: block"></canvas>
+<canvas data-ref="beam" class="beamcv" aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none"></canvas>
+<button data-ref="curtains" class="curtains" aria-label="Open the curtains and play the showreel" style="position: absolute; inset: 0; z-index: 1; width: 100%; border: 0; padding: 0; margin: 0; background: none; cursor: pointer; display: block"></button>
+<div data-ref="cursor" class="hcur" aria-hidden="true" style="position: absolute; left: 0; top: 0; z-index: 4; pointer-events: none">
+<div class="hcur-in" style="display: flex; align-items: center; gap: 8px; padding: 8px 11px 8px 12px; background: #C8FF2E; color: #121211; white-space: nowrap">
+<span class="hroll" style="display: block; height: 14px; overflow: hidden; font-family: 'Archivo', sans-serif; font-stretch: 125%; font-weight: 800; font-size: 12px; line-height: 14px; letter-spacing: 0.06em; text-transform: uppercase">
+<span class="hroll-track t-closed" style="flex-direction: column"><span>Click</span><span>Click</span></span>
+<span class="hroll-track t-open" style="flex-direction: column"><span>Close</span><span>Close</span></span>
+</span>
+<svg class="ic-play" width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M6 3.5v17l15-8.5z"></path></svg>
+<svg class="ic-close" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4"><path d="M5 5l14 14M19 5L5 19"></path></svg>
+</div>
+</div>
+<div class="ctext" style="position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: #F3EDE2; pointer-events: none">
+<div style="position: relative; display: flex; flex-direction: column; align-items: center; margin-top: -2%">
+<h1 data-ref="title" class="htitle" style="position: relative; margin: 0; display: flex; flex-direction: column; align-items: center; font-weight: 400">
+<span class="sr-only">Art Director — Emotion First</span>
+<span class="play" aria-hidden="true" style="font-size: clamp(38px, 10.4vw, 168px); line-height: 0.88"><span class="wd"><span class="lt">A</span><span class="lt">r</span><span class="lt">t</span></span> <span class="wd"><span class="lt">D</span><span class="lt">i</span><span class="lt">r</span><span class="lt">e</span><span class="lt">c</span><span class="lt">t</span><span class="lt">o</span><span class="lt">r</span></span></span>
+<span class="play" aria-hidden="true" style="font-size: clamp(38px, 10.4vw, 168px); line-height: 0.88"><span class="wd"><span class="lt">E</span><span class="lt">m</span><span class="lt">o</span><span class="lt">t</span><span class="lt">i</span><span class="lt">o</span><span class="lt">n</span></span> <span class="wd"><span class="lt">F</span><span class="lt">i</span><span class="lt">r</span><span class="lt">s</span><span class="lt">t</span></span></span>
+</h1>
+<p class="brush tagline" style="position: absolute; left: 50%; top: 50%; margin: 0; transform: translate(-50%, -54%) rotate(-7deg); font-size: clamp(26px, 4.4vw, 72px); line-height: 1; white-space: nowrap; color: #FFD60A; text-transform: none; text-shadow: 0.05em 0.05em 0 #0A0A09">love, action &amp; humor</p>
+</div>
+</div>
+</div>
+</header>
+
+<!--@logos-->
+
+<section id="about" data-ref="about" class="ab" style="padding: clamp(80px, 11vw, 160px) 32px clamp(80px, 10vw, 140px); overflow-x: clip">
+<p style="margin: 0; display: flex; flex-direction: column; gap: 10px; font-size: clamp(24px, 5.3vw, 84px); line-height: 1.05">
+<span class="ph phr fly disp" data-r="" style="--dx: -240px; --dy: 30px">{{about.years}}+ years</span>
+<span class="ph phr fly serif" data-r="" style="--dx: 260px; --dy: 30px; margin-left: 18%">of making brands</span>
+<span class="ph phr fly disp" data-r="" style="--dx: -220px; --dy: 30px; margin-left: 6%">feel something</span>
+<span class="ph phr fly serif" data-r="" style="--dx: 240px; --dy: 30px; margin-left: 26%">before they say</span>
+<span class="ph phr fly disp" data-r="" style="--dx: -260px; --dy: 30px; margin-left: 12%">a single word.</span>
+</p>
+<div class="g12" style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 20px; row-gap: 40px; margin-top: clamp(72px, 9vw, 128px); align-items: start">
+<!--@portrait-->
+<p class="mtxt fly" data-r="" style="--dx: 0px; --dy: 90px; grid-column: 5 / span 5; margin: 0; font-size: clamp(15px, 1.35vw, 19px); line-height: 1.6; text-wrap: pretty">{{about.text}}</p>
+<dl style="grid-column: 10 / span 3; margin: 0; display: flex; flex-direction: column; gap: 22px">
+<div class="fly fact" data-r="" style="--dx: 140px; --dy: 0px; --fd: 0; display: flex; flex-direction: column; gap: 4px">
+<dt class="mono" style="color: var(--muted)">Experience</dt>
+<dd class="mono" style="margin: 0"><span data-ref="count" data-to="{{about.years}}">{{about.years}}</span>+ years</dd>
+</div>
+<div class="fly fact" data-r="" style="--dx: 140px; --dy: 0px; --fd: 1; display: flex; flex-direction: column; gap: 4px">
+<dt class="mono" style="color: var(--muted)">Views</dt>
+<dd class="mono" style="margin: 0">{{about.views}}</dd>
+</div>
+<div class="fly fact" data-r="" style="--dx: 140px; --dy: 0px; --fd: 2; display: flex; flex-direction: column; gap: 4px">
+<dt class="mono" style="color: var(--muted)">Focus</dt>
+<dd class="mono" style="margin: 0">{{about.focus}}</dd>
+</div>
+<div class="fly fact" data-r="" style="--dx: 140px; --dy: 0px; --fd: 3; display: flex; flex-direction: column; gap: 4px">
+<dt class="mono" style="color: var(--muted)">Based in</dt>
+<dd class="mono" style="margin: 0">{{about.city}}</dd>
+</div>
+<a class="mono fly fact" data-r="" href="#contact" style="--dx: 140px; --dy: 0px; --fd: 4; margin-top: 8px">Get in touch →</a>
+</dl>
+</div>
+</section>
+
+<!--@films-->
+
+<!--@work-->
+
+<!--@footer-->
+
+</div>
+</body>
+</html>
