@@ -5,7 +5,7 @@
 
 backend:
   name: github
-  repo: nurgazinovayan-ui/test_ayan
+  repo: nurgazinovayan-ui/nurgazinov-portfolio
   branch: main
   # base_url подставляется при сборке (scripts/build.mjs) — адрес боевого домена Vercel
   base_url: https://nurgazinov.com

@@ -35,11 +35,11 @@ GitHub-репозиторий, Vercel замечает коммит и за ~1 �
 
 ### 2. Создать проект на Vercel
 1. Зарегистрируйтесь на https://vercel.com через GitHub.
-2. **Add New… → Project** → выберите репозиторий `nurgazinovayan-ui/test_ayan` → **Import**
+2. **Add New… → Project** → выберите репозиторий `nurgazinovayan-ui/nurgazinov-portfolio` → **Import**
    (если репозитория нет в списке — нажмите **Adjust GitHub App Permissions** и дайте доступ к нему).
 3. Framework Preset: **Other**. Остальные настройки подтянутся из `vercel.json`
    (`npm run build`, папка `dist`). Нажмите **Deploy**.
-4. Через пару минут сайт откроется по адресу вида `test-ayan.vercel.app` — проверьте его.
+4. Через пару минут сайт откроется по адресу вида `nurgazinov-portfolio.vercel.app` — проверьте его.
 
 ### 3. Подключить домен nurgazinov.com
 1. Vercel → проект → **Settings → Domains → Add** → `nurgazinov.com`. Согласитесь добавить и `www.nurgazinov.com`
