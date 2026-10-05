@@ -1,7 +1,9 @@
 import { spring } from 'remotion';
 import { FPS, ease, mix, prog } from '../theme';
-import { FONT, HAND } from '../fonts';
+import { FONT } from '../fonts';
 import { Sketch, rr } from './rough';
+import { useLook } from './look';
+import type { HandVariant } from './look';
 
 /**
  * Hand-drawn cut of the generated piece (native 830×324, scaled by the parent):
@@ -44,60 +46,7 @@ const CENTER: Layout = {
   rule: { x1: 44, x2: 786, y: 284 },
 };
 
-export type HandVariant = {
-  bg: string;
-  ink: string;
-  muted: string;
-  a1: string;
-  a2: string;
-  capInk: string;
-  grid: number;
-  layout: 'left' | 'center' | 'right';
-  speed: number;
-  stagger: number;
-};
-
-export const HAND_VARIANTS = {
-  // chalk on night: the original
-  a: {
-    bg: '#0E0F14',
-    ink: '#F4F4F6',
-    muted: 'rgba(244,244,246,0.5)',
-    a1: '#3B7BFF',
-    a2: '#A78BFA',
-    capInk: '#FFFFFF',
-    grid: 0.16,
-    layout: 'left',
-    speed: 1,
-    stagger: 5,
-  },
-  // pencil on paper, centred, quick rhythm
-  b: {
-    bg: '#EFECE4',
-    ink: '#16161C',
-    muted: 'rgba(22,22,28,0.55)',
-    a1: '#6D5BF5',
-    a2: '#3B7BFF',
-    capInk: '#FFFFFF',
-    grid: 0.18,
-    layout: 'center',
-    speed: 1.3,
-    stagger: 3,
-  },
-  // blueprint, mirrored, slow rhythm
-  c: {
-    bg: '#0D1C4F',
-    ink: '#EEF2FF',
-    muted: 'rgba(238,242,255,0.55)',
-    a1: '#A78BFA',
-    a2: '#7FB0FF',
-    capInk: '#0D1C4F',
-    grid: 0.22,
-    layout: 'right',
-    speed: 0.8,
-    stagger: 8,
-  },
-} satisfies Record<string, HandVariant>;
+export type { HandVariant };
 
 const ROWS = [54, 108, 162, 216, 270];
 const COLS = [138, 277, 415, 553, 692];
@@ -110,6 +59,8 @@ export const HandPiece: React.FC<{ t: number; frame: number; v: HandVariant; bgO
   bgOpacity = 1,
   seed = 100,
 }) => {
+  const K = useLook();
+  const HAND = K.font;
   const T = t * v.speed;
   const L = v.layout === 'center' ? CENTER : v.layout === 'right' ? { ...LEFT, mirror: true } : LEFT;
   const bx = (b: Box): Box => (L.mirror ? { ...b, x: HP_W - b.x - b.w } : b);
@@ -164,14 +115,14 @@ export const HandPiece: React.FC<{ t: number; frame: number; v: HandVariant; bgO
   const scroll = (T * 1.4) % period;
 
   // ---- FLOW ---------------------------------------------------------------------------------------
-  const F = L.flow;
+  const F = { ...L.flow, size: L.flow.size * K.flowScale, y: L.flow.y + (L.flow.size * (1 - K.flowScale)) / 2 };
   const flowStyle: React.CSSProperties = {
     position: 'absolute',
     top: F.y,
-    fontFamily: HAND,
+    fontFamily: K.flowFont,
     fontSize: F.size,
     lineHeight: 1,
-    fontWeight: 700,
+    fontWeight: K.flowWeight,
     letterSpacing: '0.01em',
     whiteSpace: 'nowrap',
     ...(F.align === 'center'
@@ -298,7 +249,7 @@ export const HandPiece: React.FC<{ t: number; frame: number; v: HandVariant; bgO
                   paddingLeft: fs * 0.5,
                   fontFamily: HAND,
                   fontSize: fs,
-                  fontWeight: 700,
+                  fontWeight: K.weight,
                   color: v.capInk,
                   lineHeight: 1,
                 }}
@@ -326,7 +277,7 @@ export const HandPiece: React.FC<{ t: number; frame: number; v: HandVariant; bgO
               fontFamily: HAND,
               fontSize: tk.h * 0.8,
               lineHeight: `${tk.h}px`,
-              fontWeight: 700,
+              fontWeight: K.weight,
               color: v.ink,
               textAlign: L.mirror ? 'right' : 'left',
               transform: `translateY(${y}%)`,
@@ -382,7 +333,7 @@ export const HandPiece: React.FC<{ t: number; frame: number; v: HandVariant; bgO
           justifyContent: 'space-between',
           fontFamily: HAND,
           fontSize: 22,
-          fontWeight: 700,
+          fontWeight: K.weight,
           letterSpacing: '0.08em',
           color: v.muted,
           clipPath: L.mirror ? `inset(0 0 0 ${(1 - labelsIn) * 100}%)` : `inset(0 ${(1 - labelsIn) * 100}% 0 0)`,

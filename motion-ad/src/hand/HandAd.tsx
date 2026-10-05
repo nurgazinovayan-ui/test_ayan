@@ -1,14 +1,15 @@
 import type { CSSProperties, ReactNode } from 'react';
 import { AbsoluteFill, interpolate, useCurrentFrame } from 'remotion';
 import '../fonts';
-import { FONT, HAND } from '../fonts';
+import { FONT } from '../fonts';
 import { Background } from '../components/Background';
 import { Grain } from '../components/Grain';
 import { MaskLine } from '../components/MaskLine';
-import { C, GRADIENT, TEXT_X, ease, mix, mixRect, prog } from '../theme';
+import { TEXT_X, ease, mix, mixRect, prog } from '../theme';
 import type { Rect } from '../theme';
-import { HAND_VARIANTS, HP_H, HP_W, HandPiece } from './HandPiece';
-import type { HandVariant } from './HandPiece';
+import { HP_H, HP_W, HandPiece } from './HandPiece';
+import { LOOKS, LookContext, useLook } from './look';
+import type { HandVariant, Look } from './look';
 import { Sketch, rr } from './rough';
 import type { Shape } from './rough';
 
@@ -45,23 +46,23 @@ const BUTTON: Rect = { x: FIELD.x + FIELD.w - 18 - 132, y: FIELD.y + FIELD.h - 1
 const BTN_C = { x: BUTTON.x + BUTTON.w / 2, y: BUTTON.y + BUTTON.h / 2 };
 
 const PROMPT = 'Создай динамичную анимацию для моего бренда';
-const PAPER = '#0F0F13';
 
-const hand = (size: number): CSSProperties => ({
-  fontFamily: HAND,
+const hand = (K: Look, size: number): CSSProperties => ({
+  fontFamily: K.font,
   fontSize: size,
   lineHeight: 1.02,
-  fontWeight: 700,
-  color: C.ink,
+  fontWeight: K.weight,
+  letterSpacing: K.tracking,
+  color: K.ink,
   whiteSpace: 'nowrap',
 });
 
-const gradientText: CSSProperties = {
-  backgroundImage: GRADIENT,
+const gradientText = (K: Look): CSSProperties => ({
+  backgroundImage: K.gradient,
   WebkitBackgroundClip: 'text',
   backgroundClip: 'text',
   color: 'transparent',
-};
+});
 
 /** A sketched box: opaque fill underneath, chalk outline drawn on top. */
 const SketchBox: React.FC<{
@@ -75,34 +76,38 @@ const SketchBox: React.FC<{
   opacity?: number;
   dx?: number;
   children?: ReactNode;
-}> = ({ rect, frame, id, draw = 1, stroke = 'rgba(250,250,250,0.85)', strokeWidth = 1.6, fill = PAPER, opacity = 1, dx = 0, children }) => (
+}> = ({ rect, frame, id, draw = 1, stroke, strokeWidth = 1.6, fill, opacity = 1, dx = 0, children }) => {
+  const K = useLook();
+  return (
   <div style={{ position: 'absolute', left: rect.x + dx, top: rect.y, width: rect.w, height: rect.h, opacity }}>
-    <div style={{ position: 'absolute', inset: 2, borderRadius: rect.r, background: fill, overflow: 'hidden' }}>{children}</div>
+    <div style={{ position: 'absolute', inset: 2, borderRadius: rect.r, background: fill ?? K.paper, overflow: 'hidden' }}>{children}</div>
     <Sketch
       id={id}
       frame={frame}
       shape={{ kind: 'path', d: rr(1, 1, rect.w - 2, rect.h - 2, rect.r) }}
       draw={draw}
-      opts={{ stroke, strokeWidth, roughness: 1.1 }}
+      opts={{ stroke: stroke ?? K.line, strokeWidth, roughness: 1.1 }}
     />
   </div>
-);
+  );
+};
 
 const CardIcon: React.FC<{ kind: number; frame: number; draw: number }> = ({ kind, frame, draw }) => {
+  const K = useLook();
   const shapes: { s: Shape; o: object }[] =
     kind === 0
       ? [
-          { s: { kind: 'ellipse', cx: 14, cy: 17, w: 20, h: 20 }, o: { stroke: C.ink2, strokeWidth: 1.5 } },
-          { s: { kind: 'ellipse', cx: 26, cy: 6, w: 8, h: 8 }, o: { stroke: C.blue, fill: C.blue, fillStyle: 'solid' } },
+          { s: { kind: 'ellipse', cx: 14, cy: 17, w: 20, h: 20 }, o: { stroke: K.ink2, strokeWidth: 1.5 } },
+          { s: { kind: 'ellipse', cx: 26, cy: 6, w: 8, h: 8 }, o: { stroke: K.a1, fill: K.a1, fillStyle: 'solid' } },
         ]
       : kind === 1
         ? [
-            { s: { kind: 'ellipse', cx: 12, cy: 16, w: 18, h: 18 }, o: { stroke: C.blue, fill: C.blue, fillStyle: 'hachure', hachureGap: 3 } },
-            { s: { kind: 'ellipse', cx: 22, cy: 16, w: 18, h: 18 }, o: { stroke: C.violet, fill: C.violet, fillStyle: 'hachure', hachureAngle: 40, hachureGap: 3 } },
+            { s: { kind: 'ellipse', cx: 12, cy: 16, w: 18, h: 18 }, o: { stroke: K.a1, fill: K.a1, fillStyle: 'hachure', hachureGap: 3 } },
+            { s: { kind: 'ellipse', cx: 22, cy: 16, w: 18, h: 18 }, o: { stroke: K.a2, fill: K.a2, fillStyle: 'hachure', hachureAngle: 40, hachureGap: 3 } },
           ]
         : [
-            { s: { kind: 'path', d: rr(2, 9, 30, 14, 7) }, o: { stroke: C.ink2, strokeWidth: 1.5 } },
-            { s: { kind: 'ellipse', cx: 10, cy: 16, w: 8, h: 8 }, o: { stroke: C.violet, fill: C.violet, fillStyle: 'solid' } },
+            { s: { kind: 'path', d: rr(2, 9, 30, 14, 7) }, o: { stroke: K.ink2, strokeWidth: 1.5 } },
+            { s: { kind: 'ellipse', cx: 10, cy: 16, w: 8, h: 8 }, o: { stroke: K.a2, fill: K.a2, fillStyle: 'solid' } },
           ];
   return (
     <div style={{ position: 'absolute', right: 14, top: 12, width: 34, height: 30 }}>
@@ -120,22 +125,25 @@ const CardFace: React.FC<{ index: number; title: string; frame: number; opacity:
   opacity,
   lit,
   done,
-}) => (
+}) => {
+  const K = useLook();
+  return (
   <div style={{ position: 'absolute', inset: 0, opacity }}>
-    <div style={{ position: 'absolute', left: 16, top: 10, fontFamily: HAND, fontSize: 22, color: C.ink3 }}>0{index + 1}</div>
+    <div style={{ position: 'absolute', left: 16, top: 10, fontFamily: K.font, fontSize: 22, color: K.ink3 }}>0{index + 1}</div>
     <CardIcon kind={index} frame={frame} draw={1} />
-    <div style={{ position: 'absolute', left: 16, bottom: 18, ...hand(36), color: lit > 0.3 ? '#fff' : C.ink }}>{title}</div>
+    <div style={{ position: 'absolute', left: 16, bottom: 18, ...hand(K, 36), color: lit > 0.3 ? K.aSoft : K.ink }}>{title}</div>
     <div style={{ position: 'absolute', left: 14, bottom: 10, width: 100, height: 10 }}>
       <Sketch
         id={320 + index}
         frame={frame}
         shape={{ kind: 'curve', pts: [[0, 6], [40, 3], [96, 5]] }}
         draw={done}
-        opts={{ stroke: C.blue, strokeWidth: 3.5, roughness: 0.9 }}
+        opts={{ stroke: K.a1, strokeWidth: 3.5, roughness: 0.9 }}
       />
     </div>
   </div>
-);
+  );
+};
 
 const HandWindow: React.FC<{
   rect: Rect;
@@ -151,6 +159,7 @@ const HandWindow: React.FC<{
   seed?: number;
   children?: ReactNode;
 }> = ({ rect, frame, id, t, v, pieceOpacity, chrome, opacity = 1, draw = 1, lit = 0, seed, children }) => {
+  const K = useLook();
   const s = Math.max(rect.w / HP_W, rect.h / HP_H);
   const edge = 1 - chrome;
   const maskX = `linear-gradient(90deg, rgba(0,0,0,${1 - edge}) 0%, #000 ${edge * 18}%, #000 ${100 - edge * 6}%, rgba(0,0,0,${1 - edge}) 100%)`;
@@ -163,8 +172,8 @@ const HandWindow: React.FC<{
           inset: 2,
           borderRadius: rect.r,
           overflow: 'hidden',
-          background: `rgba(15,15,19,${chrome})`,
-          boxShadow: `0 30px 70px -34px rgba(59,123,255,${0.45 * chrome})`,
+          background: `color-mix(in srgb, ${K.paper} ${chrome * 100}%, transparent)`,
+          boxShadow: K.dark ? `0 30px 70px -34px rgba(59,123,255,${0.45 * chrome})` : `0 18px 40px -28px rgba(30,30,40,${0.35 * chrome})`,
         }}
       >
         <div style={{ position: 'absolute', inset: 0, WebkitMaskImage: maskX, maskImage: maskX }}>
@@ -193,14 +202,23 @@ const HandWindow: React.FC<{
           frame={frame}
           shape={{ kind: 'path', d: rr(1, 1, rect.w - 2, rect.h - 2, rect.r) }}
           draw={draw}
-          opts={{ stroke: lit > 0.2 ? C.blueSoft : 'rgba(250,250,250,0.8)', strokeWidth: 1.6 + lit * 1.2, roughness: 1.1 }}
+          opts={{ stroke: lit > 0.2 ? K.aSoft : K.line, strokeWidth: 1.6 + lit * 1.2, roughness: 1.1 }}
         />
       </div>
     </div>
   );
 };
 
-export const HandAd: React.FC = () => {
+export const HandAd: React.FC<{ look?: string }> = ({ look = 'chalk' }) => {
+  const K = LOOKS[look] ?? LOOKS.chalk;
+  return (
+    <LookContext.Provider value={K}>
+      <HandScene K={K} />
+    </LookContext.Provider>
+  );
+};
+
+const HandScene: React.FC<{ K: Look }> = ({ K }) => {
   const f = useCurrentFrame();
 
   // ---- camera ---------------------------------------------------------------------------------------
@@ -273,7 +291,7 @@ export const HandAd: React.FC = () => {
 
   const focusX = interpolate(f, [0, 90, 210, 360, 450, 540], [900, 880, 760, 640, 900, 920], { extrapolateRight: 'clamp' });
 
-  const underline = (id: number, w: number, draw: number, color = C.blue) => (
+  const underline = (id: number, w: number, draw: number, color: string = K.a1) => (
     <div style={{ position: 'relative', width: w, height: 14, marginTop: -6 }}>
       <Sketch
         id={id}
@@ -286,8 +304,8 @@ export const HandAd: React.FC = () => {
   );
 
   return (
-    <AbsoluteFill style={{ fontFamily: FONT, overflow: 'hidden', backgroundColor: C.bg }}>
-      <Background frame={f} focusX={focusX} />
+    <AbsoluteFill style={{ fontFamily: FONT, overflow: 'hidden', backgroundColor: K.bg }}>
+      <Background frame={f} focusX={focusX} bg={K.bg} glow={K.bgGlow} grid={K.bgGrid} gridColor={K.ink} />
 
       {/* ================= workspace (inside the camera) ================= */}
       <div style={camera}>
@@ -305,15 +323,15 @@ export const HandAd: React.FC = () => {
           );
           return (
             <div key={i} style={{ position: 'absolute', inset: 0, opacity: 1 - chainOut }}>
-              {arrow('rgba(250,250,250,0.7)', arrowDraw[i], 200 + i * 10, 1.6)}
-              {arrowLit[i] > 0 && arrow(C.blueSoft, arrowLit[i], 205 + i * 10, 2.6)}
+              {arrow(K.line, arrowDraw[i], 200 + i * 10, 1.6)}
+              {arrowLit[i] > 0 && arrow(K.aSoft, arrowLit[i], 205 + i * 10, 2.6)}
             </div>
           );
         })}
 
         {/* marker dot travelling along the chain (hidden behind the cards) */}
         <div style={{ position: 'absolute', left: pulseX - 9, top: CARD_Y + CARD_H / 2 - 12, width: 18, height: 18, opacity: pulseOn, filter: 'drop-shadow(0 0 8px rgba(127,168,255,0.9))' }}>
-          <Sketch id={240} frame={f} shape={{ kind: 'ellipse', cx: 9, cy: 9, w: 16, h: 16 }} opts={{ stroke: '#fff', strokeWidth: 1.2, fill: C.blueSoft, fillStyle: 'solid' }} />
+          <Sketch id={240} frame={f} shape={{ kind: 'ellipse', cx: 9, cy: 9, w: 16, h: 16 }} opts={{ stroke: '#fff', strokeWidth: 1.2, fill: K.aSoft, fillStyle: 'solid' }} />
         </div>
 
         <SketchBox
@@ -321,7 +339,7 @@ export const HandAd: React.FC = () => {
           frame={f}
           id={110}
           draw={cardDraw[1]}
-          stroke={lit[1] > 0.2 ? C.blueSoft : undefined}
+          stroke={lit[1] > 0.2 ? K.aSoft : undefined}
           strokeWidth={1.6 + lit[1] * 1.2}
           opacity={prog(f, 98, 106) * (1 - chainOut)}
           dx={mix(-24, 0, cardIn[1]) - chainOut * 30}
@@ -335,21 +353,21 @@ export const HandAd: React.FC = () => {
           frame={f}
           id={100}
           draw={fieldDraw}
-          stroke={lit[0] > 0.2 ? C.blueSoft : undefined}
+          stroke={lit[0] > 0.2 ? K.aSoft : undefined}
           strokeWidth={1.6 + lit[0] * 1.2}
           opacity={fieldIn * (1 - chainOut)}
           dx={-chainOut * 30}
         >
           <div style={{ position: 'absolute', inset: 0, opacity: fieldContent }}>
-            <div style={{ position: 'absolute', left: 20, top: 12, display: 'flex', alignItems: 'center', gap: 8, fontFamily: HAND, fontSize: 22, color: C.ink3 }}>
+            <div style={{ position: 'absolute', left: 20, top: 12, display: 'flex', alignItems: 'center', gap: 8, fontFamily: K.font, fontSize: 22, color: K.ink3 }}>
               <div style={{ position: 'relative', width: 10, height: 10 }}>
-                <Sketch id={120} frame={f} shape={{ kind: 'ellipse', cx: 5, cy: 5, w: 9, h: 9 }} opts={{ stroke: C.blue, fill: C.blue, fillStyle: 'solid', strokeWidth: 1 }} />
+                <Sketch id={120} frame={f} shape={{ kind: 'ellipse', cx: 5, cy: 5, w: 9, h: 9 }} opts={{ stroke: K.a1, fill: K.a1, fillStyle: 'solid', strokeWidth: 1 }} />
               </div>
               опиши идею
             </div>
-            <div style={{ position: 'absolute', left: 20, top: 44, width: 494, ...hand(31), fontWeight: 400, whiteSpace: 'normal', lineHeight: '34px' }}>
+            <div style={{ position: 'absolute', left: 20, top: 44, width: 470, ...hand(K, 31), fontWeight: 400, whiteSpace: 'normal', lineHeight: '34px' }}>
               {PROMPT.slice(0, chars)}
-              <span style={{ display: 'inline-block', width: 3, height: 28, marginLeft: 3, verticalAlign: '-5px', borderRadius: 2, background: C.blueSoft, opacity: caretOn ? 1 : 0 }} />
+              <span style={{ display: 'inline-block', width: 3, height: 28, marginLeft: 3, verticalAlign: '-5px', borderRadius: 2, background: K.aSoft, opacity: caretOn ? 1 : 0 }} />
             </div>
           </div>
           <CardFace index={0} title="Идея" frame={f} opacity={prog(f, 94, 108)} lit={lit[0]} done={done[0]} />
@@ -367,20 +385,20 @@ export const HandAd: React.FC = () => {
               transform: `scale(${1 - press * 0.07})`,
             }}
           >
-            <div style={{ position: 'absolute', inset: 3, borderRadius: 99, background: `linear-gradient(90deg, ${C.blue}, #6F6BFF)`, opacity: 0.85 }} />
+            <div style={{ position: 'absolute', inset: 3, borderRadius: 99, background: `linear-gradient(90deg, ${K.a1}, #6F6BFF)`, opacity: 0.85 }} />
             <Sketch
               id={130}
               frame={f}
               shape={{ kind: 'path', d: rr(1, 1, BUTTON.w - 2, BUTTON.h - 2, BUTTON.r) }}
               draw={prog(f, 10, 26, ease.soft)}
-              opts={{ stroke: '#fff', strokeWidth: 1.6, fill: '#9FC0FF', fillStyle: 'hachure', hachureGap: 7, fillWeight: 1, roughness: 1 }}
+              opts={{ stroke: '#fff', strokeWidth: 1.6, fill: K.dark ? '#9FC0FF' : '#FFFFFF', fillStyle: 'hachure', hachureGap: 7, fillWeight: 1, roughness: 1 }}
             />
-            <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', ...hand(28), color: '#fff' }}>
+            <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', ...hand(K, 28), color: '#fff' }}>
               Создать →
             </div>
           </div>
           <div style={{ position: 'absolute', left: BTN_C.x - 92, top: BTN_C.y - 40, width: 184, height: 80, opacity: 1 - scribbleOut }}>
-            <Sketch id={140} frame={f} shape={{ kind: 'ellipse', cx: 92, cy: 40, w: 178, h: 72 }} draw={scribble} opts={{ stroke: C.violet, strokeWidth: 2.6, roughness: 1.6 }} />
+            <Sketch id={140} frame={f} shape={{ kind: 'ellipse', cx: 92, cy: 40, w: 164, h: 62 }} draw={scribble} opts={{ stroke: K.a2, strokeWidth: 2.6, roughness: 1.6 }} />
           </div>
           {[-150, -110, -70, -30, 20, 200].map((deg, i) => {
             const a = (deg * Math.PI) / 180;
@@ -392,7 +410,7 @@ export const HandAd: React.FC = () => {
                   id={150 + i}
                   frame={f}
                   shape={{ kind: 'line', x1: BTN_C.x + Math.cos(a) * r0, y1: BTN_C.y + Math.sin(a) * r0 * 0.5, x2: BTN_C.x + Math.cos(a) * r1, y2: BTN_C.y + Math.sin(a) * r1 * 0.5 }}
-                  opts={{ stroke: i % 2 ? C.blueSoft : C.violet, strokeWidth: 2.4, roughness: 0.6 }}
+                  opts={{ stroke: i % 2 ? K.aSoft : K.a2, strokeWidth: 2.4, roughness: 0.6 }}
                 />
               </div>
             );
@@ -405,31 +423,31 @@ export const HandAd: React.FC = () => {
             frame={f}
             id={160}
             t={tA}
-            v={HAND_VARIANTS.a}
+            v={K.variants[0]}
             pieceOpacity={prog(f, 188, 204)}
             chrome={1}
             opacity={prog(f, 110, 118)}
             draw={cardDraw[2]}
             lit={Math.max(lit[2], prog(f, 168, 176) * (1 - prog(f, 180, 196)))}
           >
-            <div style={{ position: 'absolute', inset: 0, background: PAPER, opacity: 1 - prog(f, 182, 198) }}>
+            <div style={{ position: 'absolute', inset: 0, background: K.paper, opacity: 1 - prog(f, 182, 198) }}>
               <CardFace index={2} title="Моушн" frame={f} opacity={prog(f, 118, 132) * (1 - prog(f, 176, 186))} lit={lit[2]} done={done[2]} />
             </div>
             {/* pencil playhead line */}
             <div style={{ position: 'absolute', left: 24, right: 24, bottom: 10, height: 10, opacity: prog(f, 206, 222) * (1 - prog(f, 338, 350)) }}>
-              <Sketch id={170} frame={f} shape={{ kind: 'line', x1: 0, y1: 5, x2: 778, y2: 5 }} opts={{ stroke: 'rgba(255,255,255,0.25)', strokeWidth: 1.2 }} />
-              <Sketch id={171} frame={f} shape={{ kind: 'line', x1: 0, y1: 5, x2: 778, y2: 5 }} draw={prog(f, 192, 346, (x) => x)} opts={{ stroke: C.blueSoft, strokeWidth: 2.4 }} />
+              <Sketch id={170} frame={f} shape={{ kind: 'line', x1: 0, y1: 5, x2: 778, y2: 5 }} opts={{ stroke: K.ink3, strokeWidth: 1.2 }} />
+              <Sketch id={171} frame={f} shape={{ kind: 'line', x1: 0, y1: 5, x2: 778, y2: 5 }} draw={prog(f, 192, 346, (x) => x)} opts={{ stroke: K.aSoft, strokeWidth: 2.4 }} />
             </div>
           </HandWindow>
         )}
 
         {f >= 370 && f < 456 && (
           <>
-            <HandWindow rect={varRect(0)} frame={f} id={180} t={(f - 370) + 18} v={HAND_VARIANTS.b} pieceOpacity={1} chrome={1} opacity={varOpacity} seed={500} />
-            <HandWindow rect={varRect(2)} frame={f} id={190} t={(f - 370) + 26} v={HAND_VARIANTS.c} pieceOpacity={1} chrome={1} opacity={varOpacity} seed={700} />
+            <HandWindow rect={varRect(0)} frame={f} id={180} t={(f - 370) + 18} v={K.variants[1]} pieceOpacity={1} chrome={1} opacity={varOpacity} seed={500} />
+            <HandWindow rect={varRect(2)} frame={f} id={190} t={(f - 370) + 26} v={K.variants[2]} pieceOpacity={1} chrome={1} opacity={varOpacity} seed={700} />
           </>
         )}
-        {f >= 444 && <HandWindow rect={mainRect} frame={f} id={160} t={tA} v={HAND_VARIANTS.a} pieceOpacity={1} chrome={mainChrome} />}
+        {f >= 444 && <HandWindow rect={mainRect} frame={f} id={160} t={tA} v={K.variants[0]} pieceOpacity={1} chrome={mainChrome} />}
 
         {/* sketched cursor */}
         {cur.o > 0 && (
@@ -447,35 +465,35 @@ export const HandAd: React.FC = () => {
       {/* ================= copy ================= */}
       <div style={{ position: 'absolute', left: TEXT_X, top: 104 }}>
         <MaskLine enter={t1[0].enter} exit={t1[0].exit}>
-          <div style={hand(64)}>Идея становится</div>
+          <div style={hand(K, 64)}>Идея становится</div>
         </MaskLine>
         <MaskLine enter={t1[1].enter} exit={t1[1].exit}>
-          <div style={{ ...hand(64), ...gradientText }}>движением</div>
+          <div style={{ ...hand(K, 64), ...gradientText(K) }}>движением</div>
         </MaskLine>
         <div style={{ opacity: 1 - t1[1].exit }}>{underline(400, 250, prog(f, 22, 36, ease.out))}</div>
       </div>
 
       <div style={{ position: 'absolute', left: TEXT_X, top: 118 }}>
         <MaskLine enter={t2[0].enter} exit={t2[0].exit}>
-          <div style={hand(56)}>Задай направление.</div>
+          <div style={hand(K, 56)}>Задай направление.</div>
         </MaskLine>
         <MaskLine enter={t2[1].enter} exit={t2[1].exit}>
-          <div style={{ ...hand(56), ...gradientText }}>Запусти создание.</div>
+          <div style={{ ...hand(K, 56), ...gradientText(K) }}>Запусти создание.</div>
         </MaskLine>
       </div>
 
       <div style={{ position: 'absolute', left: TEXT_X, top: 120 }}>
         {['Типографика.', 'Формы.', 'Движение.'].map((w, i) => (
           <MaskLine key={w} enter={t3[i].enter} exit={t3[i].exit}>
-            <div style={{ ...hand(28), lineHeight: '44px', ...(i === 2 ? gradientText : {}) }}>{w}</div>
+            <div style={{ ...hand(K, 28), lineHeight: '44px', ...(i === 2 ? gradientText(K) : {}) }}>{w}</div>
           </MaskLine>
         ))}
       </div>
 
       <div style={{ position: 'absolute', left: TEXT_X, top: 36 }}>
         <MaskLine enter={t4.enter} exit={t4.exit}>
-          <div style={hand(56)}>
-            Меньше рутины. <span style={gradientText}>Больше идей.</span>
+          <div style={hand(K, 56)}>
+            Меньше рутины. <span style={gradientText(K)}>Больше идей.</span>
           </div>
         </MaskLine>
       </div>
@@ -483,19 +501,19 @@ export const HandAd: React.FC = () => {
       <div style={{ position: 'absolute', left: TEXT_X, top: 112 }}>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 18 }}>
           <MaskLine enter={t5[0]}>
-            <span style={{ fontFamily: FONT, fontSize: 64, lineHeight: 1.08, fontWeight: 600, letterSpacing: '-0.04em', color: C.ink }}>ONEFLOW</span>
+            <span style={{ fontFamily: FONT, fontSize: 64, lineHeight: 1.08, fontWeight: 600, letterSpacing: '-0.04em', color: K.ink }}>ONEFLOW</span>
           </MaskLine>
           <MaskLine enter={t5[1]} style={{ paddingRight: 12, marginRight: -12 }}>
-            <span style={{ ...hand(64), lineHeight: 1.08, paddingRight: 6, ...gradientText }}>MOTION</span>
+            <span style={{ ...hand(K, 64), lineHeight: 1.08, paddingRight: 6, ...gradientText(K) }}>MOTION</span>
           </MaskLine>
         </div>
-        {underline(410, 300, prog(f, 470, 480, ease.out), C.violet)}
+        {underline(410, 300, prog(f, 470, 480, ease.out), K.a2)}
         <MaskLine enter={t5[2]} style={{ marginTop: 10 }}>
-          <div style={{ ...hand(28), color: C.ink2 }}>Моушн-графика — быстро и удобно</div>
+          <div style={{ ...hand(K, 28), color: K.ink2 }}>Моушн-графика — быстро и удобно</div>
         </MaskLine>
       </div>
 
-      <Grain frame={f} />
+      <Grain frame={f} blend={K.grainBlend} opacity={K.grain} dark={K.dark} />
     </AbsoluteFill>
   );
 };

@@ -2,10 +2,17 @@ import { AbsoluteFill } from 'remotion';
 import { C, HEIGHT, WIDTH, mix } from '../theme';
 
 /** Near-black field, a faint interface grid and two slow accent glows that follow the action. */
-export const Background: React.FC<{ frame: number; focusX: number }> = ({ frame, focusX }) => {
+export const Background: React.FC<{ frame: number; focusX: number; bg?: string; glow?: number; grid?: number; gridColor?: string }> = ({
+  frame,
+  focusX,
+  bg = C.bg,
+  glow = 1,
+  grid = 0.045,
+  gridColor = '#fff',
+}) => {
   const drift = Math.sin(frame / 70) * 18;
   return (
-    <AbsoluteFill style={{ backgroundColor: C.bg }}>
+    <AbsoluteFill style={{ backgroundColor: bg }}>
       <svg width={WIDTH} height={HEIGHT} style={{ position: 'absolute', inset: 0 }}>
         <defs>
           <radialGradient id="grid-fade" cx="62%" cy="50%" r="70%">
@@ -16,7 +23,7 @@ export const Background: React.FC<{ frame: number; focusX: number }> = ({ frame,
             <rect width={WIDTH} height={HEIGHT} fill="url(#grid-fade)" />
           </mask>
           <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse" x={-frame * 0.12} y="22">
-            <path d="M48 0H0V48" fill="none" stroke="#fff" strokeOpacity="0.045" strokeWidth="1" />
+            <path d="M48 0H0V48" fill="none" stroke={gridColor} strokeOpacity={grid} strokeWidth="1" />
           </pattern>
         </defs>
         <rect width={WIDTH} height={HEIGHT} fill="url(#grid)" mask="url(#grid-mask)" />
@@ -29,6 +36,7 @@ export const Background: React.FC<{ frame: number; focusX: number }> = ({ frame,
           width: 720,
           height: 520,
           borderRadius: '50%',
+          opacity: glow,
           background: `radial-gradient(closest-side, rgba(59, 123, 255, 0.20), rgba(59, 123, 255, 0) 100%)`,
         }}
       />
@@ -40,6 +48,7 @@ export const Background: React.FC<{ frame: number; focusX: number }> = ({ frame,
           width: 640,
           height: 460,
           borderRadius: '50%',
+          opacity: glow,
           background: `radial-gradient(closest-side, rgba(167, 139, 250, 0.13), rgba(167, 139, 250, 0) 100%)`,
         }}
       />

@@ -14,9 +14,20 @@ const handle = delayRender('Loading Geist');
 Promise.all([
   loadFont({ family: 'Geist', url: staticFile('fonts/geist-latin-wght-normal.woff2'), weight: '100 900', unicodeRange: LATIN }),
   loadFont({ family: 'Geist', url: staticFile('fonts/geist-cyrillic-wght-normal.woff2'), weight: '100 900', unicodeRange: CYRILLIC }),
-  ...(['400', '700'] as const).flatMap((w) => [
-    loadFont({ family: 'Caveat', url: staticFile(`fonts/caveat-latin-${w}-normal.woff2`), weight: w, unicodeRange: LATIN }),
-    loadFont({ family: 'Caveat', url: staticFile(`fonts/caveat-cyrillic-${w}-normal.woff2`), weight: w, unicodeRange: CYRILLIC }),
+  // hand-lettered faces for the hand-drawn looks (all SIL OFL, licences next to the files)
+  ...(
+    [
+      ['Caveat', 'caveat', '400'],
+      ['Caveat', 'caveat', '700'],
+      ['Neucha', 'neucha', '400'],
+      ['Pangolin', 'pangolin', '400'],
+      ['Amatic SC', 'amatic-sc', '400'],
+      ['Amatic SC', 'amatic-sc', '700'],
+      ['Rubik Doodle Shadow', 'rubik-doodle-shadow', '400'],
+    ] as const
+  ).flatMap(([family, file, w]) => [
+    loadFont({ family, url: staticFile(`fonts/${file}-latin-${w}-normal.woff2`), weight: w, unicodeRange: LATIN }),
+    loadFont({ family, url: staticFile(`fonts/${file}-cyrillic-${w}-normal.woff2`), weight: w, unicodeRange: CYRILLIC }),
   ]),
 ])
   .then(() => continueRender(handle))

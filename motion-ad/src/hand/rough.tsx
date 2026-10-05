@@ -1,6 +1,7 @@
 import rough from 'roughjs';
 import type { Options } from 'roughjs/bin/core';
 import type { CSSProperties } from 'react';
+import { useLook } from './look';
 
 /*
  * Hand-drawn strokes. roughjs is deterministic for a given `seed`; the seed changes every BOIL
@@ -52,6 +53,7 @@ export const Sketch: React.FC<{
   opts?: Options;
   style?: CSSProperties;
 }> = ({ shape, frame, id, draw = 1, fillDraw, opts = {}, style }) => {
+  const K = useLook();
   const o: Options = {
     roughness: 1.3,
     bowing: 1,
@@ -63,11 +65,25 @@ export const Sketch: React.FC<{
     ...opts,
     seed: seedFor(id, frame),
   };
+  o.strokeWidth = (o.strokeWidth ?? 1.6) * K.stroke;
+  o.roughness = (o.roughness ?? 1.3) * K.rough;
+  o.fillWeight = (o.fillWeight ?? 1.6) * Math.max(1, K.stroke * 0.8);
+  if (o.fill && o.fillStyle && o.fillStyle !== 'solid') o.fillStyle = K.fillStyle;
   const paths = gen.toPaths(build(shape, o));
   const fd = fillDraw ?? draw;
   return (
     <svg
-      style={{ position: 'absolute', left: 0, top: 0, width: '100%', height: '100%', overflow: 'visible', pointerEvents: 'none', ...style }}
+      style={{
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        width: '100%',
+        height: '100%',
+        overflow: 'visible',
+        pointerEvents: 'none',
+        filter: K.glow ? `drop-shadow(0 0 ${K.glow}px ${o.stroke})` : undefined,
+        ...style,
+      }}
     >
       {paths.map((p, i) => {
         // roughjs emits fill strokes with stroke === fill colour; the outline uses the stroke colour
