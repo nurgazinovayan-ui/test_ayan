@@ -1,0 +1,25 @@
+{
+  "name": "oneflow-motion-ad",
+  "private": true,
+  "version": "1.0.0",
+  "description": "ONEFLOW Motion — 18s promo, 1230×380 @ 30fps (Remotion)",
+  "scripts": {
+    "studio": "remotion studio",
+    "render": "remotion render OneflowMotionAd out/oneflow-motion-ad.mp4",
+    "still": "remotion still OneflowMotionAd out/still.png --frame=300",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fontsource/caveat": "^5.3.0",
+    "@remotion/cli": "4.0.533",
+    "@remotion/fonts": "4.0.533",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "remotion": "4.0.533",
+    "roughjs": "^4.6.6"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.8",
+    "typescript": "5.8.3"
+  }
+}
