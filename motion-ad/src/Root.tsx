@@ -17,6 +17,11 @@ import { MonoKinetic } from './kinetic2/Mono';
 import { SerifKinetic } from './kinetic2/Serif';
 import { OrbitKinetic } from './kinetic2/Orbit';
 
+import { BentoKinetic } from './kinetic3/Bento';
+import { BrutalKinetic } from './kinetic3/Brutal';
+import { AuroraKinetic } from './kinetic3/Aurora';
+import { PixelKinetic } from './kinetic3/Pixel';
+
 const ex = { width: EX_W, height: EX_H, fps: FPS, durationInFrames: EX_DURATION };
 import { DURATION, FPS, HEIGHT, WIDTH } from './theme';
 
@@ -24,6 +29,12 @@ const size = { width: WIDTH, height: HEIGHT, fps: FPS, durationInFrames: DURATIO
 
 export const RemotionRoot: React.FC = () => (
   <>
+    <Folder name="Modern-styles">
+      <Composition id="Modern-bento" component={BentoKinetic} defaultProps={{ lang: 'ru' as const }} {...ex} />
+      <Composition id="Modern-brutal" component={BrutalKinetic} defaultProps={{ lang: 'ru' as const }} {...ex} />
+      <Composition id="Modern-aurora" component={AuroraKinetic} defaultProps={{ lang: 'ru' as const }} {...ex} />
+      <Composition id="Modern-pixel" component={PixelKinetic} defaultProps={{ lang: 'ru' as const }} {...ex} />
+    </Folder>
     <Folder name="Kinetic-styles">
       <Composition id="Kinetic-swiss" component={SwissKinetic} defaultProps={{ lang: 'ru' as const }} {...ex} />
       <Composition id="Kinetic-mono" component={MonoKinetic} defaultProps={{ lang: 'ru' as const }} {...ex} />

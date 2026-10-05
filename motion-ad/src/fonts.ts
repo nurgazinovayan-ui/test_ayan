@@ -8,6 +8,8 @@ export const HAND = "'Caveat', 'Geist', cursive";
 // Geist Mono and Cormorant Garamond (SIL OFL 1.1) — for the mono and serif kinetic cuts.
 export const MONO = "'Geist Mono', ui-monospace, monospace";
 export const SERIF = "'Cormorant Garamond', Georgia, serif";
+// Press Start 2P (SIL OFL 1.1) — pixel face for the pixel cut.
+export const PIXEL = "'Press Start 2P', monospace";
 
 const CYRILLIC = 'U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116';
 const LATIN =
@@ -35,6 +37,7 @@ Promise.all([
       ['Amatic SC', 'amatic-sc', '400'],
       ['Amatic SC', 'amatic-sc', '700'],
       ['Rubik Doodle Shadow', 'rubik-doodle-shadow', '400'],
+      ['Press Start 2P', 'press-start-2p', '400'],
     ] as const
   ).flatMap(([family, file, w]) => [
     loadFont({ family, url: staticFile(`fonts/${file}-latin-${w}-normal.woff2`), weight: w, unicodeRange: LATIN }),
