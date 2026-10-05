@@ -12,6 +12,11 @@ import { EditorialExplainer } from './explainer/Editorial';
 
 import { KIN_DURATION, KIN_H, KIN_W, KineticAd } from './kinetic/KineticAd';
 
+import { SwissKinetic } from './kinetic2/Swiss';
+import { MonoKinetic } from './kinetic2/Mono';
+import { SerifKinetic } from './kinetic2/Serif';
+import { OrbitKinetic } from './kinetic2/Orbit';
+
 const ex = { width: EX_W, height: EX_H, fps: FPS, durationInFrames: EX_DURATION };
 import { DURATION, FPS, HEIGHT, WIDTH } from './theme';
 
@@ -19,6 +24,12 @@ const size = { width: WIDTH, height: HEIGHT, fps: FPS, durationInFrames: DURATIO
 
 export const RemotionRoot: React.FC = () => (
   <>
+    <Folder name="Kinetic-styles">
+      <Composition id="Kinetic-swiss" component={SwissKinetic} defaultProps={{ lang: 'ru' as const }} {...ex} />
+      <Composition id="Kinetic-mono" component={MonoKinetic} defaultProps={{ lang: 'ru' as const }} {...ex} />
+      <Composition id="Kinetic-serif" component={SerifKinetic} defaultProps={{ lang: 'ru' as const }} {...ex} />
+      <Composition id="Kinetic-orbit" component={OrbitKinetic} defaultProps={{ lang: 'ru' as const }} {...ex} />
+    </Folder>
     <Folder name="Kinetic-type">
       <Composition id="MotionKinetic" component={KineticAd} defaultProps={{ lang: 'ru' as const }} width={KIN_W} height={KIN_H} fps={FPS} durationInFrames={KIN_DURATION} />
       <Composition id="MotionKinetic-en" component={KineticAd} defaultProps={{ lang: 'en' as const }} width={KIN_W} height={KIN_H} fps={FPS} durationInFrames={KIN_DURATION} />

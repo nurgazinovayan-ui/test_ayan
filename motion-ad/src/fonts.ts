@@ -5,6 +5,9 @@ import { continueRender, delayRender, staticFile } from 'remotion';
 export const FONT = "'Geist', system-ui, sans-serif";
 // Caveat (SIL OFL 1.1, see public/fonts/OFL-Caveat.txt) — handwriting for the hand-drawn cut.
 export const HAND = "'Caveat', 'Geist', cursive";
+// Geist Mono and Cormorant Garamond (SIL OFL 1.1) — for the mono and serif kinetic cuts.
+export const MONO = "'Geist Mono', ui-monospace, monospace";
+export const SERIF = "'Cormorant Garamond', Georgia, serif";
 
 const CYRILLIC = 'U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116';
 const LATIN =
@@ -14,6 +17,14 @@ const handle = delayRender('Loading Geist');
 Promise.all([
   loadFont({ family: 'Geist', url: staticFile('fonts/geist-latin-wght-normal.woff2'), weight: '100 900', unicodeRange: LATIN }),
   loadFont({ family: 'Geist', url: staticFile('fonts/geist-cyrillic-wght-normal.woff2'), weight: '100 900', unicodeRange: CYRILLIC }),
+  loadFont({ family: 'Geist Mono', url: staticFile('fonts/geist-mono-latin-wght-normal.woff2'), weight: '100 900', unicodeRange: LATIN }),
+  loadFont({ family: 'Geist Mono', url: staticFile('fonts/geist-mono-cyrillic-wght-normal.woff2'), weight: '100 900', unicodeRange: CYRILLIC }),
+  ...(['300', '500'] as const).flatMap((w) =>
+    (['normal', 'italic'] as const).flatMap((st) => [
+      loadFont({ family: 'Cormorant Garamond', url: staticFile(`fonts/cormorant-garamond-latin-${w}-${st}.woff2`), weight: w, style: st, unicodeRange: LATIN }),
+      loadFont({ family: 'Cormorant Garamond', url: staticFile(`fonts/cormorant-garamond-cyrillic-${w}-${st}.woff2`), weight: w, style: st, unicodeRange: CYRILLIC }),
+    ]),
+  ),
   // hand-lettered faces for the hand-drawn looks (all SIL OFL, licences next to the files)
   ...(
     [

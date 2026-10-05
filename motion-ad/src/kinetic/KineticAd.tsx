@@ -24,10 +24,10 @@ export const KIN_W = 1920;
 export const KIN_H = 1080;
 export const KIN_DURATION = 450;
 
-const K = { grey: '#e5e5e5', ink: '#111111', lime: '#cdf158', white: '#f7f7f7', mid: '#8a8a8a' };
-const B = { motion: 32, s1: 74, s2: 162, s3: 246, res: 318, end: 390 };
+export const K = { grey: '#e5e5e5', ink: '#111111', lime: '#cdf158', white: '#f7f7f7', mid: '#8a8a8a' };
+export const B = { motion: 32, s1: 74, s2: 162, s3: 246, res: 318, end: 390 };
 
-const COPY = {
+export const COPY = {
   ru: {
     open: ['Ваши фото.', 'Ваша идея.', 'Ваш ролик.'],
     s1a: 'Загрузите',
@@ -65,14 +65,14 @@ const COPY = {
     cta: 'Try Motion Engine',
   },
 };
-type Copy = (typeof COPY)['ru'];
+export type Copy = (typeof COPY)['ru'];
 
 // ---- helpers --------------------------------------------------------------------------------------
 
 /** Variable-weight text. */
-const W = (w: number): CSSProperties => ({ fontWeight: Math.round(w), fontVariationSettings: `'wght' ${w.toFixed(0)}` });
+export const W = (w: number): CSSProperties => ({ fontWeight: Math.round(w), fontVariationSettings: `'wght' ${w.toFixed(0)}` });
 
-const Mask: React.FC<{ y: number; children: ReactNode; style?: CSSProperties }> = ({ y, children, style }) => (
+export const Mask: React.FC<{ y: number; children: ReactNode; style?: CSSProperties }> = ({ y, children, style }) => (
   <div style={{ overflow: 'hidden', padding: '0.06em 0 0.12em', margin: '-0.06em 0 -0.12em', ...style }}>
     <div style={{ transform: `translateY(${y}%)` }}>{children}</div>
   </div>
@@ -84,14 +84,14 @@ const Scene: React.FC<{ bg: string; s?: number; ox?: number; oy?: number; childr
   </AbsoluteFill>
 );
 
-const punch = (f: number, at: number, k = 0.08) => 1 + k * (1 - spring({ frame: f - at, fps: 30, config: { damping: 11, stiffness: 170 } }));
+export const punch = (f: number, at: number, k = 0.08) => 1 + k * (1 - spring({ frame: f - at, fps: 30, config: { damping: 11, stiffness: 170 } }));
 
 /**
  * Abstract composition — the stand-in for a photo / storyboard frame / the finished video.
  * kind 0: circle pops and drifts · 1: capsule stretches · 2: lines draw and fold into a grid ·
  * 3: two blocks slide past each other · 4: big letter through a mask.
  */
-const Comp: React.FC<{ kind: number; t: number; w: number; h: number; bg: string; fg: string; ac: string; r?: number }> = ({ kind, t, w, h, bg, fg, ac, r = 18 }) => {
+export const Comp: React.FC<{ kind: number; t: number; w: number; h: number; bg: string; fg: string; ac: string; r?: number }> = ({ kind, t, w, h, bg, fg, ac, r = 18 }) => {
   const u = Math.min(w, h);
   const sp = spring({ frame: t, fps: 30, config: { damping: 13, stiffness: 120 } });
   const live = Math.sin(t / 14);
