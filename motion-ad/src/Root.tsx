@@ -10,6 +10,8 @@ import { GlassExplainer } from './explainer/Glass';
 import { NightExplainer } from './explainer/Night';
 import { EditorialExplainer } from './explainer/Editorial';
 
+import { KIN_DURATION, KIN_H, KIN_W, KineticAd } from './kinetic/KineticAd';
+
 const ex = { width: EX_W, height: EX_H, fps: FPS, durationInFrames: EX_DURATION };
 import { DURATION, FPS, HEIGHT, WIDTH } from './theme';
 
@@ -17,6 +19,10 @@ const size = { width: WIDTH, height: HEIGHT, fps: FPS, durationInFrames: DURATIO
 
 export const RemotionRoot: React.FC = () => (
   <>
+    <Folder name="Kinetic-type">
+      <Composition id="MotionKinetic" component={KineticAd} defaultProps={{ lang: 'ru' as const }} width={KIN_W} height={KIN_H} fps={FPS} durationInFrames={KIN_DURATION} />
+      <Composition id="MotionKinetic-en" component={KineticAd} defaultProps={{ lang: 'en' as const }} width={KIN_W} height={KIN_H} fps={FPS} durationInFrames={KIN_DURATION} />
+    </Folder>
     <Folder name="Explainer">
       <Composition id="Explainer-layers" component={LayersExplainer} defaultProps={{ lang: 'ru' as const }} {...ex} />
       <Composition id="Explainer-glass" component={GlassExplainer} defaultProps={{ lang: 'ru' as const }} {...ex} />
