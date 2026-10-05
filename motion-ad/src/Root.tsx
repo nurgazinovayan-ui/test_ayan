@@ -4,12 +4,25 @@ import { HandAd } from './hand/HandAd';
 import { LOOKS } from './hand/look';
 import { LIGHT_DURATION, LIGHT_H, LIGHT_W, LightAd } from './light/LightAd';
 import { CUTS_DURATION, CUTS_H, CUTS_W, CutsAd } from './cuts/CutsAd';
+import { EX_DURATION, EX_H, EX_W } from './explainer/shared';
+import { LayersExplainer } from './explainer/Layers';
+import { GlassExplainer } from './explainer/Glass';
+import { NightExplainer } from './explainer/Night';
+import { EditorialExplainer } from './explainer/Editorial';
+
+const ex = { width: EX_W, height: EX_H, fps: FPS, durationInFrames: EX_DURATION };
 import { DURATION, FPS, HEIGHT, WIDTH } from './theme';
 
 const size = { width: WIDTH, height: HEIGHT, fps: FPS, durationInFrames: DURATION };
 
 export const RemotionRoot: React.FC = () => (
   <>
+    <Folder name="Explainer">
+      <Composition id="Explainer-layers" component={LayersExplainer} defaultProps={{ lang: 'ru' as const }} {...ex} />
+      <Composition id="Explainer-glass" component={GlassExplainer} defaultProps={{ lang: 'ru' as const }} {...ex} />
+      <Composition id="Explainer-night" component={NightExplainer} defaultProps={{ lang: 'ru' as const }} {...ex} />
+      <Composition id="Explainer-editorial" component={EditorialExplainer} defaultProps={{ lang: 'ru' as const }} {...ex} />
+    </Folder>
     <Folder name="Cuts-outline">
       <Composition id="MotionCuts" component={CutsAd} defaultProps={{ lang: 'ru' as const }} width={CUTS_W} height={CUTS_H} fps={FPS} durationInFrames={CUTS_DURATION} />
       <Composition id="MotionCuts-en" component={CutsAd} defaultProps={{ lang: 'en' as const }} width={CUTS_W} height={CUTS_H} fps={FPS} durationInFrames={CUTS_DURATION} />

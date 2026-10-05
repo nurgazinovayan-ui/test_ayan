@@ -223,7 +223,7 @@ const Frame: React.FC<{ shot: Shot; w: number; h: number; id: string; f: number;
 };
 
 /** The rendered ad itself: product, sun, kinetic type. Pure function of local time t. */
-const ResultClip: React.FC<{ t: number; w: number; h: number; c: Copy }> = ({ t, w, h, c }) => {
+export const ResultClip: React.FC<{ t: number; w: number; h: number; c: Pick<Copy, "clip1" | "clip2" | "clipTag"> }> = ({ t, w, h, c }) => {
   const u = h / 742.5;
   const sun = spring({ frame: t - 2, fps: 30, config: { damping: 18, stiffness: 90 } });
   const up = spring({ frame: t - 6, fps: 30, config: { damping: 15, stiffness: 110 } });
