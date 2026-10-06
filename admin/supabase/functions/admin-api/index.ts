@@ -16,6 +16,8 @@
 //   media-upload-url { name, type, size } → one-time signed upload URL for a banner image/video in the public
 //                                      'site-media' bucket (admin.sql); the page uploads the file straight to Storage
 //   media-delete  { path }           → remove a banner file from that bucket (only home-banners/<uuid>.<ext>)
+//   credits-grant { userId, credits, note? } → add a pack of credits to an account by hand (credit_packs, source
+//                                      'admin', valid 12 months); requires the app's 202610060001_credits.sql
 
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
@@ -164,6 +166,12 @@ Deno.serve(async (req) => {
         perUser.set(r.user_id, u);
       }
 
+      // unexpired credits per account (credit_packs; absent until the credits migration is run)
+      const credits = new Map<string, number>();
+      const { data: packs, error: pErr } = await admin.from('credit_packs').select('user_id, credits_left')
+        .gt('credits_left', 0).gt('expires_at', new Date().toISOString()).limit(MAX_LOG_ROWS);
+      if (!pErr) for (const p of packs ?? []) credits.set(p.user_id, (credits.get(p.user_id) ?? 0) + Number(p.credits_left));
+
       const onlineSince = new Date(Date.now() - ONLINE_WINDOW_MINUTES * 60_000).toISOString();
       const { data: presence } = await admin.from('presence').select('user_id, last_seen');
       const lastSeen = new Map((presence ?? []).map((p: { user_id: string; last_seen: string }) => [p.user_id, p.last_seen]));
@@ -184,7 +192,8 @@ Deno.serve(async (req) => {
           const g = perUser.get(u.id);
           const seen = lastSeen.get(u.id) ?? null;
           return { ...u, lastSeen: seen, online: Boolean(seen && seen >= onlineSince), generations: g?.total ?? 0,
-            generations30: g?.last30 ?? 0, spendUsd: Math.round((g?.spend ?? 0) * 100) / 100, lastGenerationAt: g?.lastAt ?? null };
+            generations30: g?.last30 ?? 0, spendUsd: Math.round((g?.spend ?? 0) * 100) / 100, lastGenerationAt: g?.lastAt ?? null,
+            credits: credits.get(u.id) ?? 0 };
         }),
         stats: {
           days: STATS_DAYS,
@@ -267,6 +276,25 @@ Deno.serve(async (req) => {
       const { error } = await admin.storage.from(MEDIA_BUCKET).remove([path]);
       if (error) throw error;
       return json({ ok: true });
+    }
+
+    if (action === 'credits-grant') {
+      const userId = String(body.userId ?? '');
+      const amount = Number(body.credits);
+      const note = typeof body.note === 'string' ? body.note.trim().slice(0, 200) : '';
+      if (!/^[0-9a-f-]{36}$/i.test(userId)) return json({ error: 'Неверный пользователь.' }, 400);
+      if (!Number.isInteger(amount) || amount < 1 || amount > 1_000_000) return json({ error: 'Укажите от 1 до 1 000 000 кредитов.' }, 400);
+      const { data: target, error: uErr } = await admin.auth.admin.getUserById(userId);
+      if (uErr || !target.user) return json({ error: 'Пользователь не найден.' }, 404);
+      const { error } = await admin.rpc('grant_credits', {
+        p_user: userId, p_source: 'admin', p_credits: amount, p_amount_usd: null,
+        p_note: note || `Начислено администратором (${caller.email})`, p_external_id: null,
+      });
+      if (error) throw error;
+      const { data: bal, error: bErr } = await admin.rpc('credit_balance', { p_user: userId });
+      if (bErr) throw bErr;
+      const row = Array.isArray(bal) ? bal[0] : bal;
+      return json({ ok: true, credits: Number(row?.available ?? 0) });
     }
 
     if (action === 'content-save') {
