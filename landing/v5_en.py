@@ -147,6 +147,16 @@ EN = {
     'Сторис готовы — глянешь 9:16?': 'Stories are ready — can you check 9:16?', 'Супер, беру в работу': 'Great, I’m on it',
     'Тексты закинул в проект, проверьте CTA': 'Copy is in the project, please check the CTA', 'Айдос теперь в ваших контактах': 'Aidos is now in your contacts',
     # pricing
+    # pricing: top-up slider (v5_ice.pricing_html)
+    'Платите только за то, что создаёте': 'Pay only for what you create',
+    'Без подписки и тарифов: пополняйте баланс на любую сумму. Кредиты действуют 12 месяцев — чем больше пополнение, тем выгоднее.':
+        'No subscription, no plans: top up any amount. Credits stay valid for 12 months — the bigger the top-up, the better the rate.',
+    'Вы получите': 'You get', '2\u2009750 кредитов': '2,750 credits', '55 кредитов за $1': '55 credits per $1', '+10% бонус': '+10% bonus',
+    'Сумма пополнения': 'Top-up amount', '50 кредитов за $1': '50 credits per $1', '55 кредитов за $1 · +10%': '55 credits per $1 · +10%',
+    '60 кредитов за $1 · +20%': '60 credits per $1 · +20%', 'Этого хватит примерно на': 'Enough for about',
+    '50 кредитов в подарок при регистрации': '50 free credits when you sign up', 'Все разделы ONEFLOW и 30+ нейросетей': 'Every ONEFLOW mode and 30+ AI models',
+    'Кредиты не сгорают 12 месяцев': 'Credits don’t expire for 12 months', 'Открыть демо': 'Open the demo',
+    'Количество генераций — примерное: зависит от модели, длительности и разрешения.': 'Generation counts are approximate: they depend on the model, length and resolution.',
     'Тарифы': 'Pricing', 'Остаток бюджета — всегда ваш': 'Your leftover budget is always yours',
     'На любом тарифе неизрасходованный бюджет переходит на следующий месяц.': 'On every plan, unused budget rolls over to the next month.',
     'Период оплаты': 'Billing period', 'Месяц': 'Monthly', 'Год': 'Yearly', 'Попробовать': 'Try it', 'Демо-режим': 'Demo mode',

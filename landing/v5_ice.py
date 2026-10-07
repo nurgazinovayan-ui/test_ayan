@@ -557,6 +557,128 @@ JS_LANG = """<script>
 """
 
 
+# Pricing: no plans any more — a top-up slider like the app's (src/components/TopUpModal.tsx). The numbers mirror the
+# app: amounts $10–500, tiers 50 / 55 / 60 credits per $1 (app_settings in 202610060001_credits.sql), credits live
+# 12 months, 50 free on sign-up. «≈ N» uses the server price tables (1 credit = 1 cent of the estimate), so the landing
+# never promises more than the balance pays for.
+TOPUP_STOPS = [10, 15, 20, 25, 30, 40, 50, 60, 75, 100, 125, 150, 200, 250, 300, 400, 500]
+TOPUP_TIERS = [(10, 50), (50, 55), (200, 60)]
+TOPUP_EQ = [  # credits per generation (generate-video / generate-image price tables), what, model, spec
+    (63, 'видео', 'Kling 3.0', 'Ролик 5 с, 720p, без звука', False),
+    (14, 'фото', 'Nano Banana Pro', 'Изображение 1K', False),
+    (6, 'фото', 'GPT Image 2.5', 'Изображение 1K · Sunburst', True),
+]
+TOPUP_DEFAULT = 50
+
+
+def topup_credits(usd):
+    return int(usd * max(r for f, r in TOPUP_TIERS if usd >= f))
+
+
+def ru_num(n):
+    return f'{n:,}'.replace(',', ' ')
+
+
+def ru_credits(n):
+    m10, m100 = n % 10, n % 100
+    word = 'кредит' if m10 == 1 and m100 != 11 else 'кредита' if 2 <= m10 <= 4 and not 12 <= m100 <= 14 else 'кредитов'
+    return f'{ru_num(n)} {word}'
+
+
+def pricing_html():
+    usd = TOPUP_DEFAULT
+    cr = topup_credits(usd)
+    rate = cr // usd
+    idx = TOPUP_STOPS.index(usd)
+    last = len(TOPUP_STOPS) - 1
+    pct = lambda i: f'{i / last * 100:.3f}'.rstrip('0').rstrip('.')  # noqa: E731
+    marks = (f'<span style="left:0%">${TOPUP_STOPS[0]}</span>'
+             + ''.join(f'<span class="t" style="left:{pct(TOPUP_STOPS.index(f))}%">${f}<i>+{round((r / TOPUP_TIERS[0][1] - 1) * 100)}%</i></span>'
+                       for f, r in TOPUP_TIERS[1:])
+             + f'<span style="left:100%">${TOPUP_STOPS[-1]}</span>')
+    eq = ''.join(f'<li{" class=hastop" if top else ""}><span><b data-c="{c}">≈ {ru_num(cr // c)}</b> {what}</span><span class="nw">'
+                 f'{"<i class=top>TOP</i>" if top else ""}{model}<span class="qm" tabindex="0" role="note" aria-label="{tip}" data-tip="{tip}">?</span></span></li>'
+                 for c, what, model, tip, top in TOPUP_EQ)
+    tiers = ''.join(f'<li data-from="{f}"{" class=on" if f == 50 else ""}><b>{rng}</b><span>{r} кредитов за $1{bonus}</span></li>'
+                    for (f, r), rng, bonus in zip(TOPUP_TIERS, ('$10–49', '$50–199', '$200–500'), ('', ' · +10%', ' · +20%')))
+    return ('<section class="sec" id="pricing"><div class="wrap"><div class="sh rv"><span class="k">Цены</span><h2>Платите только за то, что создаёте</h2>'
+            '<p>Без подписки и тарифов: пополняйте баланс на любую сумму. Кредиты действуют 12 месяцев — чем больше пополнение, тем выгоднее.</p></div>'
+            '<div class="tp card rv"><div class="tp-l tp-calc">'
+            f'<div class="tp-top"><div class="tp-usd" id="tpUsd">${usd}</div><div class="tp-get"><span>Вы получите</span><b id="tpCr">{ru_credits(cr)}</b>'
+            f'<small id="tpRate">{rate} кредитов за $1</small><em id="tpBonus">+10% бонус</em></div></div>'
+            f'<div class="tp-sl" style="--tpp:{pct(idx)}%"><input type="range" id="tpR" min="0" max="{last}" step="1" value="{idx}" aria-label="Сумма пополнения" '
+            f'aria-valuetext="${usd} — {ru_credits(cr)}" data-stops="{",".join(map(str, TOPUP_STOPS))}" '
+            f'data-tiers="{";".join(f"{f}:{r}" for f, r in TOPUP_TIERS)}"><div class="tp-mk" aria-hidden="true">{marks}</div></div>'
+            f'<ul class="tp-tiers">{tiers}</ul></div>'
+            f'<div class="tp-r"><div class="gens tp-calc"><span>Этого хватит примерно на</span><ul>{eq}</ul></div>'
+            '<ul class="tp-pts"><li>50 кредитов в подарок при регистрации</li><li>Все разделы ONEFLOW и 30+ нейросетей</li><li>Кредиты не сгорают 12 месяцев</li></ul>'
+            '<div class="tp-acts"><a class="btn p" data-app="register" href="/app?auth=register">Начать бесплатно →</a>'
+            '<a class="btn w" data-app="demo" href="/app?demo=1">Открыть демо</a></div></div></div>'
+            '<p class="tp-note">Количество генераций — примерное: зависит от модели, длительности и разрешения.</p></div></section>')
+
+
+PRICE_CSS = """
+/* pricing: top-up slider */
+.tp { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 36px; margin-top: 44px; padding: 34px; border-radius: 26px; }
+.tp-top { display: flex; align-items: flex-end; gap: 26px; flex-wrap: wrap; }
+.tp-usd { font: 700 clamp(56px, 7vw, 84px)/.9 var(--d); letter-spacing: -.05em; color: var(--num); font-variant-numeric: tabular-nums; min-width: 3.2ch; }
+.tp-get { display: grid; gap: 4px; padding-bottom: 4px; } .tp-get span { font: 400 12px var(--m); color: var(--muted); }
+.tp-get b { font: 700 26px/1.1 var(--d); letter-spacing: -.02em; font-variant-numeric: tabular-nums; } .tp-get small { font-size: 13.5px; color: var(--ink2); }
+.tp-get em { justify-self: start; padding: 3px 9px; border-radius: 99px; background: rgba(126,224,195,.15); color: var(--ok); font: 600 12px var(--d); font-style: normal; }
+.tp-get em[hidden] { display: none; }
+.tp-sl { position: relative; margin: 34px 0 0; padding-bottom: 40px; }
+.tp-sl input { -webkit-appearance: none; appearance: none; display: block; width: 100%; height: 28px; margin: 0; background: transparent; cursor: pointer; }
+.tp-sl input::-webkit-slider-runnable-track { height: 8px; border-radius: 99px; background: linear-gradient(90deg, var(--ac) var(--tpp), var(--s3) var(--tpp)); }
+.tp-sl input::-moz-range-track { height: 8px; border-radius: 99px; background: var(--s3); } .tp-sl input::-moz-range-progress { height: 8px; border-radius: 99px; background: var(--ac); }
+.tp-sl input::-webkit-slider-thumb { -webkit-appearance: none; width: 26px; height: 26px; margin-top: -9px; border-radius: 50%; background: #fff; border: 0;
+  box-shadow: 0 0 0 6px rgba(155,232,255,.25), 0 6px 16px rgba(0,0,0,.5); transition: box-shadow .2s; }
+.tp-sl input::-moz-range-thumb { width: 26px; height: 26px; border-radius: 50%; background: #fff; border: 0; box-shadow: 0 0 0 6px rgba(155,232,255,.25), 0 6px 16px rgba(0,0,0,.5); }
+.tp-sl input:focus-visible { outline: none; } .tp-sl input:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 6px rgba(155,232,255,.55), 0 6px 16px rgba(0,0,0,.5); }
+.tp-sl input:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 6px rgba(155,232,255,.55), 0 6px 16px rgba(0,0,0,.5); }
+.tp-mk { position: absolute; left: 13px; right: 13px; top: 36px; height: 30px; font: 500 12px var(--m); color: var(--muted); }
+.tp-mk span { position: absolute; transform: translateX(-50%); white-space: nowrap; text-align: center; line-height: 1.25; }
+.tp-mk span:first-child { transform: none; } .tp-mk span:last-child { transform: translateX(-100%); }
+.tp-mk .t { color: var(--ink2); } .tp-mk i { display: block; font-style: normal; color: var(--ok); font-size: 11px; }
+.tp-tiers { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 18px; }
+.tp-tiers li { display: grid; gap: 2px; padding: 10px 12px; border-radius: 12px; background: var(--s2); color: var(--ink2); font-size: 12.5px; transition: background .25s, color .25s, box-shadow .25s; }
+.tp-tiers b { font: 600 14px var(--d); color: var(--ink); } .tp-tiers li.on { background: var(--acsoft); box-shadow: inset 0 0 0 1px rgba(155,232,255,.35); color: var(--ink); }
+.tp-r { display: flex; flex-direction: column; } .tp-r .gens { margin: 0; padding: 16px 18px; font-size: 15px; } .tp-r .gens ul { font-size: 15px !important; gap: 9px !important; }
+.tp-pts { list-style: none; display: grid; gap: 9px; margin: 20px 0 24px; font-size: 14.5px; color: var(--ink2); }
+.tp-pts li { display: flex; gap: 10px; } .tp-pts li::before { content: '✓'; flex: none; color: var(--ok); font-weight: 700; }
+.tp-acts { display: grid; gap: 10px; margin-top: auto; } .tp-acts .btn { width: 100%; }
+.tp-acts .btn.w { background: rgba(255,255,255,.06); color: var(--ink); box-shadow: inset 0 0 0 1px rgba(255,255,255,.12); }
+.tp-note { margin-top: 16px; text-align: center; font-size: 12.5px; color: var(--muted); }
+@media (max-width: 900px) { .tp { grid-template-columns: minmax(0, 1fr); gap: 28px; padding: 24px 20px; } }
+@media (max-width: 560px) { .tp-top { gap: 14px; } .tp-usd { font-size: 58px; } .tp-get b { font-size: 22px; } .tp-tiers { grid-template-columns: minmax(0, 1fr); }
+  .tp-tiers li { grid-template-columns: auto 1fr; gap: 10px; align-items: baseline; } .tp-tiers li span { text-align: right; } .tp-mk { font-size: 11px; } }
+"""
+
+JS_PRICE = """<script>
+// pricing slider: same stops and tiers as the app's top-up window; numbers are formatted for the page language
+(() => {
+  const r = document.getElementById('tpR'); if (!r) return;
+  const en = document.documentElement.lang === 'en';
+  const stops = r.dataset.stops.split(',').map(Number), tiers = r.dataset.tiers.split(';').map((x) => x.split(':').map(Number));
+  const num = (n) => String(n).replace(/\\B(?=(\\d{3})+(?!\\d))/g, en ? ',' : '\\u2009');
+  const word = (n) => { if (en) return n === 1 ? 'credit' : 'credits'; const a = n % 10, b = n % 100;
+    return a === 1 && b !== 11 ? 'кредит' : a >= 2 && a <= 4 && (b < 12 || b > 14) ? 'кредита' : 'кредитов'; };
+  const $ = (id) => document.getElementById(id), sl = r.parentElement, base = tiers[0][1];
+  const upd = () => {
+    const i = +r.value, usd = stops[i], tier = tiers.filter((t) => usd >= t[0]).pop(), cr = Math.floor(usd * tier[1]), bonus = Math.round((tier[1] / base - 1) * 100);
+    const crs = num(cr) + ' ' + word(cr);
+    $('tpUsd').textContent = '$' + usd; $('tpCr').textContent = crs;
+    $('tpRate').textContent = en ? tier[1] + ' credits per $1' : tier[1] + ' кредитов за $1';
+    $('tpBonus').hidden = !bonus; $('tpBonus').textContent = en ? '+' + bonus + '% bonus' : '+' + bonus + '% бонус';
+    sl.style.setProperty('--tpp', (i / (stops.length - 1)) * 100 + '%'); r.setAttribute('aria-valuetext', '$' + usd + ' — ' + crs);
+    document.querySelectorAll('.tp-tiers li').forEach((li) => li.classList.toggle('on', +li.dataset.from === tier[0]));
+    document.querySelectorAll('#pricing [data-c]').forEach((b) => { b.textContent = '≈ ' + num(Math.floor(cr / +b.dataset.c)); });
+  };
+  r.addEventListener('input', upd); upd();
+})();
+</script>
+"""
+
+
 def build(docs='', lang='ru'):
     html = v.build(docs=docs, theme='dark')
     head, rest = html.split('<main id="main">', 1)
@@ -565,7 +687,8 @@ def build(docs='', lang='ru'):
     sections = re.split(r'(?=<section class="sec"|<div class="wrap"><section class="end)', main_old)
     hero_old = sections[0].replace('href="#how"', 'href="#modes"')
     pick = lambda pat: next(s for s in sections if pat in s)  # noqa: E731
-    pricing, faq, end = pick('id="pricing"'), pick('id="faq"'), pick('class="end')
+    faq, end = pick('id="faq"'), pick('class="end')
+    pricing = pricing_html()  # top-up slider instead of v4's plan cards
     grab = lambda pat: re.search(pat, hero_old, re.S).group(0)  # noqa: E731
     h1, sub, acts = grab(r'<h1.*?</h1>'), grab(r'<p class="sub">.*?</p>'), grab(r'<div class="acts">.*?</div>')
     models = (f'<div class="models" role="img" aria-label="Нейросети в ONEFLOW: {", ".join(AI_ALL)}"><div class="t">'
@@ -600,8 +723,12 @@ def build(docs='', lang='ru'):
         head = head.replace("<script>document.documentElement.classList.add('js')</script>",
                             "<script>document.documentElement.classList.add('js');try{if(localStorage.getItem('of-lang')==='ru'&&!/cms-edit/.test(location.search))location.replace('/ru'+location.hash)}catch(e){}</script>", 1)
     head = head.replace(protos.CSS, '').replace(protos.DARK, '')
-    head = head.replace('</style>', ICE + TABS_CSS.replace('ANIM', '\n  '.join(ANIM)) + HERO_CSS + '</style>', 1)
-    tail = tail.replace(protos.js(), '').replace('</body>', JS_TABS + JS_LANG + '</body>')
+    head = head.replace('</style>', ICE + TABS_CSS.replace('ANIM', '\n  '.join(ANIM)) + HERO_CSS + PRICE_CSS + '</style>', 1)
+    tail = tail.replace(protos.js(), '').replace('</body>', JS_TABS + JS_LANG + JS_PRICE + '</body>')
+    # v4's month/year switch is gone with the plan cards; its script would stop at the missing buttons
+    tail, n = re.subn(r"\n  const pm = document\.getElementById\('pm'\).*?py\.onclick = \(\) => set\('y'\);", '', tail, count=1, flags=re.S)
+    assert n == 1, 'v4 pricing switch script not found'
+    tail = tail.replace("const SKIP = '.pro-b, .ui, .models, .gens, [data-m],", "const SKIP = '.pro-b, .ui, .models, .gens, .tp-calc, [data-m],", 1)
     tail = tail.replace("key: name + '.' + counts[name]", "key: (document.documentElement.lang === 'en' ? 'en:' : '') + name + '.' + counts[name]")
     html = head + main + tail
     if lang == 'en':
