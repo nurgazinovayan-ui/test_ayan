@@ -173,8 +173,8 @@ EN = {
     'Да, в разделе «Для бизнеса»: HoReCa для ресторанов и кафе, Квартира для риелторов, Авто для автодилеров, Техника для магазинов электроники, а также Мебель. Выберите шаблон, загрузите своё фото — получите студийный снимок в высоком разрешении.':
         'Yes, under “For business”: HoReCa for restaurants and cafés, Apartment for realtors, Auto for car dealers, Electronics for electronics stores, plus Furniture. Pick a template, upload your photo and get a high-resolution studio shot.',
     'Какие нейросети входят в ONEFLOW?': 'Which AI models are included in ONEFLOW?',
-    'Фото: Nano Banana Pro, Nano Banana 2, Nano Banana 2 Lite, GPT Image 2, GPT Image 2.5 Sunburst, GPT Image 2.5 Flare, Seedream 5 Pro, Seedream 5.0 Lite, Recraft V4 Styles Pro, Grok Imagine Image 2.0, Krea 2 Large.':
-        'Images: Nano Banana Pro, Nano Banana 2, Nano Banana 2 Lite, GPT Image 2, GPT Image 2.5 Sunburst, GPT Image 2.5 Flare, Seedream 5 Pro, Seedream 5.0 Lite, Recraft V4 Styles Pro, Grok Imagine Image 2.0, Krea 2 Large.',
+    'Фото: Nano Banana 2.1, Nano Banana Pro, Nano Banana 2, Nano Banana 2 Lite, GPT Image 2, GPT Image 2.5 Sunburst, GPT Image 2.5 Flare, Seedream 5 Pro, Seedream 5.0 Lite, Recraft V4 Styles Pro, Grok Imagine Image 2.0, Krea 2 Large.':
+        'Images: Nano Banana 2.1, Nano Banana Pro, Nano Banana 2, Nano Banana 2 Lite, GPT Image 2, GPT Image 2.5 Sunburst, GPT Image 2.5 Flare, Seedream 5 Pro, Seedream 5.0 Lite, Recraft V4 Styles Pro, Grok Imagine Image 2.0, Krea 2 Large.',
     'Видео: Kling 3.0, Veo 3.1 Fast, Seedance 2.5, Seedance 2.0, Seedance 2.0 Mini, MiniMax Hailuo 3 Max, FLUX.3 Video.':
         'Video: Kling 3.0, Veo 3.1 Fast, Seedance 2.5, Seedance 2.0, Seedance 2.0 Mini, MiniMax Hailuo 3 Max, FLUX.3 Video.',
     'Вектор: Recraft V4 Vector.': 'Vector: Recraft V4 Vector.', 'Музыка: Lyria 3 Pro.': 'Music: Lyria 3 Pro.', 'Голос: Gemini 3.1 Flash TTS.': 'Voice: Gemini 3.1 Flash TTS.',

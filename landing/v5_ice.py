@@ -476,7 +476,7 @@ dialog.doc { background: var(--card); } .sf input, .sf textarea { background: va
 
 # Every model the app calls (supabase/functions + src/types.ts). The Motion Engine storyboard model is shown as
 # ONEFLOW Motion Engine and stays off this list by the owner's choice.
-AI = [('Фото', ['Nano Banana Pro', 'Nano Banana 2', 'Nano Banana 2 Lite', 'GPT Image 2', 'GPT Image 2.5 Sunburst', 'GPT Image 2.5 Flare',
+AI = [('Фото', ['Nano Banana 2.1', 'Nano Banana Pro', 'Nano Banana 2', 'Nano Banana 2 Lite', 'GPT Image 2', 'GPT Image 2.5 Sunburst', 'GPT Image 2.5 Flare',
                 'Seedream 5 Pro', 'Seedream 5.0 Lite', 'Recraft V4 Styles Pro', 'Grok Imagine Image 2.0', 'Krea 2 Large']),
       ('Видео', ['Kling 3.0', 'Veo 3.1 Fast', 'Seedance 2.5', 'Seedance 2.0', 'Seedance 2.0 Mini', 'MiniMax Hailuo 3 Max', 'FLUX.3 Video']),
       ('Вектор', ['Recraft V4 Vector']), ('Музыка', ['Lyria 3 Pro']), ('Голос', ['Gemini 3.1 Flash TTS']),
@@ -564,7 +564,7 @@ JS_LANG = """<script>
 TOPUP_STOPS = [10, 15, 20, 25, 30, 40, 50, 60, 75, 100, 125, 150, 200, 250, 300, 400, 500]
 TOPUP_TIERS = [(10, 50), (50, 55), (200, 60)]
 TOPUP_EQ = [  # credits per generation (generate-* price tables), what, model, spec — same as CREDIT_EXAMPLES in the app
-    (7, 'фото', 'Nano Banana 2', 'Изображение 1K', False),
+    (4, 'фото', 'Nano Banana 2.1', 'Изображение 1K', False),
     (63, 'видео', 'Kling 3.0', 'Ролик 5 с, 720p, без звука', False),
     (8, 'треков', 'Lyria 3 Pro', 'Музыкальный трек', False),
 ]
