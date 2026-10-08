@@ -56,7 +56,7 @@ html { color-scheme: light; } body { background: var(--bg); color: var(--ink); }
 .mpanel { background: var(--card); border-radius: 32px; box-shadow: var(--sh2); }
 .lt .eb { background: var(--raised); box-shadow: var(--sh-sm); color: var(--ink2); } .lt .eb i { background: var(--lime); color: var(--limeink); }
 .lt h3 { font-weight: 200; letter-spacing: -.045em; } .lt .lead { color: var(--ink2); }
-.bens b { font-weight: 300; color: var(--ink); } .bens span { font-weight: 500; }
+.bens b { font-weight: 600; color: var(--ink); } .bens span { font-weight: 600; color: var(--ink); } .bens small { color: var(--ink2); }
 
 /* the animated app windows, light */
 .win { background: var(--s1); box-shadow: 0 0 0 1px rgba(0,0,0,.05), 0 40px 80px -42px rgba(0,0,0,.4); }
@@ -85,6 +85,7 @@ html { color-scheme: light; } body { background: var(--bg); color: var(--ink); }
 .gens { background: var(--field); } .gens > span { color: var(--muted); font-family: var(--d); } .gens .nw { color: var(--muted); }
 .gens .top { background: var(--lime); color: var(--limeink); } .qm { background: rgba(0,0,0,.08); color: var(--ink); } .qm::after { background: var(--ac); color: #fff; }
 .tp-pts li { color: var(--ink2); } .tp-pts li::before { color: var(--olive); }
+.tp-pts li.hl { background: var(--lime); color: var(--limeink); box-shadow: 0 0 26px var(--limeglow); font-size: 15.5px; } .tp-pts li.hl::before { color: var(--limeink); }
 .tp-acts .btn.w { background: var(--raised); color: var(--ink); box-shadow: var(--sh-sm); }
 
 /* faq, closing card, footer, documents */
