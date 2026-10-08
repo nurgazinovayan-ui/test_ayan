@@ -164,7 +164,7 @@ EN = {
     'Без регистрации и карты': 'No sign-up, no card', 'Все разделы программы': 'Every section of the app', 'Генерации показываются на примерах — ничего не списывается':
         'Generations are shown on examples — nothing is charged', 'Перейти на тариф — в любой момент': 'Switch to a plan anytime', 'Открыть демо →': 'Open the demo →',
     'Стартовый': 'Starter', '/ мес': '/ mo', 'Для первых карточек и тестов рекламы.': 'For your first product cards and ad tests.', 'Примерно генераций в месяц': 'Approx. generations per month',
-    'видео': 'videos', 'фото': 'images', 'Ролик 5 с, 720p, без звука': '5-second clip, 720p, no sound', 'Изображение 1K': '1K image', 'Изображение 1K · Sunburst': '1K image · Sunburst',
+    'видео': 'videos', 'фото': 'images', 'треков': 'music tracks', 'Музыкальный трек': 'Music track', 'Ролик 5 с, 720p, без звука': '5-second clip, 720p, no sound', 'Изображение 1K': '1K image', 'Изображение 1K · Sunburst': '1K image · Sunburst',
     'Все разделы ONEFLOW': 'Every ONEFLOW section', 'LLM-модели': 'LLM models', 'Адаптация визуалов': 'Visual adaptation', 'Выбрать': 'Choose', 'Популярный': 'Popular',
     'Для регулярной работы с генерацией.': 'For regular work with generation.', 'Выбрать →': 'Choose →', 'Максимальный': 'Max', 'Для команд без ограничений.': 'For teams, without limits.',
     'Всё из популярного': 'Everything in Popular', 'Приоритетная поддержка': 'Priority support',

@@ -563,10 +563,10 @@ JS_LANG = """<script>
 # never promises more than the balance pays for.
 TOPUP_STOPS = [10, 15, 20, 25, 30, 40, 50, 60, 75, 100, 125, 150, 200, 250, 300, 400, 500]
 TOPUP_TIERS = [(10, 50), (50, 55), (200, 60)]
-TOPUP_EQ = [  # credits per generation (generate-video / generate-image price tables), what, model, spec
+TOPUP_EQ = [  # credits per generation (generate-* price tables), what, model, spec — same as CREDIT_EXAMPLES in the app
+    (7, 'фото', 'Nano Banana 2', 'Изображение 1K', False),
     (63, 'видео', 'Kling 3.0', 'Ролик 5 с, 720p, без звука', False),
-    (14, 'фото', 'Nano Banana Pro', 'Изображение 1K', False),
-    (6, 'фото', 'GPT Image 2.5', 'Изображение 1K · Sunburst', True),
+    (8, 'треков', 'Lyria 3 Pro', 'Музыкальный трек', False),
 ]
 TOPUP_DEFAULT = 50
 
