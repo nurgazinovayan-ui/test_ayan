@@ -612,8 +612,8 @@ def pricing_html():
             f'<ul class="tp-tiers">{tiers}</ul></div>'
             f'<div class="tp-r"><div class="gens tp-calc"><span>Этого хватит примерно на</span><ul>{eq}</ul></div>'
             '<ul class="tp-pts"><li>50 кредитов в подарок при регистрации</li><li>Все разделы ONEFLOW и 30+ нейросетей</li><li class="hl">Кредиты не сгорают 12 месяцев</li></ul>'
-            '<div class="tp-acts"><a class="btn p" data-app="register" href="/app?auth=register">Начать бесплатно →</a>'
-            '<a class="btn w" data-app="demo" href="/app?demo=1">Открыть демо</a></div></div></div>'
+            '</div><div class="tp-acts"><a class="btn p" data-app="register" href="/app?auth=register">Начать бесплатно →</a>'
+            '<a class="btn w" data-app="demo" href="/app?demo=1">Открыть демо</a></div></div>'
             '<p class="tp-note">Количество генераций — примерное: зависит от модели, длительности и разрешения.</p></div></section>')
 
 
@@ -646,8 +646,9 @@ PRICE_CSS = """
 .tp-pts { list-style: none; display: grid; gap: 9px; margin: 20px 0 24px; font-size: 14.5px; color: var(--ink2); }
 .tp-pts li { display: flex; gap: 10px; }
 .tp-pts li.hl { margin-top: 4px; padding: 11px 14px; border-radius: 14px; background: var(--acsoft); color: var(--ink); font-weight: 600; } .tp-pts li::before { content: '✓'; flex: none; color: var(--ok); font-weight: 700; }
-.tp-acts { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; margin-top: auto; }
-@media (max-width: 420px) { .tp-acts { grid-template-columns: minmax(0, 1fr); } } .tp-acts .btn { width: 100%; }
+.tp-acts { grid-column: 1 / -1; display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-top: -8px; }
+.tp-acts .btn { min-width: 240px; }
+@media (max-width: 560px) { .tp-pts { margin-bottom: 0; } .tp-acts { flex-direction: column; margin-top: 0; } .tp-acts .btn { width: 100%; min-width: 0; } }
 .tp-acts .btn.w { background: rgba(255,255,255,.06); color: var(--ink); box-shadow: inset 0 0 0 1px rgba(255,255,255,.12); }
 .tp-note { margin-top: 16px; text-align: center; font-size: 12.5px; color: var(--muted); }
 @media (max-width: 900px) { .tpc { grid-template-columns: minmax(0, 1fr); gap: 28px; padding: 24px 20px; } }
