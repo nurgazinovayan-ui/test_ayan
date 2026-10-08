@@ -639,17 +639,14 @@ html { color-scheme: light; } body { background: var(--bg); color: var(--ink); }
 .lang a:hover { color: var(--ink); } .lang a[aria-current] { background: var(--ac); color: #fff; }
 .mnav { background: rgba(241,241,241,.97); border-radius: 24px; } .mnav a:hover { background: var(--field); }
 
-/* hero: thin headline with the lime marker, then the video as a rounded banner */
-.hero { display: flex; flex-direction: column; align-items: stretch; min-height: 0; margin-top: 0; padding: 70px 0 0; overflow: visible; }
-.hero > .wrap { order: 1; }
-.hbg { order: 2; position: relative; left: auto; right: auto; top: auto; z-index: 0; width: min(1120px, 100% - 48px); height: auto; aspect-ratio: 1470 / 630;
-  margin: 48px auto 0; border-radius: 32px; background: #d4d4d4; -webkit-mask-image: none; mask-image: none; box-shadow: 0 40px 80px -46px rgba(0,0,0,.45); }
-.hbg::after { background: none; }
-.hbg video { left: 0; top: 0; width: 100%; height: 100%; transform: none; object-fit: cover; }
-.hero h1 { max-width: 1000px; font: 200 clamp(42px, 5.8vw, 80px)/1.03 var(--d); letter-spacing: -.045em; color: var(--ink); }
-.hero h1 .gr { display: table; margin-left: -6px; padding: 0 8px; color: var(--ink); -webkit-text-fill-color: currentColor; font-weight: 300;
-  background: linear-gradient(transparent 60%, var(--lime) 60%, var(--lime) 93%, transparent 93%); -webkit-background-clip: border-box; background-clip: border-box; }
-.hero .sub { max-width: 620px; margin-top: 26px; font-size: 18px; color: var(--ink2); }
+/* hero: the video stays the background of the first screen (as on the dark page); a light haze in the page colour
+   on the left and at the bottom keeps the dark headline readable and lets the video dissolve into the page */
+.hbg { background: #d4d4d4; }
+.hbg::after { background: linear-gradient(180deg, rgba(229,229,229,.75) 0%, rgba(229,229,229,.3) 10%, rgba(229,229,229,0) 22%),
+    linear-gradient(90deg, rgba(229,229,229,.94) 0%, rgba(229,229,229,.82) 28%, rgba(229,229,229,.35) 50%, rgba(229,229,229,0) 66%); }
+.hero h1 { max-width: 760px; font: 200 clamp(40px, 4.9vw, 70px)/1.03 var(--d); letter-spacing: -.045em; color: var(--ink); }
+.hero h1 .gr { color: var(--ink); -webkit-text-fill-color: currentColor; font-weight: 300; background: none; }
+.hero .sub { max-width: 560px; font-size: 18px; color: var(--ink2); }
 .mrow { padding-top: 40px; } .models span { font-weight: 300; color: #9d9d9d; } .fnote { color: var(--muted); }
 
 /* section heads */
@@ -709,8 +706,9 @@ dialog.doc::backdrop { background: rgba(0,0,0,.35); } .sf input, .sf textarea { 
 .sf input:focus, .sf textarea:focus { border-color: var(--ink); } .totop { border-radius: 50%; background: var(--ac); color: #fff; } .skip { background: var(--ac); color: #fff; }
 
 @media (max-width: 760px) {
-  .hero { padding-top: 40px; } .hbg { width: calc(100% - 32px); aspect-ratio: 4 / 5; margin-top: 32px; border-radius: 26px; }
-  .hbg video { object-position: 62% 50%; } .hero h1 { font-size: 11vw; } .hero .acts { flex-direction: column; align-items: stretch; }
+  .hbg::after { background: linear-gradient(180deg, rgba(229,229,229,.7) 0%, rgba(229,229,229,0) 18%),
+    linear-gradient(0deg, rgba(229,229,229,.97) 0%, rgba(229,229,229,.9) 38%, rgba(229,229,229,0) 72%); }
+  .hero h1 { font-size: 10.5vw; } .hero .acts { flex-direction: column; align-items: stretch; }
   .ed { flex-wrap: nowrap; justify-content: flex-start; gap: 8px; } .ed button { padding: 11px 15px; border-radius: 999px; background: var(--raised); box-shadow: var(--sh-sm); color: var(--ink2); }
   .ed button[aria-selected="true"] { background: var(--ac); color: #fff; }
   .mpanel { border-radius: 26px; } .tpc { border-radius: 26px; } .end { border-radius: 28px; }
