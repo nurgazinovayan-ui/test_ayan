@@ -603,7 +603,7 @@ def pricing_html():
                     for (f, r), rng, bonus in zip(TOPUP_TIERS, ('$10–49', '$50–199', '$200–500'), ('', ' · +10%', ' · +20%')))
     return ('<section class="sec" id="pricing"><div class="wrap"><div class="sh rv"><span class="k">Цены</span><h2>Платите только за то, что создаёте</h2>'
             '<p>Без подписки и тарифов: пополняйте баланс на любую сумму. Кредиты действуют 12 месяцев — чем больше пополнение, тем выгоднее.</p></div>'
-            '<div class="tp card rv"><div class="tp-l tp-calc">'
+            '<div class="tpc card rv"><div class="tp-l tp-calc">'
             f'<div class="tp-top"><div class="tp-usd" id="tpUsd">${usd}</div><div class="tp-get"><span>Вы получите</span><b id="tpCr">{ru_credits(cr)}</b>'
             f'<small id="tpRate">{rate} кредитов за $1</small><em id="tpBonus">+10% бонус</em></div></div>'
             f'<div class="tp-sl" style="--tpp:{pct(idx)}%"><input type="range" id="tpR" min="0" max="{last}" step="1" value="{idx}" aria-label="Сумма пополнения" '
@@ -619,7 +619,7 @@ def pricing_html():
 
 PRICE_CSS = """
 /* pricing: top-up slider */
-.tp { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 36px; margin-top: 44px; padding: 34px; border-radius: 26px; }
+.tpc { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 36px; margin-top: 44px; padding: 34px; border-radius: 26px; }
 .tp-top { display: flex; align-items: flex-end; gap: 26px; flex-wrap: wrap; }
 .tp-usd { font: 700 clamp(56px, 7vw, 84px)/.9 var(--d); letter-spacing: -.05em; color: var(--num); font-variant-numeric: tabular-nums; min-width: 3.2ch; }
 .tp-get { display: grid; gap: 4px; padding-bottom: 4px; } .tp-get span { font: 400 12px var(--m); color: var(--muted); }
@@ -648,7 +648,7 @@ PRICE_CSS = """
 .tp-acts { display: grid; gap: 10px; margin-top: auto; } .tp-acts .btn { width: 100%; }
 .tp-acts .btn.w { background: rgba(255,255,255,.06); color: var(--ink); box-shadow: inset 0 0 0 1px rgba(255,255,255,.12); }
 .tp-note { margin-top: 16px; text-align: center; font-size: 12.5px; color: var(--muted); }
-@media (max-width: 900px) { .tp { grid-template-columns: minmax(0, 1fr); gap: 28px; padding: 24px 20px; } }
+@media (max-width: 900px) { .tpc { grid-template-columns: minmax(0, 1fr); gap: 28px; padding: 24px 20px; } }
 @media (max-width: 560px) { .tp-top { gap: 14px; } .tp-usd { font-size: 58px; } .tp-get b { font-size: 22px; } .tp-tiers { grid-template-columns: minmax(0, 1fr); }
   .tp-tiers li { grid-template-columns: auto 1fr; gap: 10px; align-items: baseline; } .tp-tiers li span { text-align: right; } .tp-mk { font-size: 11px; } }
 """
@@ -679,7 +679,8 @@ JS_PRICE = """<script>
 """
 
 
-def build(docs='', lang='ru'):
+def build(docs='', lang='ru', theme='ice'):
+    """theme: 'ice' — the dark page; 'soft' — the app's light theme (soft.py layered on top)."""
     html = v.build(docs=docs, theme='dark')
     head, rest = html.split('<main id="main">', 1)
     main_old, tail = rest.split('</main>', 1)
@@ -725,6 +726,9 @@ def build(docs='', lang='ru'):
     head = head.replace(protos.CSS, '').replace(protos.DARK, '')
     head = head.replace('</style>', ICE + TABS_CSS.replace('ANIM', '\n  '.join(ANIM)) + HERO_CSS + PRICE_CSS + '</style>', 1)
     tail = tail.replace(protos.js(), '').replace('</body>', JS_TABS + JS_LANG + JS_PRICE + '</body>')
+    if theme == 'soft':
+        import soft
+        head = soft.apply(head)
     # v4's month/year switch is gone with the plan cards; its script would stop at the missing buttons
     tail, n = re.subn(r"\n  const pm = document\.getElementById\('pm'\).*?py\.onclick = \(\) => set\('y'\);", '', tail, count=1, flags=re.S)
     assert n == 1, 'v4 pricing switch script not found'
@@ -738,6 +742,12 @@ def build(docs='', lang='ru'):
 
 
 if __name__ == '__main__':
+    import sys
+    if 'soft' in sys.argv[1:]:  # python3 v5_ice.py soft → v6-soft.html / v6-soft-en.html (preview of the light theme)
+        open(os.path.join(HERE, 'v6-soft.html'), 'w', encoding='utf-8').write(build(theme='soft'))
+        open(os.path.join(HERE, 'v6-soft-en.html'), 'w', encoding='utf-8').write(build(lang='en', theme='soft'))
+        print('v6-soft.html v6-soft-en.html')
+        sys.exit()
     open(os.path.join(HERE, 'v5-ice.html'), 'w', encoding='utf-8').write(build())
     print('v5-ice.html')
     if os.path.exists(os.path.join(HERE, 'v5_en.py')):
