@@ -62,10 +62,11 @@ def build4(theme='light'):
 
 
 def build5():
-    """The current oneflow.art landing (v5_ice.py): English at / (index.html), Russian at /ru (ru.html)."""
+    """The current oneflow.art landing (v5_ice.py + soft.py, light): English at / (index.html), Russian at /ru (ru.html)."""
     sys.path.insert(0, HERE)
     import v5_ice, v5_en
-    pages = {'index.html': v5_ice.build(docs=v5_en.legal_en(), lang='en'), 'ru.html': v5_ice.build(docs=legal_dialogs(), lang='ru')}
+    # light «Soft» theme (the app's light theme) and English first — the owner's rule; the dark page is v5_ice.build(theme='ice')
+    pages = {'index.html': v5_ice.build(docs=v5_en.legal_en(), lang='en', theme='soft'), 'ru.html': v5_ice.build(docs=legal_dialogs(), lang='ru', theme='soft')}
     finish_pages(pages, '5-ice', 'ONEFLOW-5-Ice-vercel.zip')
 
 
