@@ -1,8 +1,9 @@
 """oneflow.art in the app's dark theme, behind a ☀/☾ switch next to EN/RU.
 
-The light «Soft» page (soft.py) stays the default: a first visit is always light. The switch sets
-<html data-theme="dark"> and stores the choice under the app's own key, 'oneflow-theme', so the site and the app at
-/app (same origin) open in the same theme. A one-line script in <head> applies a stored choice before the first paint.
+The site opens dark (the owner's rule: dark and English first on the landing, light first in the app). A one-line
+script in <head> sets <html data-theme="dark"> before the first paint unless the visitor switched to light; the
+choice is stored under the site's own key, 'of-site-theme', so it never changes the app's theme ('oneflow-theme').
+Without JavaScript the page shows the light «Soft» layer (soft.py), which the dark rules sit on top of.
 
 Dark tokens come from the app (App.css «STYLE V2» dark): page #0b0b0d, cards #151517 / #1d1d20, fields #26262a, text
 #f2f2f4. Buttons mirror the light page: the main action is the light pill (the light page's black pill, inverted), the
@@ -82,11 +83,11 @@ MOON = ('<svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
 SWITCH = f'<button type="button" class="thm" aria-pressed="false" aria-label="Тёмная тема">{MOON}{SUN}</button>'
 MENU_SWITCH = f'<button type="button" class="mthm">{MOON}{SUN}<span class="to-dark">Тёмная тема</span><span class="to-light">Светлая тема</span></button>'
 
-# applied in <head> before the first paint, so a stored dark choice never flashes light
-EARLY = "try{if(localStorage.getItem('oneflow-theme')==='dark')document.documentElement.dataset.theme='dark'}catch(e){}"
+# applied in <head> before the first paint: dark unless the visitor chose light, so the page never flashes the other theme
+EARLY = "try{if(localStorage.getItem('of-site-theme')!=='light')document.documentElement.dataset.theme='dark'}catch(e){document.documentElement.dataset.theme='dark'}"
 
 JS = """<script>
-// ☀/☾: light by default; the choice is stored under the app's key so /app opens in the same theme
+// ☀/☾: dark by default; the choice is stored under the site's own key (the app keeps its own theme)
 (() => {
   const root = document.documentElement, meta = document.querySelector('meta[name="theme-color"]');
   const sync = () => { const dark = root.dataset.theme === 'dark';
@@ -95,7 +96,7 @@ JS = """<script>
   document.querySelectorAll('.thm, .mthm').forEach((b) => b.addEventListener('click', () => {
     const dark = root.dataset.theme !== 'dark';
     if (dark) root.dataset.theme = 'dark'; else delete root.dataset.theme;
-    try { localStorage.setItem('oneflow-theme', dark ? 'dark' : 'light'); } catch (e) {}
+    try { localStorage.setItem('of-site-theme', dark ? 'dark' : 'light'); } catch (e) {}
     sync(); }));
   sync();
 })();
