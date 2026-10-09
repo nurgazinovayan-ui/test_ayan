@@ -26,7 +26,7 @@ html { color-scheme: light; } body { background: var(--bg); color: var(--ink); }
 .btn.g:hover, .btn.w:hover { background: #fff; }
 
 /* menu */
-.nav .in { background: rgba(229,229,229,.8); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border-radius: 999px; }
+.nav .in { background: none; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; }  /* no plate under the menu */
 .nav nav a { color: var(--ink2); } .nav nav a:hover { color: var(--ink); } .nav .btn, .mnav .row .in2, .mnav .row a { border-radius: 999px; }
 .lang { background: var(--raised); box-shadow: var(--sh-sm); border-radius: 999px; } .lang a { border-radius: 999px; color: var(--muted); }
 .lang a:hover { color: var(--ink); } .lang a[aria-current] { background: var(--ac); color: #fff; }
