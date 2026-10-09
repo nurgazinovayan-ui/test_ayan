@@ -16,6 +16,8 @@
 //   media-upload-url { name, type, size } → one-time signed upload URL for a banner image/video in the public
 //                                      'site-media' bucket (admin.sql); the page uploads the file straight to Storage
 //   media-delete  { path }           → remove a banner file from that bucket (only home-banners/<uuid>.<ext>)
+//   news-save     { items }          → validate + store the landing's «new AI models» cards under the top menu
+//                                      (site_content 'landing.news'); an empty list deletes the row → built-in cards
 //   credits-grant { userId, credits, note? } → add a pack of credits to an account by hand (credit_packs, source
 //                                      'admin', valid 12 months); requires the app's 202610060001_credits.sql
 
@@ -74,6 +76,40 @@ function cleanLink(v: unknown): string {
     // fall through
   }
   throw new BadInput('Ссылка должна быть режимом приложения или адресом https://');
+}
+
+// Landing news cards: an https:// URL or a path on this site; never a mode (the landing has none).
+const NEWS_KEY = 'landing.news';
+const MAX_NEWS = 6;
+function cleanSiteLink(v: unknown): string {
+  const s = cleanText(v, 1000);
+  if (!s) return '';
+  if (/^\/[A-Za-z0-9._\-/?=&#]*$/.test(s) && !s.startsWith('//')) return s;
+  try {
+    const u = new URL(s);
+    if (u.protocol === 'https:' && !u.username && !u.password) return u.toString();
+  } catch {
+    // fall through
+  }
+  throw new BadInput('Ссылка должна начинаться с https:// или быть адресом на сайте (/app…).');
+}
+
+function cleanNews(input: unknown, publicPrefix: string) {
+  if (!Array.isArray(input)) throw new BadInput('Неверный формат новинок.');
+  if (input.length > MAX_NEWS) throw new BadInput(`Не больше ${MAX_NEWS} карточек.`);
+  return input.map((raw, i) => {
+    const x = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
+    const type = x.type === 'video' ? 'video' : 'image';
+    const lang = (l: unknown) => {
+      const o = (l && typeof l === 'object' ? l : {}) as Record<string, unknown>;
+      return { title: cleanText(o.title, 80), text: cleanText(o.text, 160) };
+    };
+    const ru = lang(x.ru), en = lang(x.en);
+    if (!ru.title && !en.title) throw new BadInput(`Карточка ${i + 1}: добавьте заголовок.`);
+    const id = cleanText(x.id, 64).replace(/[^A-Za-z0-9_-]/g, '') || crypto.randomUUID();
+    return { id, type, media: cleanMedia(x.media, publicPrefix, true), poster: type === 'video' ? cleanMedia(x.poster, publicPrefix, false) : '',
+      isNew: x.isNew !== false, link: cleanSiteLink(x.link), ru, en };
+  });
 }
 
 function cleanSlides(input: unknown, publicPrefix: string) {
@@ -256,6 +292,26 @@ Deno.serve(async (req) => {
       return json({ ok: true, value });
     }
 
+    if (action === 'news-save') {
+      let items;
+      try {
+        items = cleanNews(body.items, publicPrefix);
+      } catch (e) {
+        if (e instanceof BadInput) return json({ error: e.message }, 400);
+        throw e;
+      }
+      if (!items.length) {
+        const { error } = await admin.from('site_content').delete().eq('key', NEWS_KEY);
+        if (error) throw error;
+        return json({ ok: true, reset: true });
+      }
+      const value = JSON.stringify({ v: 1, items });
+      const { error } = await admin.from('site_content')
+        .upsert({ key: NEWS_KEY, value, updated_at: new Date().toISOString(), updated_by: caller.email });
+      if (error) throw error;
+      return json({ ok: true, value });
+    }
+
     if (action === 'media-upload-url') {
       const type = String(body.type ?? '');
       const size = Number(body.size ?? 0);
@@ -300,7 +356,7 @@ Deno.serve(async (req) => {
     if (action === 'content-save') {
       const key = String(body.key ?? '').trim();
       if (!/^[a-z0-9._-]{1,120}$/.test(key)) return json({ error: 'Неверный ключ.' }, 400);
-      if (key === BANNERS_KEY) return json({ error: 'Баннеры сохраняются отдельно.' }, 400);
+      if (key === BANNERS_KEY || key === NEWS_KEY) return json({ error: 'Баннеры и новинки сохраняются отдельно.' }, 400);
       const value = typeof body.value === 'string' ? body.value : null;
       if (value === null || value.trim() === '') {
         const { error } = await admin.from('site_content').delete().eq('key', key);

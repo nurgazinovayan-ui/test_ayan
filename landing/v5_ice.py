@@ -9,6 +9,7 @@ Images are CSS custom properties (one url each), so the single-file build stores
 import os
 import re
 
+import news
 import protos
 import v4_porcelain as v
 
@@ -699,7 +700,7 @@ def build(docs='', lang='ru', theme='ice'):
               + ''.join(f'<span>{n}</span>' for n in AI_ALL) * 2 + '</div></div>')
     hero = (f'<section class="hero"><div class="hbg" aria-hidden="true"><video poster="assets/hero/oneflow-hero-poster.webp" autoplay muted loop playsinline preload="auto" '
             'disablepictureinpicture disableremoteplayback tabindex="-1"><source src="assets/hero/oneflow-hero.webm" type="video/webm">'
-            f'<source src="assets/hero/oneflow-hero.mp4" type="video/mp4"></video></div><div class="wrap">{h1}{sub}{acts}</div></section>'
+            f'<source src="assets/hero/oneflow-hero.mp4" type="video/mp4"></video></div><div class="wrap">{news.news_html()}{h1}{sub}{acts}</div></section>'
             f'<div class="mrow"><div class="wrap">{models}<p class="fnote">{FNOTE}</p></div></div>')
     q, a = FAQ_AI  # right after the first question: «какие нейросети» is the most common pre-sale question
     faq = faq.replace('</details>', f'</details><details><summary>{q}</summary><p>{a}</p></details>', 1)
@@ -728,8 +729,8 @@ def build(docs='', lang='ru', theme='ice'):
         head = head.replace("<script>document.documentElement.classList.add('js')</script>",
                             "<script>document.documentElement.classList.add('js');try{if(localStorage.getItem('of-lang')==='ru'&&!/cms-edit/.test(location.search))location.replace('/ru'+location.hash)}catch(e){}</script>", 1)
     head = head.replace(protos.CSS, '').replace(protos.DARK, '')
-    head = head.replace('</style>', ICE + TABS_CSS.replace('ANIM', '\n  '.join(ANIM)) + HERO_CSS + PRICE_CSS + made.MADE_CSS + '</style>', 1)
-    tail = tail.replace(protos.js(), '').replace('</body>', JS_TABS + JS_LANG + JS_PRICE + made.JS_MADE + '</body>')
+    head = head.replace('</style>', ICE + TABS_CSS.replace('ANIM', '\n  '.join(ANIM)) + HERO_CSS + PRICE_CSS + made.MADE_CSS + news.NEWS_CSS + '</style>', 1)
+    tail = tail.replace(protos.js(), '').replace('</body>', JS_TABS + JS_LANG + JS_PRICE + made.JS_MADE + news.JS_NEWS + '</body>')
     if theme == 'soft':
         import soft
         head = soft.apply(head)
