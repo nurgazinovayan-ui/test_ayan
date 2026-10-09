@@ -76,7 +76,7 @@ def process(html, slug):
     used = set(json.loads(subprocess.check_output(['node', os.path.join(HERE, 'fontsused.js'), tmp], cwd=HERE)))
     os.remove(tmp)
     html, nf = inline_fonts(html, used)
-    for d_, n in sorted(set(re.findall(r'assets/(ol|ui|hero)/([\w-]+)\.webp', html))):
+    for d_, n in sorted(set(re.findall(r'assets/(ol|ui|hero|made)/([\w-]+)\.webp', html))):
         html = html.replace(f'assets/{d_}/{n}.webp', uri(os.path.join(HERE, 'assets', d_, f'{n}.webp'), 'image/webp'))
     # hero promo video stays a separate file next to index.html (served from the site root); the poster is inlined
     html = html.replace('assets/video/oneflow-promo.jpg', uri(os.path.join(HERE, 'assets', 'video', 'oneflow-promo.jpg'), 'image/jpeg'))

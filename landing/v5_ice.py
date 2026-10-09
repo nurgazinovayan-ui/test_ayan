@@ -709,7 +709,8 @@ def build(docs='', lang='ru', theme='ice'):
     modes = ('<section class="sec" id="modes"><div class="wrap"><div class="sh rv"><span class="k">Возможности</span><h2>Всё для контента — в одном окне</h2></div>'
              f'<div class="ed" role="tablist" aria-label="Режимы ONEFLOW">{buttons}</div>'
              '<div class="mpanel">' + ''.join(tab_panel(i, *t) for i, t in enumerate(TABS)) + '</div></div></section>')
-    main = f'<main id="main">{hero}{modes}{pricing}{faq}{end}</main>'
+    import made
+    main = f'<main id="main">{hero}{made.made_html()}{modes}{pricing}{faq}{end}</main>'
     # nav: new anchors + EN/RU switch; head: language alternates; theme colour; styles; no v4 feature-card demos
     links = ''.join(f'<a href="{h}">{t}</a>' for h, t in NAV)
     cur = lambda l: ' aria-current="page"' if l == lang else ''  # noqa: E731
@@ -727,8 +728,8 @@ def build(docs='', lang='ru', theme='ice'):
         head = head.replace("<script>document.documentElement.classList.add('js')</script>",
                             "<script>document.documentElement.classList.add('js');try{if(localStorage.getItem('of-lang')==='ru'&&!/cms-edit/.test(location.search))location.replace('/ru'+location.hash)}catch(e){}</script>", 1)
     head = head.replace(protos.CSS, '').replace(protos.DARK, '')
-    head = head.replace('</style>', ICE + TABS_CSS.replace('ANIM', '\n  '.join(ANIM)) + HERO_CSS + PRICE_CSS + '</style>', 1)
-    tail = tail.replace(protos.js(), '').replace('</body>', JS_TABS + JS_LANG + JS_PRICE + '</body>')
+    head = head.replace('</style>', ICE + TABS_CSS.replace('ANIM', '\n  '.join(ANIM)) + HERO_CSS + PRICE_CSS + made.MADE_CSS + '</style>', 1)
+    tail = tail.replace(protos.js(), '').replace('</body>', JS_TABS + JS_LANG + JS_PRICE + made.JS_MADE + '</body>')
     if theme == 'soft':
         import soft
         head = soft.apply(head)
