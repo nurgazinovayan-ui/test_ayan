@@ -732,8 +732,15 @@ def build(docs='', lang='ru', theme='ice'):
     head = head.replace('</style>', ICE + TABS_CSS.replace('ANIM', '\n  '.join(ANIM)) + HERO_CSS + PRICE_CSS + made.MADE_CSS + news.NEWS_CSS + '</style>', 1)
     tail = tail.replace(protos.js(), '').replace('</body>', JS_TABS + JS_LANG + JS_PRICE + made.JS_MADE + news.JS_NEWS + '</body>')
     if theme == 'soft':
-        import soft
+        import soft, dark
         head = soft.apply(head)
+        # ☀/☾ next to EN/RU; dark styles after the Soft layer; a stored dark choice applies before the first paint
+        head = head.replace(switch, switch + dark.SWITCH, 1)
+        head = re.sub(r'(<nav class="mnav" id="mnav"[^>]*>.*?)(<div class="row">)', lambda m: m.group(1) + dark.MENU_SWITCH + m.group(2), head, count=1, flags=re.S)
+        head = head.replace("document.documentElement.classList.add('js')", "document.documentElement.classList.add('js');" + dark.EARLY, 1)
+        i = head.rindex('</style>')
+        head = head[:i] + dark.DARK_CSS + head[i:]
+        tail = tail.replace('</body>', dark.JS + '</body>', 1)
     # v4's month/year switch is gone with the plan cards; its script would stop at the missing buttons
     tail, n = re.subn(r"\n  const pm = document\.getElementById\('pm'\).*?py\.onclick = \(\) => set\('y'\);", '', tail, count=1, flags=re.S)
     assert n == 1, 'v4 pricing switch script not found'
