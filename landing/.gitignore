@@ -1,3 +1,6 @@
 shots/
 out/
 __pycache__/
+# Origin font (Rajesh Rajput): its licence forbids public copies — kept on the build machine only, shipped in the site zip
+fonts/Origin-*
+site/*/fonts/

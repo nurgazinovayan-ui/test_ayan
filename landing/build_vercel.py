@@ -5,7 +5,7 @@ python3 build_vercel.py 5        →  site/5-ice/index.html + out/ONEFLOW-5-Ice-
 python3 build_vercel.py 4        →  site/4-porcelain/index.html + out/ONEFLOW-4-Porcelain-vercel.zip
 python3 build_vercel.py 4 dark   →  site/4-porcelain-dark/index.html + out/ONEFLOW-4-Porcelain-dark-vercel.zip
 """
-import base64, json, os, re, subprocess, sys, zipfile
+import base64, json, os, re, shutil, subprocess, sys, zipfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 APPREPO = '/home/user/oneflow'
@@ -25,8 +25,20 @@ def legal_dialogs():
     return out
 
 
+# Origin's licence forbids converting the font or making the files available online (so: not inlined as base64, not in
+# these public git repos). It is served unmodified as /fonts/<file> from the site zip only; the files are .gitignored and
+# live in landing/fonts/ on the build machine. Without them the faces are dropped and the headings fall back to Geist.
+SEPARATE_FONTS = ('Origin',)
+
+
+def separate_font_files():
+    return sorted(f for f in os.listdir(os.path.join(HERE, 'fonts')) if f.startswith(tuple(n + '-' for n in SEPARATE_FONTS)) and f.endswith('.woff2'))
+
+
 def inline_fonts(html, used):
     blocks = re.findall(r'@font-face\s*{[^}]*}', open(os.path.join(HERE, 'fonts.css'), encoding='utf-8').read())
+    blocks = [b for b in blocks if not re.search(r"url\(fonts/(" + '|'.join(SEPARATE_FONTS) + r")-", b)
+              or os.path.exists(os.path.join(HERE, re.search(r'url\((fonts/[^)]+)\)', b).group(1)))]
     text = set(re.sub(r'<[^>]+>', '', html))
     def covers(b):
         m = re.search(r'unicode-range:\s*([^;]+);', b)
@@ -50,8 +62,11 @@ def inline_fonts(html, used):
         ws = sorted(int(re.search(r'font-weight:\s*(\d+)', b).group(1)) for b in bs)
         merged.append(re.sub(r'font-weight:\s*\d+;', f'font-weight: {ws[0]} {ws[-1]};' if ws[0] != ws[-1] else f'font-weight: {ws[0]};', bs[0]))
     keep = merged
-    faces = '\n'.join(re.sub(r'url\((fonts/[^)]+)\)', lambda m: 'url(' + uri(os.path.join(HERE, m.group(1)), 'font/woff2') + ')', b) for b in keep)
-    return html.replace('<link rel="stylesheet" href="fonts.css">', '<style>\n' + faces + '\n</style>', 1), len(keep)
+    sep = lambda f: f.startswith(tuple(f'fonts/{n}-' for n in SEPARATE_FONTS))
+    faces = '\n'.join(re.sub(r'url\((fonts/[^)]+)\)', lambda m: 'url(' + ('/' + m.group(1) if sep(m.group(1)) else uri(os.path.join(HERE, m.group(1)), 'font/woff2')) + ')', b) for b in keep)
+    preload = ''.join(f'<link rel="preload" href="/{f}" as="font" type="font/woff2" crossorigin>\n'
+                      for b in keep for f in re.findall(r'url\((fonts/[^)]+)\)', b) if sep(f))
+    return html.replace('<link rel="stylesheet" href="fonts.css">', preload + '<style>\n' + faces + '\n</style>', 1), len(keep)
 
 
 def build4(theme='light'):
@@ -83,8 +98,9 @@ def process(html, slug):
     html = html.replace('src="assets/video/oneflow-promo.', 'src="/oneflow-promo.')
     html = html.replace('src="assets/hero/oneflow-hero.', 'src="/oneflow-hero.')  # hero video: separate files at the site root
     html = html.replace('<meta name="theme-color"', f'<link rel="icon" href="{uri(os.path.join(APPREPO, "public", "favicon.svg"), "image/svg+xml")}" type="image/svg+xml">\n<meta name="theme-color"', 1)
-    assert 'assets/' not in html and 'fonts/' not in html
-    bad = r'(?<![\w-])(?:src|href)="(?!data:|#|/app(?:\?|\")|/\"|/ru\"|https://oneflow\.art/(?:ru)?\"|/oneflow-(?:promo|hero)\.(?:mp4|webm)\")'
+    sepf = '|'.join(SEPARATE_FONTS)
+    assert 'assets/' not in html and not re.search(r'(?<!/)fonts/|/fonts/(?!(?:' + sepf + r')-[\w-]+\.woff2[)"])', html)
+    bad = r'(?<![\w-])(?:src|href)="(?!data:|#|/app(?:\?|\")|/\"|/ru\"|https://oneflow\.art/(?:ru)?\"|/oneflow-(?:promo|hero)\.(?:mp4|webm)\"|/fonts/(?:' + sepf + r')-[\w-]+\.woff2\")'
     assert not re.search(bad, html), re.findall(r'.{40}' + bad + r'.{30}', html)[:3]
     return html, nf, used
 
@@ -95,6 +111,10 @@ def finish_pages(pages, slug, zipname):
         html, nf, used = process(html, slug)
         open(os.path.join(d, name), 'w', encoding='utf-8').write(html)
         print(f'site/{slug}/{name} {len(html.encode()) // 1024} KB, {nf} font faces, fonts used {sorted(used)}')
+    if separate_font_files():  # local preview (python -m http.server in site/<slug>); .gitignored
+        os.makedirs(os.path.join(d, 'fonts'), exist_ok=True)
+        for f in separate_font_files():
+            shutil.copyfile(os.path.join(HERE, 'fonts', f), os.path.join(d, 'fonts', f))
     os.makedirs(os.path.join(HERE, 'out'), exist_ok=True)
     with zipfile.ZipFile(os.path.join(HERE, 'out', zipname), 'w', zipfile.ZIP_DEFLATED) as z:
         for name in pages:
@@ -141,7 +161,10 @@ def sync_app_repo(index, extra_pages=None):
     for ext in ('mp4', 'webm'):
         shutil.copyfile(os.path.join(HERE, 'assets', 'video', f'oneflow-promo.{ext}'), os.path.join(APPREPO, 'public', f'oneflow-promo.{ext}'))
         shutil.copyfile(os.path.join(HERE, 'assets', 'hero', f'oneflow-hero.{ext}'), os.path.join(APPREPO, 'public', f'oneflow-hero.{ext}'))
-    print('synced landing/index.html, landing/admin.html, public/oneflow-promo.*, public/oneflow-hero.* →', APPREPO)
+    for f in separate_font_files():  # public/fonts/Origin-* is .gitignored in the app repo (licence: no public copies)
+        os.makedirs(os.path.join(APPREPO, 'public', 'fonts'), exist_ok=True)
+        shutil.copyfile(os.path.join(HERE, 'fonts', f), os.path.join(APPREPO, 'public', 'fonts', f))
+    print('synced landing/index.html, landing/admin.html, public/oneflow-promo.*, public/oneflow-hero.*, public/fonts/* →', APPREPO)
 
 
 def site_zip(index, sfx='', extra_pages=None):
@@ -156,6 +179,7 @@ def site_zip(index, sfx='', extra_pages=None):
     for ext in ('mp4', 'webm'):  # hero video of the v5 landing
         extra[f'oneflow-hero.{ext}'] = os.path.join(HERE, 'assets', 'hero', f'oneflow-hero.{ext}')
     extra.update(extra_pages or {})
+    extra.update({f'fonts/{f}': os.path.join(HERE, 'fonts', f) for f in separate_font_files()})
     with zipfile.ZipFile(base) as zi, zipfile.ZipFile(tmp, 'w', zipfile.ZIP_DEFLATED) as zo:
         for it in zi.infolist():
             if it.filename in ('index.html', 'vercel.json', *extra):
