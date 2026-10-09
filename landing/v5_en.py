@@ -149,6 +149,8 @@ EN = {
     # pricing
     # news cards under the menu (news.py, built-in cards)
     'Новинки ИИ-моделей': 'New AI models', 'Новая модель Google: 4K, в 2 раза дешевле': 'New Google model: 4K at half the price',
+    'Видео из фото или текста': 'Video from a photo or text', 'Новое поколение видео от ByteDance': 'The new generation of ByteDance video',
+    'Новая модель изображений OpenAI': 'The new OpenAI image model', 'Музыка по описанию от Google': 'Music from a description, by Google',
     # pricing: top-up slider (v5_ice.pricing_html)
     'Платите только за то, что создаёте': 'Pay only for what you create',
     'Без подписки и тарифов: пополняйте баланс на любую сумму. Кредиты действуют 12 месяцев — чем больше пополнение, тем выгоднее.':

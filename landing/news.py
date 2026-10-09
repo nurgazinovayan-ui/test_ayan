@@ -1,5 +1,5 @@
-"""«New AI models» — a row of rectangular video/image cards right under the top menu (inside the hero, above the
-headline), each with a small «NEW» badge, a title and a short line of text.
+"""«New AI models» — a row of rectangular video/image cards right under the hero (above the models ticker), each
+with a small «NEW» badge, a title and a short line of text.
 
 The cards come from the admin page (oneflow.art/admin → «Новинки на сайте»): one JSON row 'landing.news' in
 site_content ({v: 1, items: [{type, media, poster, isNew, link, ru: {title, text}, en: {title, text}}]}), media in the
@@ -15,7 +15,11 @@ KEY = 'sb_publishable_xfd5nkUu18qvdzoo-dzhHQ_f5RKq4tS'  # publishable key (alrea
 # built-in cards: (CSS image variable from made.py, title, text)
 DEFAULT_NEWS = [
     ('--mi2', 'Nano Banana 2.1', 'Новая модель Google: 4K, в 2 раза дешевле'),
-]  # one card for now; the admin can publish up to 6
+    ('--mi0', 'Kling 3.0', 'Видео из фото или текста'),
+    ('--mi3', 'Seedance 2.5', 'Новое поколение видео от ByteDance'),
+    ('--mi1', 'GPT Image 2.5 Sunburst', 'Новая модель изображений OpenAI'),
+    ('--mi4', 'Lyria 3 Pro', 'Музыка по описанию от Google'),
+]  # the admin can publish up to 6
 
 
 def news_html():
@@ -23,18 +27,18 @@ def news_html():
         f'<article class="nw-card"><div class="nw-media" style="background-image:var({var})"></div>'
         f'<span class="nw-new">NEW</span><div class="nw-txt"><b>{title}</b><span>{text}</span></div></article>'
         for var, title, text in DEFAULT_NEWS)
-    return f'<div class="news" id="news" role="region" aria-label="Новинки ИИ-моделей"><div class="nw-row">{cards}</div></div>'
+    return f'<div class="news" id="news" role="region" aria-label="Новинки ИИ-моделей"><div class="wrap"><div class="nw-row">{cards}</div></div></div>'
 
 
 NEWS_CSS = """
-/* news: rectangular video/image cards under the top menu */
-.news { margin: 0 0 36px; }
+/* news: rectangular video/image cards under the hero; they share the row while they fit, then the row scrolls */
+.news { position: relative; z-index: 1; margin: 8px 0 0; }
 .nw-row { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 20px; scrollbar-width: none;
   padding: 8px 20px 36px; margin: -8px -20px -36px; }
 .nw-row::-webkit-scrollbar { display: none; }
 /* centred while they fit; once the row scrolls, the auto margins collapse and it starts at the left edge */
 .nw-row > :first-child { margin-left: auto; } .nw-row > :last-child { margin-right: auto; }
-.nw-card { position: relative; flex: none; width: 228px; aspect-ratio: 21 / 9; border-radius: 16px; overflow: hidden; scroll-snap-align: start; isolation: isolate;
+.nw-card { position: relative; flex: 1 1 0; min-width: 190px; max-width: 260px; aspect-ratio: 21 / 9; border-radius: 16px; overflow: hidden; scroll-snap-align: start; isolation: isolate;
   background: #cfcfcf; box-shadow: none; color: #fff; text-decoration: none;
   transition: transform .3s var(--e); }
 a.nw-card:hover { transform: translateY(-3px); }
@@ -58,7 +62,7 @@ a.nw-card:hover { transform: translateY(-3px); }
 .nw-txt b { font: 600 13px/1.25 var(--d); letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .nw-txt span { font-size: 11px; line-height: 1.35; color: rgba(255,255,255,.82); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 @media (prefers-reduced-motion: reduce) { .nw-new::before, .nw-card::before { animation: none; } }
-@media (max-width: 760px) { .news { margin-bottom: 28px; } .nw-card { width: 62vw; max-width: 228px; } }
+@media (max-width: 760px) { .news { margin-top: 4px; } .nw-card { flex: none; width: 62vw; min-width: 0; max-width: 228px; } }
 """
 
 JS_NEWS = """<script>

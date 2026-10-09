@@ -700,7 +700,7 @@ def build(docs='', lang='ru', theme='ice'):
               + ''.join(f'<span>{n}</span>' for n in AI_ALL) * 2 + '</div></div>')
     hero = (f'<section class="hero"><div class="hbg" aria-hidden="true"><video poster="assets/hero/oneflow-hero-poster.webp" autoplay muted loop playsinline preload="auto" '
             'disablepictureinpicture disableremoteplayback tabindex="-1"><source src="assets/hero/oneflow-hero.webm" type="video/webm">'
-            f'<source src="assets/hero/oneflow-hero.mp4" type="video/mp4"></video></div><div class="wrap">{news.news_html()}{h1}{sub}{acts}</div></section>'
+            f'<source src="assets/hero/oneflow-hero.mp4" type="video/mp4"></video></div><div class="wrap">{h1}{sub}{acts}</div></section>{news.news_html()}'
             f'<div class="mrow"><div class="wrap">{models}<p class="fnote">{FNOTE}</p></div></div>')
     q, a = FAQ_AI  # right after the first question: «какие нейросети» is the most common pre-sale question
     faq = faq.replace('</details>', f'</details><details><summary>{q}</summary><p>{a}</p></details>', 1)

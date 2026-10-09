@@ -42,10 +42,9 @@ html { color-scheme: light; } body { background: var(--bg); color: var(--ink); }
 .hero h1 .gr { color: var(--ink); -webkit-text-fill-color: currentColor; font-weight: 300; background: none; }
 .hero .sub { max-width: 560px; margin-left: 0; margin-right: 0; font-size: 18px; color: var(--ink2); }
 .hero .acts { justify-content: flex-start; }
-/* the news card sits right under the menu; the headline block stays at the bottom of the first screen */
+/* the headline block stays at the bottom of the first screen; the news cards follow right under the hero */
 .hero { padding-top: 92px; }
 .hero > .wrap { align-self: stretch; display: flex; flex-direction: column; justify-content: flex-end; }
-.hero .news { margin-bottom: auto; padding-bottom: 32px; }
 .mrow { padding-top: 40px; } .models span { font-weight: 300; color: #9d9d9d; } .fnote { color: var(--muted); }
 
 /* section heads */
