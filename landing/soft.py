@@ -42,6 +42,10 @@ html { color-scheme: light; } body { background: var(--bg); color: var(--ink); }
 .hero h1 .gr { color: var(--ink); -webkit-text-fill-color: currentColor; font-weight: 300; background: none; }
 .hero .sub { max-width: 560px; margin-left: auto; margin-right: auto; font-size: 18px; color: var(--ink2); }
 .hero .acts { justify-content: center; }
+/* the news card sits right under the menu; the headline block stays at the bottom of the first screen */
+.hero { padding-top: 92px; }
+.hero > .wrap { align-self: stretch; display: flex; flex-direction: column; justify-content: flex-end; }
+.hero .news { margin-bottom: auto; padding-bottom: 32px; }
 .mrow { padding-top: 40px; } .models span { font-weight: 300; color: #9d9d9d; } .fnote { color: var(--muted); }
 
 /* section heads */
@@ -104,7 +108,7 @@ dialog.doc::backdrop { background: rgba(0,0,0,.35); } .sf input, .sf textarea { 
 @media (max-width: 760px) {
   .hbg::after { background: linear-gradient(180deg, rgba(229,229,229,.7) 0%, rgba(229,229,229,0) 18%),
     linear-gradient(0deg, rgba(229,229,229,.97) 0%, rgba(229,229,229,.9) 38%, rgba(229,229,229,0) 72%); }
-  .hero h1 { font-size: 10.5vw; } .hero .acts { flex-direction: column; align-items: stretch; }
+  .hero { padding-top: 84px; } .hero h1 { font-size: 10.5vw; } .hero .acts { flex-direction: column; align-items: stretch; }
   .ed { flex-wrap: nowrap; justify-content: flex-start; gap: 8px; } .ed button { padding: 11px 15px; border-radius: 999px; background: var(--raised); box-shadow: var(--sh-sm); color: var(--ink2); }
   .ed button[aria-selected="true"] { background: var(--ac); color: #fff; }
   .mpanel { border-radius: 26px; } .tpc { border-radius: 26px; } .end { border-radius: 28px; }

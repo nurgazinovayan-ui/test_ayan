@@ -35,10 +35,17 @@ NEWS_CSS = """
 /* centred while they fit; once the row scrolls, the auto margins collapse and it starts at the left edge */
 .nw-row > :first-child { margin-left: auto; } .nw-row > :last-child { margin-right: auto; }
 .nw-card { position: relative; flex: none; width: 228px; aspect-ratio: 21 / 9; border-radius: 16px; overflow: hidden; scroll-snap-align: start; isolation: isolate;
-  background: #cfcfcf; box-shadow: 0 1px 0 rgba(255,255,255,.6) inset, 0 18px 36px -22px rgba(0,0,0,.45); color: #fff; text-decoration: none;
+  background: #cfcfcf; box-shadow: 0 0 22px -4px rgba(155,232,255,.55), 0 18px 36px -22px rgba(0,0,0,.45); color: #fff; text-decoration: none;
   transition: transform .3s var(--e), box-shadow .3s; }
 a.nw-card:hover { transform: translateY(-3px); box-shadow: 0 1px 0 rgba(255,255,255,.6) inset, 0 26px 44px -24px rgba(0,0,0,.55); }
 .nw-media, .nw-card video, .nw-card img { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; background: center / cover no-repeat; }
+.nw-card::before { content: ''; position: absolute; inset: 0; z-index: 2; border-radius: inherit; padding: 3px; pointer-events: none;
+  background: conic-gradient(from var(--nwa), #cdf158, #9be8ff, #b79cff, #ff9ad5, #ffd36e, #cdf158);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude;
+  animation: nwBorder 3.5s linear infinite; }
+/* the gradient ring runs round the card (falls back to a still gradient where @property isn't supported) */
+@property --nwa { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+@keyframes nwBorder { to { --nwa: 360deg; } }
 .nw-card::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(0,0,0,0) 38%, rgba(0,0,0,.72)); }
 .nw-new { position: absolute; left: 6px; top: 6px; width: 38px; height: 38px; display: grid; place-items: center; isolation: isolate;
   color: #1d2405; font: 800 8.5px/1 var(--d); letter-spacing: .05em; transform: rotate(-14deg);
@@ -50,7 +57,7 @@ a.nw-card:hover { transform: translateY(-3px); box-shadow: 0 1px 0 rgba(255,255,
 .nw-txt { position: absolute; left: 12px; right: 12px; bottom: 9px; display: grid; gap: 2px; text-shadow: 0 1px 8px rgba(0,0,0,.35); }
 .nw-txt b { font: 600 13px/1.25 var(--d); letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .nw-txt span { font-size: 11px; line-height: 1.35; color: rgba(255,255,255,.82); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-@media (prefers-reduced-motion: reduce) { .nw-new::before { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .nw-new::before, .nw-card::before { animation: none; } }
 @media (max-width: 760px) { .news { margin-bottom: 28px; } .nw-card { width: 62vw; max-width: 228px; } }
 """
 
