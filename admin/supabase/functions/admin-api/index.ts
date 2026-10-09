@@ -2,7 +2,7 @@
 // Keep "Verify JWT" ON (default). No secrets to configure: SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are injected
 // into every Edge Function automatically.
 //
-// Backend of the oneflow.art/admin page. Only ADMIN_EMAIL may call it — checked here against the caller's own verified
+// Backend of the oneflow.art/admin page. Only an admin (isAdminUser: ADMIN_EMAILS, optional MFA) may call it — checked here against the caller's own verified
 // JWT (the page hiding itself from others is just UX). Requires admin.sql (site_content, support_tickets) and the
 // app's existing generation_log / presence tables.
 //
@@ -18,6 +18,7 @@
 //   media-delete  { path }           → remove a banner file from that bucket (only home-banners/<uuid>.<ext>)
 //   news-save     { items }          → validate + store the landing's «new AI models» cards under the top menu
 //                                      (site_content 'landing.news'); an empty list deletes the row → built-in cards
+//   generation-pause { paused }      → kill switch for all new paid generations (app_settings)
 //   credits-grant { userId, credits, note? } → add a pack of credits to an account by hand (credit_packs, source
 //                                      'admin', valid 12 months); requires the app's 202610060001_credits.sql
 
@@ -25,7 +26,44 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-const ADMIN_EMAIL = 'nurgazinov.ayan@gmail.com';
+// ---- Admin check — generated from supabase/functions/_shared/admin_check.ts by
+// scripts/sync-edge-guard.mjs (the admin-api / admin-send-message copies in the admin repo carry the
+// same block). Edit the shared file, not this copy.
+//
+// Admin = a confirmed account whose e-mail is in ADMIN_EMAILS (comma separated secret; defaults to
+// the owner). With ADMIN_REQUIRE_MFA=1 the session must also have passed MFA: the JWT, already
+// verified by auth.getUser before this runs, carries aal2 (Supabase Auth → MFA → TOTP).
+const ADMIN_EMAILS = (Deno.env.get('ADMIN_EMAILS') ?? 'nurgazinov.ayan@gmail.com')
+  .split(',')
+  .map((s) => s.trim().toLowerCase())
+  .filter(Boolean);
+function jwtClaim(token: string, claim: string): unknown {
+  try {
+    const part = token.split('.')[1] ?? '';
+    const b64 = part.replace(/-/g, '+').replace(/_/g, '/').padEnd(Math.ceil(part.length / 4) * 4, '=');
+    return JSON.parse(atob(b64))?.[claim];
+  } catch {
+    return undefined;
+  }
+}
+function isAdminUser(user: { email?: string | null; email_confirmed_at?: string | null } | null | undefined, token: string): boolean {
+  if (!user || !user.email_confirmed_at || !ADMIN_EMAILS.includes((user.email ?? '').toLowerCase())) return false;
+  if (Deno.env.get('ADMIN_REQUIRE_MFA') === '1' && jwtClaim(token, 'aal') !== 'aal2') return false;
+  return true;
+}
+// Every administrative action leaves a row in security_events (who, what, on whom; never secrets).
+type AuditClient = { rpc: (fn: string, args: Record<string, unknown>) => PromiseLike<{ error: unknown }> };
+async function auditAdmin(client: AuditClient, action: string, actorId: string, details: Record<string, unknown>): Promise<void> {
+  const { error } = await client.rpc('log_security_event', {
+    p_kind: `admin_${action}`.slice(0, 60),
+    p_severity: 'info',
+    p_user: actorId,
+    p_details: details,
+    p_dedupe: null,
+  });
+  if (error) console.error('audit log failed', error);
+}
+// ---- end of admin check
 const ONLINE_WINDOW_MINUTES = 3;
 const STATS_DAYS = 30;
 const MAX_LOG_ROWS = 50000;
@@ -147,10 +185,26 @@ Deno.serve(async (req) => {
     const { data: callerData } = await admin.auth.getUser(token);
     const caller = callerData.user;
     // exactly one account: the admin email, and only once that address is confirmed (Google sign-ins are confirmed by Google)
-    if (!caller || !caller.email_confirmed_at || caller.email?.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) return json({ error: 'Доступ запрещён.' }, 403);
+    if (!caller || !isAdminUser(caller, token)) return json({ error: 'Доступ запрещён.' }, 403);
 
     const body = await req.json().catch(() => ({}));
     const action = String(body.action ?? 'overview');
+    // every change made from the admin page is journaled (security_events); reads are not
+    if (action !== 'overview') {
+      const pick = (k: string) => (typeof body[k] === 'string' || typeof body[k] === 'number' ? String(body[k]).slice(0, 120) : undefined);
+      await auditAdmin(admin, action.replace(/[^a-z-]/g, '').slice(0, 40), caller.id, {
+        id: pick('id'), key: pick('key'), userId: pick('userId'), credits: pick('credits'), status: pick('status'), path: pick('path'), paused: body.paused === true,
+      });
+    }
+
+    // Kill switch for every new paid generation (app_settings.paid_generation_enabled, read by
+    // reserve_generation_v2): { paused: true } stops new jobs at once, { paused: false } resumes.
+    if (action === 'generation-pause') {
+      const paused = body.paused === true;
+      const { error } = await admin.from('app_settings').upsert({ key: 'paid_generation_enabled', value: paused ? 0 : 1 });
+      if (error) throw error;
+      return json({ ok: true, paused });
+    }
 
     // every account (small user base: page through listUsers once)
     const listUsers = async () => {
