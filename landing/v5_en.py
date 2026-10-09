@@ -251,9 +251,11 @@ def translate(html):
             parts[i] = p
             continue
         p = re.sub(r'>([^<>]+)<', node, p)
-        parts[i] = re.sub(r'(aria-label|title|placeholder|content|alt)="([^"]+)"', attr, p)
+        p = re.sub(r'aria-valuetext="\$(\d+) — ([\d\u2009]+) кредит\w*"',
+                   lambda m: f'aria-valuetext="${m.group(1)} — {m.group(2).replace(chr(0x2009), ",")} credits"', p)
+        parts[i] = re.sub(r'(aria-label|title|placeholder|content|alt|data-tip)="([^"]+)"', attr, p)
     html = ''.join(parts)
     left = sorted({t.strip() for t in re.findall(r'>([^<>]+)<', re.sub(r'<(script|style)>.*?</\1>', '', html, flags=re.S)) if CYR.search(t)}
-                  | {a for a in re.findall(r'(?:aria-label|title|placeholder|content|alt)="([^"]+)"', html) if CYR.search(a) and a not in KEEP})
+                  | {a for a in re.findall(r'(?:aria-[\w-]+|title|placeholder|content|alt|data-tip)="([^"]+)"', html) if CYR.search(a) and a not in KEEP})
     assert not left, 'untranslated: ' + ' | '.join(left[:20])
     return html
