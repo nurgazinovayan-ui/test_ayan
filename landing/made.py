@@ -25,8 +25,7 @@ def logo_svg():
 def made_html():
     return ('<section class="made" id="made" aria-labelledby="made-h">'
             f'<div class="mb-band" id="madeBand" aria-hidden="true" data-count="{len(MADE_IMAGES)}"></div>'
-            f'<div class="mb-head"><h2 id="made-h">{logo_svg()}</h2>'
-            '<p class="mb-cap">Реклама, которую сделали в ONEFLOW: фото, типографика и визуалы под любой формат.</p></div>'
+            f'<div class="mb-head"><h2 id="made-h">{logo_svg()}</h2></div>'
             '</section>')
 
 
@@ -34,16 +33,15 @@ MADE_CSS = """
 /* made in ONEFLOW: a curved row of ads (TiltedGridHero, ported) */
 :root { """ + ' '.join(f'--mi{i}: url(assets/made/{n}.webp);' for i, n in enumerate(MADE_IMAGES)) + """ }
 .made { position: relative; height: clamp(580px, 50vw, 720px); margin-top: 56px; overflow: hidden; container-type: size; }
-.made .mb-head { position: relative; z-index: 2; display: grid; justify-items: center; gap: 14px; padding: 8px 24px 0; text-align: center; }
+.made .mb-head { position: relative; z-index: 2; display: grid; justify-items: center; padding: 72px 24px 0; text-align: center; }
 .made .mb-head h2 { margin: 0; }
 .made .mb-logo { display: block; width: min(220px, 50vw); height: auto; color: var(--ink); }
-.made .mb-cap { max-width: 460px; margin: 0; font-size: 15px; line-height: 1.5; color: var(--ink2); }
 .mb-band { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .5s; }
 .mb-band.on { opacity: 1; }
 .mb-tile { position: absolute; transform-style: preserve-3d; }
 .mb-strip { position: absolute; top: 0; overflow: hidden; background-color: #d6d6d6; background-repeat: no-repeat; }
 .mb-strip.l { border-radius: 14px 0 0 14px; } .mb-strip.r { border-radius: 0 14px 14px 0; }
-@media (max-width: 760px) { .made { height: 500px; margin-top: 40px; } .made .mb-cap { font-size: 14px; } }
+@media (max-width: 760px) { .made { height: 500px; margin-top: 40px; } .made .mb-head { padding-top: 56px; } }
 """
 
 JS_MADE = """<script>

@@ -147,8 +147,6 @@ EN = {
     'Сторис готовы — глянешь 9:16?': 'Stories are ready — can you check 9:16?', 'Супер, беру в работу': 'Great, I’m on it',
     'Тексты закинул в проект, проверьте CTA': 'Copy is in the project, please check the CTA', 'Айдос теперь в ваших контактах': 'Aidos is now in your contacts',
     # pricing
-    # made in ONEFLOW (made.py)
-    'Реклама, которую сделали в ONEFLOW: фото, типографика и визуалы под любой формат.': 'Ads made in ONEFLOW: photos, type and visuals for any format.',
     # pricing: top-up slider (v5_ice.pricing_html)
     'Платите только за то, что создаёте': 'Pay only for what you create',
     'Без подписки и тарифов: пополняйте баланс на любую сумму. Кредиты действуют 12 месяцев — чем больше пополнение, тем выгоднее.':
