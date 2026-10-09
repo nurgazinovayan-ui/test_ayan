@@ -33,7 +33,7 @@ MADE_CSS = """
 /* made in ONEFLOW: a curved row of ads (TiltedGridHero, ported) */
 :root { """ + ' '.join(f'--mi{i}: url(assets/made/{n}.webp);' for i, n in enumerate(MADE_IMAGES)) + """ }
 .made { position: relative; height: clamp(580px, 50vw, 720px); margin-top: 56px; overflow: hidden; container-type: size; }
-.made .mb-head { position: relative; z-index: 2; display: grid; justify-items: center; padding: 72px 24px 0; text-align: center; }
+.made .mb-head { position: relative; z-index: 2; display: grid; justify-items: center; padding: 128px 24px 0; text-align: center; }
 .made .mb-head h2 { margin: 0; }
 .made .mb-logo { display: block; width: min(220px, 50vw); height: auto; color: var(--ink); }
 .mb-band { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .5s; }
@@ -41,7 +41,7 @@ MADE_CSS = """
 .mb-tile { position: absolute; transform-style: preserve-3d; }
 .mb-strip { position: absolute; top: 0; overflow: hidden; background-color: #d6d6d6; background-repeat: no-repeat; }
 .mb-strip.l { border-radius: 14px 0 0 14px; } .mb-strip.r { border-radius: 0 14px 14px 0; }
-@media (max-width: 760px) { .made { height: 500px; margin-top: 40px; } .made .mb-head { padding-top: 56px; } }
+@media (max-width: 760px) { .made { height: 500px; margin-top: 40px; } .made .mb-head { padding-top: 92px; } }
 """
 
 JS_MADE = """<script>
