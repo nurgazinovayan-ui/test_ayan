@@ -36,7 +36,7 @@ MADE_CSS = """
 .made { position: relative; height: clamp(580px, 50vw, 720px); margin-top: 56px; overflow: hidden; container-type: size; }
 .made .mb-head { position: relative; z-index: 2; display: grid; justify-items: center; gap: 14px; padding: 8px 24px 0; text-align: center; }
 .made .mb-head h2 { margin: 0; }
-.made .mb-logo { display: block; width: min(300px, 60vw); height: auto; color: var(--ink); }
+.made .mb-logo { display: block; width: min(220px, 50vw); height: auto; color: var(--ink); }
 .made .mb-cap { max-width: 460px; margin: 0; font-size: 15px; line-height: 1.5; color: var(--ink2); }
 .mb-band { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .5s; }
 .mb-band.on { opacity: 1; }
