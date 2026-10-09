@@ -32,14 +32,16 @@ html { color-scheme: light; } body { background: var(--bg); color: var(--ink); }
 .lang a:hover { color: var(--ink); } .lang a[aria-current] { background: var(--ac); color: #fff; }
 .mnav { background: rgba(241,241,241,.97); border-radius: 24px; } .mnav a:hover { background: var(--field); }
 
-/* hero: the video stays the background of the first screen (as on the dark page); a light haze in the page colour
-   on the left and at the bottom keeps the dark headline readable and lets the video dissolve into the page */
+/* hero: the video stays the background of the first screen; the headline, text and buttons are centred, over a
+   light haze in the page colour round the middle (and a band at the top for the menu) */
 .hbg { background: #d4d4d4; }
 .hbg::after { background: linear-gradient(180deg, rgba(229,229,229,.75) 0%, rgba(229,229,229,.3) 10%, rgba(229,229,229,0) 22%),
-    linear-gradient(90deg, rgba(229,229,229,.94) 0%, rgba(229,229,229,.82) 28%, rgba(229,229,229,.35) 50%, rgba(229,229,229,0) 66%); }
-.hero h1 { max-width: 760px; font: 200 clamp(40px, 4.9vw, 70px)/1.03 var(--d); letter-spacing: -.045em; color: var(--ink); }
+    radial-gradient(ellipse 46% 64% at 50% 62%, rgba(229,229,229,.92) 0%, rgba(229,229,229,.7) 48%, rgba(229,229,229,0) 100%); }
+.hero .wrap { text-align: center; }
+.hero h1 { max-width: 860px; margin-left: auto; margin-right: auto; font: 200 clamp(40px, 4.9vw, 70px)/1.03 var(--d); letter-spacing: -.045em; color: var(--ink); }
 .hero h1 .gr { color: var(--ink); -webkit-text-fill-color: currentColor; font-weight: 300; background: none; }
-.hero .sub { max-width: 560px; font-size: 18px; color: var(--ink2); }
+.hero .sub { max-width: 560px; margin-left: auto; margin-right: auto; font-size: 18px; color: var(--ink2); }
+.hero .acts { justify-content: center; }
 .mrow { padding-top: 40px; } .models span { font-weight: 300; color: #9d9d9d; } .fnote { color: var(--muted); }
 
 /* section heads */

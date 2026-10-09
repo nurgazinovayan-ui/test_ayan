@@ -14,10 +14,8 @@ KEY = 'sb_publishable_xfd5nkUu18qvdzoo-dzhHQ_f5RKq4tS'  # publishable key (alrea
 
 # built-in cards: (CSS image variable from made.py, title, text)
 DEFAULT_NEWS = [
-    ('--mi2', 'Nano Banana 2.1 уже в ONEFLOW', 'Новая модель Google: фото до 4K, в 2 раза дешевле'),
-    ('--mi0', 'Motion Engine', 'Ролик из ваших фото: бриф → раскадровки → рендер'),
-    ('--mi3', 'Lyria 3 Pro', 'Музыка и озвучка для роликов прямо в ONEFLOW'),
-]
+    ('--mi2', 'Nano Banana 2.1', 'Новая модель Google: 4K, в 2 раза дешевле'),
+]  # one card for now; the admin can publish up to 6
 
 
 def news_html():
@@ -30,30 +28,30 @@ def news_html():
 
 NEWS_CSS = """
 /* news: rectangular video/image cards under the top menu */
-.news { margin: 0 0 44px; }
+.news { margin: 0 0 36px; }
 .nw-row { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 20px; scrollbar-width: none;
   padding: 8px 20px 36px; margin: -8px -20px -36px; }
 .nw-row::-webkit-scrollbar { display: none; }
 /* centred while they fit; once the row scrolls, the auto margins collapse and it starts at the left edge */
 .nw-row > :first-child { margin-left: auto; } .nw-row > :last-child { margin-right: auto; }
-.nw-card { position: relative; flex: none; width: 248px; aspect-ratio: 16 / 9; border-radius: 18px; overflow: hidden; scroll-snap-align: start; isolation: isolate;
+.nw-card { position: relative; flex: none; width: 228px; aspect-ratio: 21 / 9; border-radius: 16px; overflow: hidden; scroll-snap-align: start; isolation: isolate;
   background: #cfcfcf; box-shadow: 0 1px 0 rgba(255,255,255,.6) inset, 0 18px 36px -22px rgba(0,0,0,.45); color: #fff; text-decoration: none;
   transition: transform .3s var(--e), box-shadow .3s; }
 a.nw-card:hover { transform: translateY(-3px); box-shadow: 0 1px 0 rgba(255,255,255,.6) inset, 0 26px 44px -24px rgba(0,0,0,.55); }
 .nw-media, .nw-card video, .nw-card img { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; background: center / cover no-repeat; }
 .nw-card::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(0,0,0,0) 38%, rgba(0,0,0,.72)); }
-.nw-new { position: absolute; left: 8px; top: 8px; width: 44px; height: 44px; display: grid; place-items: center; isolation: isolate;
-  color: #1d2405; font: 800 9.5px/1 var(--d); letter-spacing: .05em; transform: rotate(-14deg);
+.nw-new { position: absolute; left: 6px; top: 6px; width: 38px; height: 38px; display: grid; place-items: center; isolation: isolate;
+  color: #1d2405; font: 800 8.5px/1 var(--d); letter-spacing: .05em; transform: rotate(-14deg);
   filter: drop-shadow(0 0 1px rgba(29,36,5,.9)) drop-shadow(0 3px 8px rgba(0,0,0,.35)); }  /* thin dark edge: readable on lime ads too */
 /* a starburst sticker instead of a pill: the jagged lime star turns slowly, the word stays put */
 .nw-new::before { content: ''; position: absolute; inset: 0; z-index: -1; background: #cdf158;
   clip-path: polygon(50.0% 0.0%, 59.3% 9.1%, 71.7% 5.0%, 76.2% 17.2%, 89.1% 18.8%, 87.8% 31.8%, 98.7% 38.9%, 92.0% 50.0%, 98.7% 61.1%, 87.8% 68.2%, 89.1% 81.2%, 76.2% 82.8%, 71.7% 95.0%, 59.3% 90.9%, 50.0% 100.0%, 40.7% 90.9%, 28.3% 95.0%, 23.8% 82.8%, 10.9% 81.2%, 12.2% 68.2%, 1.3% 61.1%, 8.0% 50.0%, 1.3% 38.9%, 12.2% 31.8%, 10.9% 18.8%, 23.8% 17.2%, 28.3% 5.0%, 40.7% 9.1%); animation: nwSpin 14s linear infinite; }
 @keyframes nwSpin { to { transform: rotate(360deg); } }
-.nw-txt { position: absolute; left: 14px; right: 14px; bottom: 12px; display: grid; gap: 2px; text-shadow: 0 1px 8px rgba(0,0,0,.35); }
-.nw-txt b { font: 600 14px/1.25 var(--d); letter-spacing: -.01em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.nw-txt span { font-size: 12px; line-height: 1.35; color: rgba(255,255,255,.82); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nw-txt { position: absolute; left: 12px; right: 12px; bottom: 9px; display: grid; gap: 2px; text-shadow: 0 1px 8px rgba(0,0,0,.35); }
+.nw-txt b { font: 600 13px/1.25 var(--d); letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nw-txt span { font-size: 11px; line-height: 1.35; color: rgba(255,255,255,.82); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 @media (prefers-reduced-motion: reduce) { .nw-new::before { animation: none; } }
-@media (max-width: 760px) { .news { margin-bottom: 28px; } .nw-card { width: 64vw; max-width: 248px; } }
+@media (max-width: 760px) { .news { margin-bottom: 28px; } .nw-card { width: 62vw; max-width: 228px; } }
 """
 
 JS_NEWS = """<script>

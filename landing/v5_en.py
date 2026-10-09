@@ -148,10 +148,7 @@ EN = {
     'Тексты закинул в проект, проверьте CTA': 'Copy is in the project, please check the CTA', 'Айдос теперь в ваших контактах': 'Aidos is now in your contacts',
     # pricing
     # news cards under the menu (news.py, built-in cards)
-    'Новинки ИИ-моделей': 'New AI models', 'Nano Banana 2.1 уже в ONEFLOW': 'Nano Banana 2.1 is now in ONEFLOW',
-    'Новая модель Google: фото до 4K, в 2 раза дешевле': 'Google’s new model: images up to 4K at half the price',
-    'Ролик из ваших фото: бриф → раскадровки → рендер': 'A video from your photos: brief → storyboards → render',
-    'Музыка и озвучка для роликов прямо в ONEFLOW': 'Music and voice-over for your videos, right in ONEFLOW',
+    'Новинки ИИ-моделей': 'New AI models', 'Новая модель Google: 4K, в 2 раза дешевле': 'New Google model: 4K at half the price',
     # pricing: top-up slider (v5_ice.pricing_html)
     'Платите только за то, что создаёте': 'Pay only for what you create',
     'Без подписки и тарифов: пополняйте баланс на любую сумму. Кредиты действуют 12 месяцев — чем больше пополнение, тем выгоднее.':
