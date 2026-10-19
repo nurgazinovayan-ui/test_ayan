@@ -9,8 +9,8 @@ innerHTML. Until something is published, the built-in cards below are shown (the
 empty, even without JavaScript). Text follows the page language; a card without English falls back to Russian.
 """
 
-SB = 'https://ayxmfihtrsacfdhszsri.supabase.co'
-KEY = 'sb_publishable_xfd5nkUu18qvdzoo-dzhHQ_f5RKq4tS'  # publishable key (already public in the page's CMS script)
+SB = 'https://api.oneflow.art'
+KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNzkyMDc2OTk3LCJleHAiOjE5NDk3NTY5OTd9.TF1AYHjnOlQp9lMUSD-GDUiWkEwKtsCPLSJSjDcQ-uo'  # publishable key (already public in the page's CMS script)
 
 # built-in cards: (CSS image variable from made.py, title, text)
 DEFAULT_NEWS = [
