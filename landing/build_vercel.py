@@ -5,23 +5,31 @@ python3 build_vercel.py 5        →  site/5-ice/index.html + out/ONEFLOW-5-Ice-
 python3 build_vercel.py 4        →  site/4-porcelain/index.html + out/ONEFLOW-4-Porcelain-vercel.zip
 python3 build_vercel.py 4 dark   →  site/4-porcelain-dark/index.html + out/ONEFLOW-4-Porcelain-dark-vercel.zip
 """
-import base64, json, os, re, shutil, subprocess, sys, zipfile
+import base64, html, json, os, re, shutil, subprocess, sys, zipfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 APPREPO = '/home/user/oneflow'
-DOCS = [('privacy', 'Конфиденциальность'), ('terms', 'Условия'), ('refunds', 'Возврат')]
+# dialog id, document key in legal_<lang>.json, dialog label — per language, plus the close button's label
+LEGAL = {'ru': ((('privacy', 'privacy', 'Конфиденциальность'), ('terms', 'terms', 'Условия'), ('refunds', 'refund', 'Возврат')), 'Закрыть'),
+         'en': ((('privacy', 'privacy', 'Privacy'), ('terms', 'terms', 'Terms'), ('refunds', 'refund', 'Refunds')), 'Close')}
 
 
 def uri(path, mime):
     return f'data:{mime};base64,' + base64.b64encode(open(path, 'rb').read()).decode()
 
 
-def legal_dialogs():
+def legal_dialogs(lang='ru'):
+    """The app's legal pages: legal_<lang>.json is exported from src/legalContent.ts by export_legal.mjs
+    (LEGAL_DIR points at another folder, e.g. a draft export for a preview)."""
+    docs = json.load(open(os.path.join(os.environ.get('LEGAL_DIR', HERE), f'legal_{lang}.json'), encoding='utf-8'))
+    items, close = LEGAL[lang]
+    e = lambda t: html.escape(t, quote=False)
     out = ''
-    for k, t in DOCS:
-        src = open(os.path.join(APPREPO, 'checkout-page', f'{k}.html'), encoding='utf-8').read()
-        body = re.search(r'<div class="doc">(.*?)</div>\s*</body>', src, re.S).group(1).strip()
-        out += f'<dialog class="doc" id="doc-{k}" aria-label="{t}"><button type="button" class="x" aria-label="Закрыть">×</button><div class="in2">{body}</div></dialog>'
+    for key, src, label in items:
+        d = docs[src]
+        body = f'<h1>{e(d["title"])}</h1><p class="updated">{e(d["updated"])}</p><p>{e(d["intro"])}</p>' + ''.join(
+            f'<h2>{e(s["heading"])}</h2>' + ''.join(f'<p>{e(p)}</p>' for p in s['paragraphs']) for s in d['sections'])
+        out += f'<dialog class="doc" id="doc-{key}" aria-label="{label}"><button type="button" class="x" aria-label="{close}">×</button><div class="in2">{body}</div></dialog>'
     return out
 
 
@@ -79,9 +87,9 @@ def build4(theme='light'):
 def build5():
     """The current oneflow.art landing (v5_ice.py + soft.py, light): English at / (index.html), Russian at /ru (ru.html)."""
     sys.path.insert(0, HERE)
-    import v5_ice, v5_en
+    import v5_ice
     # light «Soft» theme (the app's light theme) and English first — the owner's rule; the dark page is v5_ice.build(theme='ice')
-    pages = {'index.html': v5_ice.build(docs=v5_en.legal_en(), lang='en', theme='soft'), 'ru.html': v5_ice.build(docs=legal_dialogs(), lang='ru', theme='soft')}
+    pages = {'index.html': v5_ice.build(docs=legal_dialogs('en'), lang='en', theme='soft'), 'ru.html': v5_ice.build(docs=legal_dialogs(), lang='ru', theme='soft')}
     finish_pages(pages, '5-ice', 'ONEFLOW-5-Ice-vercel.zip')
 
 

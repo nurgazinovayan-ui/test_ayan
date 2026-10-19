@@ -4,7 +4,6 @@ translate() swaps whole text nodes, a few attributes and the inline-script messa
 only, so a short word never leaks into a longer sentence), then checks that no Cyrillic is left outside the names
 that are meant to stay. Add a line here whenever the Russian page gets a new text — the check will say which.
 """
-import json
 import os
 import re
 
@@ -213,18 +212,6 @@ JS = {
 
 KEEP = {'Язык / Language'}  # bilingual on purpose
 CYR = re.compile('[А-Яа-яЁё]')
-
-
-def legal_en():
-    """The English legal pages from the app (landing/legal_en.json is exported from src/legalContent.ts)."""
-    docs = json.load(open(os.path.join(HERE, 'legal_en.json'), encoding='utf-8'))
-    out = ''
-    for key, src, label in (('privacy', 'privacy', 'Privacy'), ('terms', 'terms', 'Terms'), ('refunds', 'refund', 'Refunds')):
-        d = docs[src]
-        body = f'<h1>{d["title"]}</h1><p class="updated">{d["updated"]}</p><p>{d["intro"]}</p>' + ''.join(
-            f'<h2>{s["heading"]}</h2>' + ''.join(f'<p>{p}</p>' for p in s['paragraphs']) for s in d['sections'])
-        out += f'<dialog class="doc" id="doc-{key}" aria-label="{label}"><button type="button" class="x" aria-label="Close">×</button><div class="in2">{body}</div></dialog>'
-    return out
 
 
 def translate(html):
