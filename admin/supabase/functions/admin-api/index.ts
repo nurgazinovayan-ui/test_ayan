@@ -376,7 +376,14 @@ Deno.serve(async (req) => {
       }
       const path = `${MEDIA_DIR}/${crypto.randomUUID()}.${spec.ext}`;
       const { data, error } = await admin.storage.from(MEDIA_BUCKET).createSignedUploadUrl(path);
-      if (error || !data) throw error ?? new Error('signed upload url');
+      if (error || !data) {
+        console.error('media-upload-url', error);
+        // the usual cause on a fresh server: the bucket was never created (admin.sql, admin-fix.sh)
+        const missing = String((error as { statusCode?: unknown } | null)?.statusCode ?? '') === '404';
+        return json({ error: missing
+          ? 'На сервере нет хранилища для файлов баннеров (site-media). Его создаёт admin-fix.sh — запустите его на сервере.'
+          : 'Хранилище файлов не ответило. Попробуйте ещё раз; если повторится — пришлите скриншот.' }, 500);
+      }
       return json({ path, signedUrl: data.signedUrl, publicUrl: publicPrefix + path });
     }
 
