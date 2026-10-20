@@ -57,6 +57,24 @@ RESOURCES_GUARD = """
 <script>window.__resources = {};</script>
 """
 
+# Полосы прокрутки. Страница живёт в iframe высотой в экран и прокручивается
+# внутри него, поэтому у правого края iframe появлялась стандартная светлая
+# полоса (на Windows ~15 px) — на тёмном дизайне она бросалась в глаза.
+# Полосу страницы прячем: колесо, тачпад, свайп и клавиши продолжают работать.
+# Во внутренних блоках (панель брифа на невысоких экранах) полосу не прячем —
+# по ней видно, что блок прокручивается, — а делаем тонкой и тёмной.
+# Стоит в сборке, а не в файле дизайна, чтобы пережить следующие его версии.
+SCROLLBAR_STYLE = """
+<style>
+  html, body { scrollbar-width: none; }
+  html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
+  * { scrollbar-width: thin; scrollbar-color: #3F3F46 transparent; }
+  *::-webkit-scrollbar { width: 6px; height: 6px; }
+  *::-webkit-scrollbar-thumb { background: #3F3F46; border-radius: 3px; }
+  *::-webkit-scrollbar-track { background: transparent; }
+</style>
+"""
+
 def inline(path):
     js = io.open(path, encoding="utf-8").read()
     # </script> внутри строки закрыл бы тег и оборвал скрипт.
@@ -137,7 +155,7 @@ def main():
     # замеру его же высоту — iframe рос без остановки. Поэтому iframe теперь
     # высотой в экран, и страница прокручивается внутри него (см.
     # tilda-embed-iframe.txt).
-    html = html.replace(head, head + (CONFIG % cfg), 1)
+    html = html.replace(head, head + (CONFIG % cfg) + SCROLLBAR_STYLE, 1)
 
     # Рядом с исходником — для просмотра: видео лежит в той же папке.
     io.open(OUT, "w", encoding="utf-8").write(html)
