@@ -2289,8 +2289,8 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
 
 
 
-<div style="position: relative; z-index: 2; overflow: hidden; padding: 14px 0">{{ ticker }}</div>
-<section style="position: relative; overflow: hidden; min-height: clamp(480px, 72vh, 760px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 64px 32px">
+<div style="position: absolute; top: 0; left: 0; right: 0; z-index: 2; overflow: hidden; padding: 14px 0">{{ ticker }}</div>
+<section style="position: relative; overflow: hidden; min-height: calc(clamp(480px, 72vh, 760px) + 50px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 114px 32px 64px">
   {{ sun }}
   
   <div style="position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px">

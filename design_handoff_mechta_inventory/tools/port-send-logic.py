@@ -11,6 +11,10 @@
 ожидается, скрипт падает с указанием фрагмента и ничего не записывает.
 Это и есть сигнал, что перенос нужно делать руками.
 
+Заодно переносит правки вёрстки, сделанные поверх дизайна (бегущая строка
+без фона). Они не обязательные: если фрагмент изменился, правка
+пропускается с предупреждением.
+
 Надёжнее, чтобы дизайнер работал от .dc.html из репозитория — тогда
 переносить ничего не придётся.
 """
@@ -222,6 +226,31 @@ sub("      copyLabel: this.state.copied ? 'Скопировано ✓' : 'aidyn.
     "      copyLabel: this.state.copied ? 'Скопировано ✓' : this.sendConfig().emailTo,")
 sub("      headLabel: this.state.copied ? 'Скопировано ✓' : 'aidyn.argyn@mechta.kz',",
     "      headLabel: this.state.copied ? 'Скопировано ✓' : this.sendConfig().emailTo,")
+
+# --- Правки вёрстки, сделанные поверх дизайна по просьбе заказчика ----------
+# Не обязательные: если дизайнер сам изменил это место, правка пропускается
+# с предупреждением и не мешает переносу отправки.
+def soft_group(pairs, what):
+    """Применяет набор правок только целиком: если хоть один фрагмент
+    не найден ровно один раз, не трогает ни один."""
+    global s
+    if all(s.count(a) == 1 for a, _ in pairs):
+        for a, b in pairs:
+            s = s.replace(a, b)
+    else:
+        print("ПРОПУЩЕНО (фрагмент изменился, проверить вручную): " + what)
+
+# Бегущая строка без фона: строка поверх видео хиро, а не отдельной тёмной
+# полосой над ним. Хиро поднимается под строку, но отступ сверху и высота
+# растут на её высоту (50 px = 22 px логотипы + 2 x 14 px), поэтому всё
+# содержимое хиро и каталог остаются на прежних местах. Две правки связаны:
+# без поднятой строки лишние 50 px у хиро дали бы пустой отступ сверху.
+soft_group([
+    ('<div style="position: relative; z-index: 2; overflow: hidden; padding: 14px 0">{{ ticker }}</div>',
+     '<div style="position: absolute; top: 0; left: 0; right: 0; z-index: 2; overflow: hidden; padding: 14px 0">{{ ticker }}</div>'),
+    ('min-height: clamp(480px, 72vh, 760px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 64px 32px"',
+     'min-height: calc(clamp(480px, 72vh, 760px) + 50px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 114px 32px 64px"'),
+], "бегущая строка без фона (строка поверх видео + отступ хиро)")
 
 io.open(p, "w", encoding="utf-8").write(s)
 print("перенос выполнен")
