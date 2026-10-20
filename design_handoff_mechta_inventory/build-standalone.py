@@ -7,7 +7,7 @@
 
     python3 build-standalone.py
 """
-import io, os
+import base64, io, json, os, shutil
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(HERE, "Mechta Inventory 2026.dc.html")
@@ -19,40 +19,23 @@ CONFIG = """
 <!-- ==========================================================================
      НАСТРОЙКА ОТПРАВКИ БРИФА
 
-     Схема: страница -> вебхук Make.com -> отправка письма -> ящик.
-     Страница знает только про вебхук; чем именно Make отправляет письмо,
-     ей неизвестно, поэтому способ отправки меняется без правки кода.
+     Схема: страница -> вебхук Make.com -> Gmail -> ящик.
+     Страница знает только про вебхук; чем Make отправляет письмо, ей
+     неизвестно, поэтому способ отправки меняется без правки кода.
 
-     1. В Make.com создать сценарий: Webhooks -> Custom webhook,
-        скопировать его URL.
-     2. Вторым шагом добавить Gmail -> Send an email.
-        Подключение по OAuth: пароля нет, доступ выдаётся в браузере.
-        Поля модуля:
-            To          адрес, куда приходят брифы
-            Subject     поле subject
-            Content     поле brief_text
-            Reply-To    поле contact_email (почта вендора из брифа)
-     3. Вставить URL вебхука в webhookUrl ниже.
-     4. Проверить связку через tools/send-test.html до правки лендинга.
-
-     Почему не SMTP Яндекса, хотя почта на нём: доступ по протоколам
-     IMAP/SMTP закрыт политикой организации (535 5.7.8 "This user does
-     not have access rights to this service"). Gmail тут не костыль:
-     проблема была не в том, что отправитель внешний, а в том, что
-     Web3Forms подставлял mechta.kz в Reply-To — для антиспуфинга это
-     подделка своего домена. Gmail ничем не притворяется.
-     Если доступ по протоколам откроют, шаг Gmail меняется на
-     Email -> Send an email с smtp.yandex.ru:465 SSL и паролем
-     приложения из Яндекс ID. Остальная цепочка не трогается.
+     Значения ниже подставляются при сборке из site.config.json. Править
+     лучше там: тогда при следующей версии дизайна ничего не придётся
+     вводить заново. Править прямо здесь тоже можно — до следующей сборки.
 
      Пока webhookUrl пуст, кнопка «Отправить бриф» открывает почтовый
      клиент с готовым письмом вместо автоматической отправки.
+     Подробности и разбор ошибок — в README.md.
      ========================================================================== -->
 <script>
 window.MECHTA_CONFIG = {
-  webhookUrl: '',                        // <- URL вебхука Make.com: основной канал
-  emailTo: 'aidyn.argyn@mechta.kz',      // получатель письма-фоллбэка
-  web3formsKey: ''                       // запасной канал, если вебхука нет
+  webhookUrl: '%(webhookUrl)s',          // <- URL вебхука Make.com: основной канал
+  emailTo: '%(emailTo)s',                // адрес на странице и для письма-фоллбэка
+  web3formsKey: '%(web3formsKey)s'       // запасной канал, если вебхука нет
 };
 </script>
 """
@@ -60,53 +43,6 @@ window.MECHTA_CONFIG = {
 
 
 
-# Хост-страница (Тильда) не может прочитать contentDocument чужого домена,
-# поэтому высоту сообщаем сами через postMessage. Парный слушатель —
-# в tilda-embed-iframe.txt.
-HEIGHT_REPORTER = """
-<script>
-(function () {
-  if (window.parent === window) return;   // открыт напрямую, не в iframe
-
-  // Мерить documentElement.scrollHeight нельзя: рантайм ставит
-  // html,body,#dc-root{height:100%} (support.js, FULL_PAGE_CSS), поэтому
-  // scrollHeight не может стать меньше высоты самого iframe — высота росла
-  // бы и не возвращалась назад, когда контента становится меньше (поиск,
-  // смена категории). Поэтому измеряем реальный контент: низ самого
-  // нижнего из блоков страницы.
-  function contentHeight() {
-    var host = document.querySelector('#dc-root > .sc-host')
-            || document.getElementById('dc-root');
-    var max = 0;
-    if (host) {
-      for (var i = 0; i < host.children.length; i++) {
-        var bottom = host.children[i].getBoundingClientRect().bottom;
-        if (bottom > max) max = bottom;
-      }
-      max += window.scrollY || 0;
-    }
-    // Разметка ещё не смонтирована — отдаём хоть что-то, чтобы не схлопнуть блок.
-    if (max < 1) max = document.documentElement.scrollHeight;
-    return Math.ceil(max);
-  }
-
-  var last = 0;
-  function send() {
-    var h = contentHeight();
-    if (!h || Math.abs(h - last) < 8) return;   // дребезг на ±1px не слать
-    last = h;
-    // targetOrigin '*': наружу уходит только число высоты, домен хоста
-    // заранее неизвестен (Тильда, кастомный домен, превью).
-    window.parent.postMessage({ __mechtaHeight: h }, '*');
-  }
-
-  window.addEventListener('load', send);
-  window.addEventListener('resize', send);
-  if (window.ResizeObserver) new ResizeObserver(send).observe(document.documentElement);
-  setInterval(send, 500);   // перерисовки React-рантайма ResizeObserver не всегда ловит
-})();
-</script>
-"""
 
 
 # support.js (строка ~158) при отсутствии window.__resources до-загружает
@@ -127,8 +63,54 @@ def inline(path):
     return "<script>\n" + js.replace("</script>", "<\\/script>") + "\n</script>"
 
 
+# Ассеты дизайна. Шрифты и SVG вшиваются в файл: логотип читается в canvas
+# через getImageData, и data:-картинка, в отличие от отдельного файла при
+# открытии с диска, canvas не «загрязняет». Видео (1,9 МБ) остаётся рядом:
+# вшитое в base64 оно раздуло бы HTML втрое и не могло бы грузиться потоком,
+# а интро-анимация и так переживает его отсутствие по таймауту.
+INLINE_ASSETS = [
+    ("url('fonts/FormaDJRCyrillicMicro-Regular.otf')", "fonts/FormaDJRCyrillicMicro-Regular.otf", "font/otf", "url('%s')"),
+    ("url('fonts/FormaDJRCyrillicDisplay-Bold.otf')", "fonts/FormaDJRCyrillicDisplay-Bold.otf", "font/otf", "url('%s')"),
+    ('src="./mechta-logo-hero.svg"', "mechta-logo-hero.svg", "image/svg+xml", 'src="%s"'),
+    ('src="./mechta-logo-small.svg"', "mechta-logo-small.svg", "image/svg+xml", 'src="%s"'),
+    ("src: './ticker.svg'", "ticker.svg", "image/svg+xml", "src: '%s'"),
+]
+SIDE_FILES = ["hero-video.webm"]
+
+# Настройки отправки живут отдельно от вёрстки: при новой версии дизайна
+# их не нужно вводить заново — сборка подставит их сама.
+SITE_CONFIG = os.path.join(HERE, "site.config.json")
+DEFAULTS = {"webhookUrl": "", "emailTo": "aidyn.argyn@mechta.kz", "web3formsKey": ""}
+
+DIST = os.path.join(HERE, "dist")
+# Обе копии: какой бы адрес ни стоял в iframe на Тильде — корень сайта
+# или имя файла, — после повторной выкладки папки он продолжит работать.
+DIST_NAMES = ["index.html", "Mechta Inventory 2026.html"]
+
+
+def site_config():
+    cfg = dict(DEFAULTS)
+    if os.path.isfile(SITE_CONFIG):
+        cfg.update(json.load(io.open(SITE_CONFIG, encoding="utf-8")))
+    for k, v in cfg.items():
+        # значение уходит в JS-строку в одинарных кавычках
+        if not isinstance(v, str) or any(c in v for c in "'\\\n\r<"):
+            raise SystemExit("недопустимое значение %s в site.config.json" % k)
+    return cfg
+
+
+def data_uri(path, mime):
+    raw = io.open(os.path.join(HERE, path), "rb").read()
+    return "data:%s;base64,%s" % (mime, base64.b64encode(raw).decode("ascii"))
+
+
 def main():
     html = io.open(SRC, encoding="utf-8").read()
+
+    for needle, path, mime, fmt in INLINE_ASSETS:
+        if html.count(needle) != 1:
+            raise SystemExit("ссылка на ассет не найдена ровно один раз: " + needle)
+        html = html.replace(needle, fmt % data_uri(path, mime))
 
     # support.js требует window.React / window.ReactDOM — инлайним обе перед ним,
     # чтобы файл открывался офлайн и с file://, без CDN.
@@ -147,10 +129,29 @@ def main():
     head = "<head>"
     if head not in html:
         raise SystemExit("не найден <head> в " + SRC)
-    html = html.replace(head, head + CONFIG + HEIGHT_REPORTER, 1)
+    cfg = site_config()
+    # Замера высоты для родительской страницы здесь больше нет: новый дизайн —
+    # полноэкранная страница со своей прокруткой (липкая панель брифа,
+    # прокрутка к форме, прелоадер position: fixed). В iframe, растянутом по
+    # высоте контента, всё это ломается, а fixed-прелоадер ещё и возвращает
+    # замеру его же высоту — iframe рос без остановки. Поэтому iframe теперь
+    # высотой в экран, и страница прокручивается внутри него (см.
+    # tilda-embed-iframe.txt).
+    html = html.replace(head, head + (CONFIG % cfg), 1)
 
+    # Рядом с исходником — для просмотра: видео лежит в той же папке.
     io.open(OUT, "w", encoding="utf-8").write(html)
-    print("собрано: %s (%.0f КБ)" % (os.path.basename(OUT), len(html.encode()) / 1024))
+
+    # dist/ — то, что выкладывается на хостинг целиком.
+    os.makedirs(DIST, exist_ok=True)
+    for name in DIST_NAMES:
+        io.open(os.path.join(DIST, name), "w", encoding="utf-8").write(html)
+    for name in SIDE_FILES:
+        shutil.copyfile(os.path.join(HERE, name), os.path.join(DIST, name))
+
+    print("собрано: %s (%.0f КБ) + %s" % (
+        ", ".join(DIST_NAMES), len(html.encode()) / 1024, ", ".join(SIDE_FILES)))
+    print("webhookUrl: %s" % (cfg["webhookUrl"] or "(пусто — заполнить в site.config.json)"))
 
 
 if __name__ == "__main__":

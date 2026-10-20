@@ -8,215 +8,205 @@
 <body>
 <x-dc>
 <helmet>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
 <style>
+  @font-face { font-family: 'Forma DJR'; src: url('fonts/FormaDJRCyrillicMicro-Regular.otf') format('opentype'); font-weight: 100 500; font-display: swap; }
+  @font-face { font-family: 'Forma DJR'; src: url('fonts/FormaDJRCyrillicDisplay-Bold.otf') format('opentype'); font-weight: 600 900; font-display: swap; }
   * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; background: #FFFFFF; }
-  body { font-family: Manrope, -apple-system, sans-serif; color: #0B0B0C; -webkit-font-smoothing: antialiased; }
-  a { color: #FF0080; text-decoration: none; }
-  a:hover { color: #0B0B0C; }
-  ::selection { background: #FFC7DF; }
-  .scrollx::-webkit-scrollbar { height: 0; }
+  html, body { margin: 0; padding: 0; background: #09090B; color-scheme: dark; scroll-behavior: smooth; }
+  body { font-family: 'Forma DJR', -apple-system, sans-serif; letter-spacing: 0.01em; color: #FAFAFA; -webkit-font-smoothing: antialiased; }
+  a { color: #FF4D9D; text-decoration: none; }
+  a:hover { color: #FFFFFF; }
+  ::selection { background: rgba(255,0,128,0.45); }
+  input::placeholder, textarea::placeholder { color: #71717A; }
+  @keyframes sun-spin { to { transform: rotate(360deg); } }
+  @keyframes sun-breathe { 0%, 100% { opacity: 0.85; transform: scale(1); } 50% { opacity: 1; transform: scale(1.04); } }
+  @keyframes sun-flare { 0%, 100% { opacity: 0.25; transform: scaleY(0.55); } 45% { opacity: 1; transform: scaleY(1.15); } 70% { opacity: 0.6; transform: scaleY(0.85); } }
+  @keyframes sun-shimmer { 0%, 100% { transform: translateY(0) scaleX(1); opacity: 0.55; } 50% { transform: translateY(6px) scaleX(1.03); opacity: 0.85; } }
+  @keyframes tick-run { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 </style>
 </helmet>
-<div style="max-width: 1180px; margin: 0 auto; padding: 0 32px 120px; position: relative">
-  <div style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 100vw; height: 560px; background-image: radial-gradient(#DCDCE2 1.2px, transparent 1.2px); background-size: 22px 22px; -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.45) 55%, transparent 100%); mask-image: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.45) 55%, transparent 100%); pointer-events: none"></div>
-
-  <header style="position: relative; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 24px 0">
-    <a href="https://mechta.kz" target="_blank" rel="noopener" style="font-size: 13px; font-weight: 700; color: #0B0B0C; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; padding: 11px 0" style-hover="color: #FF0080">← На главную</a>
-    <div style="position: relative; display: inline-flex">
-      <button onClick="{{ onCopy }}" type="button" style="font-family: inherit; font-size: 13px; font-weight: 700; color: #FFFFFF; background: {{ headBg }}; border: 0; cursor: pointer; border-radius: 999px; padding: 11px 20px; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; transition: background 180ms ease" style-hover="background: #FF0080">{{ headLabel }}</button>
-      <span style="position: absolute; top: calc(100% + 10px); right: 0; font-size: 12px; font-weight: 700; white-space: nowrap; padding: 8px 12px; border-radius: 6px; background: #0B0B0C; color: #FFFFFF; pointer-events: none; opacity: {{ toastOpacity }}; transform: translateY({{ toastY }}); transition: opacity 200ms ease, transform 200ms ease">Адрес скопирован</span>
-    </div>
-  </header>
-
-  <section style="padding: 56px 0 72px; display: flex; flex-direction: column; align-items: center; text-align: center; position: relative">
-    <div style="display: flex; flex-direction: column; align-items: center">
-      
-      <h1 style="margin: 0; font-size: 64px; line-height: 1.02; letter-spacing: -0.035em; font-weight: 800; text-wrap: pretty; position: static; text-align: center">Маркетинговые<br>возможности Mechta.kz<br>для вендоров</h1><p style="margin: 28px auto 0; max-width: 620px; font-size: 17px; line-height: 1.6; color: #6E6E78; text-wrap: pretty; text-align: center">Полный набор инструментов — от активации first-party данных и performance до retail media в 100+ магазинах.&nbsp;</p>
-    </div>
-    <a href="#brief" style="margin-top: 32px; font-size: 14px; font-weight: 700; color: #FFFFFF; background: #FF0080; border-radius: 999px; padding: 15px 30px; display: inline-flex; align-items: center; gap: 10px; white-space: nowrap" style-hover="background: #0B0B0C; color: #FFFFFF">Заполнить бриф ↓</a>
-  </section>
-
-  <sc-if value="{{ hasSelection }}" hint-placeholder-val="{{ false }}">
-    <div style="position: sticky; top: 0; z-index: 20; background: #FFFFFF; padding: 12px 0 20px">
-      <div style="border: 1.5px solid #0B0B0C; background: #FFFFFF; padding: 22px 24px 20px; display: flex; flex-direction: column; gap: 16px">
-        <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap">
-          <div style="display: flex; align-items: center; gap: 10px">
-            <span style="font-size: 13px; font-weight: 800; letter-spacing: -0.01em">Выбранные услуги</span>
-            <span style="font-size: 11px; font-weight: 800; color: #FFFFFF; background: #FF0080; border-radius: 999px; padding: 3px 9px">{{ selectedCount }}</span>
-          </div>
-          <button onClick="{{ onClear }}" type="button" style="appearance: none; border: 0; background: none; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 700; color: #8A8A93; padding: 4px 0" style-hover="color: #0B0B0C">Очистить всё</button>
-        </div>
-        <textarea ref="{{ taRef }}" readonly="" value="{{ selectionText }}" style="width: 100%; min-height: 132px; max-height: 240px; resize: vertical; font-family: inherit; font-size: 13px; line-height: 1.7; color: #0B0B0C; background: #FAFAFB; border: 1px solid #EDEDEF; border-radius: 8px; padding: 16px 18px; outline: none"></textarea>
-        <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap">
-          <button onClick="{{ onCopyList }}" type="button" style="font-family: inherit; font-size: 13px; font-weight: 700; padding: 12px 22px; border: 0; cursor: pointer; border-radius: 999px; background: {{ listBtnBg }}; color: {{ listBtnFg }}; white-space: nowrap; transition: background 180ms ease" style-hover="background: #FF0080; color: #0B0B0C">{{ listBtnLabel }}</button><span style="font-size: 12px; color: #000000; font-weight: 700; text-align: right">*Отправьте список менеджеру — соберём медиаплан и условия</span>
-          
-        </div>
-      </div>
-    </div>
-  </sc-if>
-
-  <div style="display: flex; justify-content: center; padding-bottom: 8px">
-    <div style="position: relative; width: 100%; max-width: 520px">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="position: absolute; left: 20px; top: 50%; transform: translateY(-50%)"><circle cx="7" cy="7" r="5" stroke="#A8A8B0" stroke-width="1.6"></circle><path d="M11 11L14 14" stroke="#A8A8B0" stroke-width="1.6" stroke-linecap="round"></path></svg>
-      <input value="{{ query }}" onInput="{{ onQuery }}" placeholder="Поиск по инструментам — например, DMP, WhatsApp, лендинг" style="width: 100%; font-family: inherit; font-size: 15px; font-weight: 500; color: #0B0B0C; padding: 15px 20px 15px 48px; border-radius: 999px; border: 1.5px solid #E4E4E8; background: #FFFFFF; outline: none" style-focus="border-color: #0B0B0C">
-    </div>
+<sc-if value="{{ preShow }}" hint-placeholder-val="{{ true }}">
+<div aria-hidden="true" style="position: fixed; inset: 0; z-index: 1000; background: #000000; display: flex; align-items: center; justify-content: center; opacity: {{ preOpacity }}; transition: opacity 600ms ease; pointer-events: {{ prePE }}">
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 24px">
+    {{ preCanvas }}
   </div>
+</div>
+</sc-if>
 
-  <nav style="background: #FFFFFF; padding: 16px 0 20px; display: flex; flex-direction: column; gap: 16px" hint-placeholder-count="0">
-    
-    <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center">
-      <sc-for list="{{ tabs }}" as="tab" hint-placeholder-count="9">
-        <button onClick="{{ tab.onClick }}" style="flex: 0 0 auto; appearance: none; cursor: pointer; font-family: inherit; font-size: 15px; font-weight: 700; letter-spacing: -0.015em; padding: 13px 20px; border-radius: 999px; border: 1.5px solid {{ tab.line }}; background: {{ tab.bg }}; color: {{ tab.color }}; display: flex; align-items: center; gap: 8px; white-space: nowrap; transition: background 120ms ease, border-color 120ms ease" style-hover="border-color: #0B0B0C" type="button">
-          {{ tab.label }}
-          <sc-if value="{{ tab.hasCount }}" hint-placeholder-val="{{ true }}">
-            <span style="font-size: 11px; font-weight: 700; color: {{ tab.countColor }}; background: {{ tab.countBg }}; border-radius: 999px; padding: 2px 7px">{{ tab.count }}</span>
-          </sc-if>
+
+
+
+
+<div style="position: relative; z-index: 2; overflow: hidden; padding: 14px 0">{{ ticker }}</div>
+<section style="position: relative; overflow: hidden; min-height: clamp(480px, 72vh, 760px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 64px 32px">
+  {{ sun }}
+  
+  <div style="position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px">
+    <span data-px-word="" style="position: relative; display: block; font-size: clamp(24px, 3.2vw, 40px); font-weight: 700; line-height: 1.1; letter-spacing: 0.02em; white-space: nowrap; color: #FAFAFA; pointer-events: none; user-select: none">Make marketing</span>
+    <span data-px-word="" style="position: relative; display: block; font-size: clamp(24px, 3.2vw, 40px); font-weight: 700; line-height: 1.1; letter-spacing: 0.02em; white-space: nowrap; color: #FAFAFA; pointer-events: none; user-select: none">great again</span>
+  </div>
+  <img data-px-logo="" src="./mechta-logo-hero.svg" alt="Mechta Marketing Team" width="1536" height="1024" style="position: relative; display: block; width: min(720px, 100%); height: auto; aspect-ratio: 1536 / 1024; margin: calc(-1 * min(84px, 11.5vw)) 0 calc(-1 * min(72px, 10vw)); pointer-events: none; user-select: none">
+  <div style="position: relative; display: flex; align-items: center; gap: 12px; margin-bottom: 8px">
+    <span data-px-word="" style="position: relative; display: block; font-size: 22px; font-weight: 700; line-height: 1.1; letter-spacing: 0.02em; white-space: nowrap; color: #FAFAFA; pointer-events: none; user-select: none">by</span>
+    <img src="./mechta-logo-small.svg" alt="Mechta" width="197" height="30" style="position: relative; display: block; width: 148px; height: auto; aspect-ratio: 197 / 30; pointer-events: none; user-select: none">
+  </div>
+  <a href="#brief" onClick="{{ openForm }}" aria-label="Заполнить бриф" style="position: relative; margin-top: 40px; cursor: pointer; display: flex; align-items: center; gap: 28px; padding: 16px 8px; color: #FAFAFA">
+    <span data-px-arrow="" style="width: 70px; height: 45px; flex: 0 0 auto"></span>
+    <span data-px-text="" style="font-size: clamp(32px, 4.4vw, 56px); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; line-height: 1; white-space: nowrap">Заполнить бриф</span>
+    <span data-px-arrow="" style="width: 70px; height: 45px; flex: 0 0 auto"></span>
+  </a>
+</section>
+<div style="display: grid; grid-template-rows: {{ formRows }}; opacity: {{ formOpacity }}; transition: grid-template-rows 800ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 600ms ease">
+<div style="min-height: 0; overflow: {{ formOverflow }}">
+<main ref="{{ mainRef }}" style="max-width: 1280px; margin: 0 auto; padding: 64px 32px 0; display: flex; flex-wrap: wrap-reverse; align-items: flex-end; gap: 32px">
+
+  <section id="catalog" style="scroll-margin-top: 24px; flex: 1 1 340px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+    <div ref="{{ ctrlRef }}" style="display: flex; flex-direction: column; gap: 16px">
+    <div style="display: flex; flex-direction: column; gap: 4px">
+      
+      
+    </div>
+
+    <div style="position: relative">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%)"><circle cx="7" cy="7" r="5" stroke="#71717A" stroke-width="1.6"></circle><path d="M11 11L14 14" stroke="#71717A" stroke-width="1.6" stroke-linecap="round"></path></svg>
+      <input value="{{ query }}" onInput="{{ onQuery }}" placeholder="{{ phText }}" style="width: 100%; height: 40px; font-family: inherit; font-size: 15px; letter-spacing: 0.01em; color: #FAFAFA; padding: 0 12px 0 36px; border: 1px solid #27272A; border-radius: 6px; background: transparent; outline: none; transition: box-shadow 140ms ease, border-color 140ms ease" style-focus="border-color: #52525B; box-shadow: 0 0 0 3px rgba(255,77,157,0.25)">
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 4px; padding: 4px; border-radius: 8px; background: #18181B">
+      <sc-for list="{{ catChips }}" as="c" hint-placeholder-count="10">
+        <button onClick="{{ c.onClick }}" type="button" style="appearance: none; border: 0; cursor: pointer; height: 32px; font-family: inherit; font-size: 14px; font-weight: 500; letter-spacing: 0.01em; padding: 0 12px; border-radius: 6px; background: {{ c.bg }}; color: {{ c.fg }}; box-shadow: {{ c.sh }}; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; transition: background 140ms ease, color 140ms ease" style-hover="color: #FAFAFA">
+          {{ c.label }}
+          <span style="font-size: 12px; color: {{ c.cnt }}">{{ c.count }}</span>
         </button>
       </sc-for>
     </div>
-  </nav>
-
-  <section style="padding: 44px 0 0; display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 32px">
-    <div style="max-width: 640px">
-      <h2 style="margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.025em">{{ activeTitle }}</h2>
-      <p style="margin: 12px 0 0; font-size: 15px; line-height: 1.6; color: #6E6E78; text-wrap: pretty">{{ activeBlurb }}</p>
     </div>
-    <div style="display: flex; flex-direction: column; gap: 10px">
-      
-      <div style="display: flex; flex-wrap: wrap; gap: 8px">
-        <sc-for list="{{ goals }}" as="g" hint-placeholder-count="6">
-          <button onClick="{{ g.onClick }}" style="appearance: none; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 700; padding: 8px 14px; border-radius: 999px; border: 1px solid {{ g.border }}; background: {{ g.bg }}; color: {{ g.color }}" style-hover="border-color: #0B0B0C">{{ g.label }}</button>
-        </sc-for>
-      </div>
-    </div>
-  </section>
 
-  <sc-if value="{{ showNote }}" hint-placeholder-val="{{ false }}">
-    
-  </sc-if>
+    <sc-if value="{{ noGroups }}" hint-placeholder-val="{{ false }}">
+      <div style="border: 1px dashed #27272A; border-radius: 12px; padding: 48px 24px; text-align: center; font-size: 15px; color: #A1A1AA">Ничего не найдено</div>
+    </sc-if>
 
-  <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
-    <div style="margin-top: 40px; border: 1px solid #EDEDEF; padding: 56px 32px; text-align: center">
-      <div style="font-size: 17px; font-weight: 700; letter-spacing: -0.02em">Ничего не найдено</div>
-      <p style="margin: 10px 0 0; font-size: 14px; color: #8A8A93">Попробуйте другой запрос или сбросьте фильтр по задаче.</p>
-    </div>
-  </sc-if>
-
-  <section style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; background: #FFFFFF; margin-top: 40px">
-    <sc-for list="{{ items }}" as="it" hint-placeholder-count="6">
-      <article style="background: #FFFFFF; border: 1px solid #EDEDEF; padding: 32px 30px 30px; display: flex; flex-direction: column; gap: 16px; transition: border-color 150ms ease" style-hover="border-color: #0B0B0C">
-        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px">
-          <h3 style="margin: 0; font-size: 18px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.3; text-wrap: pretty">{{ it.name }}</h3>
-          <span style="flex: 0 0 auto; font-size: 11px; font-weight: 700; color: #A8A8B0; letter-spacing: 0.04em">{{ it.catShort }}</span>
-        </div>
-        <p style="margin: 0; font-size: 14px; line-height: 1.65; color: #55555F; flex: 1; text-wrap: pretty">{{ it.what }}</p>
-        <div style="display: flex; flex-wrap: wrap; gap: 6px">
-          <sc-for list="{{ it.tags }}" as="t" hint-placeholder-count="1">
-            <span style="font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: 4px; background: #FFEAF3; color: #C2005F">{{ t }}</span>
-          </sc-for>
-        </div>
-        <sc-if value="{{ it.hasNote }}" hint-placeholder-val="{{ false }}">
-          <div style="display: flex; gap: 10px; align-items: flex-start; background: #FFEAF3; padding: 12px 14px; border-radius: 6px">
-            <span style="flex: 0 0 auto; font-size: 10px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #C2005F; padding-top: 1px">Обязательно</span>
-            <span style="font-size: 12px; line-height: 1.5; font-weight: 600; color: #0B0B0C; text-wrap: pretty">{{ it.note }}</span>
+    <div style="display: flex; flex-direction: column; gap: 24px">
+      <sc-for list="{{ groups }}" as="grp" hint-placeholder-count="1">
+        <sc-if value="{{ grp.open }}" hint-placeholder-val="{{ true }}">
+          <div style="border: 1px solid #27272A; border-radius: 12px; background: #232327; overflow: hidden">
+            <div style="display: flex; align-items: center; gap: 12px; padding: 16px 20px; border-bottom: 1px solid #27272A">
+              <h3 style="margin: 0; flex: 1; min-width: 0; font-size: 17px; font-weight: 600; letter-spacing: -0.005em; line-height: 1.3">{{ grp.label }}</h3>
+              <sc-if value="{{ grp.hasSel }}" hint-placeholder-val="{{ false }}">
+                <span style="flex: 0 0 auto; height: 22px; display: inline-flex; align-items: center; padding: 0 8px; border-radius: 6px; font-size: 12px; font-weight: 600; color: #FFFFFF; background: #E0006E; white-space: nowrap">{{ grp.selLabel }}</span>
+              </sc-if>
+            </div>
+            <sc-for list="{{ grp.tools }}" as="t" hint-placeholder-count="4">
+              <div onClick="{{ t.onToggle }}" style="cursor: pointer; background: {{ t.cardBg }}; border-bottom: 1px solid #333338; padding: 16px 20px; display: flex; flex-wrap: wrap; align-items: flex-start; gap: 8px 16px; transition: background 140ms ease" style-hover="background: #2C2C31">
+                <span style="flex: 0 0 18px; width: 18px; height: 18px; margin-top: 2px; border-radius: 4px; border: 1px solid {{ t.chkBorder }}; background: {{ t.chkBg }}; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; line-height: 1; transition: background 140ms ease, border-color 140ms ease">{{ t.chkMark }}</span>
+                <div style="flex: 1 1 240px; min-width: 0; display: flex; flex-direction: column; gap: 4px">
+                  <span style="font-size: 15px; font-weight: 600; line-height: 1.4; color: {{ t.rowName }}">{{ t.name }}</span>
+                  <span style="font-size: 14px; line-height: 1.5; color: #A1A1AA; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden">{{ t.what }}</span>
+                  <sc-if value="{{ t.hasNote }}" hint-placeholder-val="{{ false }}">
+                    <span style="font-size: 13px; font-weight: 500; line-height: 1.45; color: {{ t.noteColor }}">Обязательно: {{ t.note }}</span>
+                  </sc-if>
+                </div>
+                <span style="flex: 0 1 auto; max-width: 220px; margin-left: auto; display: inline-flex; align-items: center; padding-top: 3px; font-size: 12px; font-weight: 500; line-height: 1.4; text-align: right; color: {{ t.priceColor }}">{{ t.price }}</span>
+              </div>
+            </sc-for>
           </div>
         </sc-if>
-        <div style="padding-top: 16px; border-top: 1px solid #F2F2F4; display: flex; align-items: baseline; gap: 10px">
-          <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #A8A8B0">Условия</span>
-          <span style="font-size: 14px; font-weight: 700; color: {{ it.priceColor }}; letter-spacing: -0.01em">{{ it.price }}</span>
-        </div>
-        <button onClick="{{ it.onPick }}" type="button" style="width: 100%; font-family: inherit; font-size: 13px; font-weight: 700; padding: 12px 16px; cursor: pointer; border-radius: 999px; border: 1.5px solid {{ it.pickBorder }}; background: {{ it.pickBg }}; color: {{ it.pickFg }}; transition: background 150ms ease, border-color 150ms ease" style-hover="border-color: #0B0B0C">{{ it.pickLabel }}</button>
-      </article>
-    </sc-for>
+      </sc-for>
+    </div>
   </section>
 
-  <section id="brief" style="margin-top: 96px; border: 1.5px solid #0B0B0C; padding: 40px 44px 36px; scroll-margin-top: 24px">
-    <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 24px; flex-wrap: wrap">
-      <h2 style="margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.025em">Бриф кампании</h2>
-      <span style="font-size: 12px; font-weight: 700; color: #C2005F">Шаг: {{ stepLabel }}</span>
-    </div>
-    <div style="margin-top: 20px; height: 3px; background: #EDEDEF">
-      <div style="height: 3px; background: #FF0080; width: {{ progress }}; transition: width 220ms ease"></div>
-    </div>
+  <aside id="brief" ref="{{ asideRef }}" style="flex: 0 1 400px; min-width: 320px; max-width: 100%; scroll-margin-top: 24px; margin-top: {{ briefOffset }}">
+    <div style="position: sticky; top: 88px; max-height: calc(100vh - 104px); overflow-y: auto; border: 1px solid #27272A; border-radius: 12px; background: #232327; box-shadow: 0 1px 2px rgba(0,0,0,0.5), 0 24px 60px -30px rgba(224,0,110,0.35); display: flex; flex-direction: column">
 
-    <sc-if value="{{ briefOpen }}" hint-placeholder-val="{{ true }}">
-      <div style="display: flex; flex-direction: column; gap: 28px; padding-top: 32px">
-        <sc-for list="{{ fields }}" as="f" hint-placeholder-count="3">
-          <div style="display: flex; flex-direction: column; gap: 10px">
-            <label style="font-size: 16px; font-weight: 800; letter-spacing: -0.015em">{{ f.label }}</label>
-            <sc-if value="{{ f.hasHint }}" hint-placeholder-val="{{ false }}">
-              <span style="font-size: 13px; color: #8A8A93; margin-top: -6px">{{ f.hint }}</span>
-            </sc-if>
-            <sc-if value="{{ f.isInput }}" hint-placeholder-val="{{ true }}">
-              <input type="{{ f.type }}" value="{{ f.value }}" onChange="{{ f.onChange }}" placeholder="{{ f.placeholder }}" style="width: 100%; max-width: 620px; font-family: inherit; font-size: 15px; color: #0B0B0C; padding: 14px 18px; border-radius: 8px; border: 1.5px solid #E4E4E8; background: #FFFFFF; outline: none" style-focus="border-color: #0B0B0C">
-            </sc-if>
-            <sc-if value="{{ f.isRadio }}" hint-placeholder-val="{{ false }}">
-              <div style="display: flex; flex-wrap: wrap; gap: 10px 32px; max-width: 620px">
-                <sc-for list="{{ f.options }}" as="o" hint-placeholder-count="3">
-                  <button onClick="{{ o.onClick }}" type="button" style="appearance: none; border: 0; background: none; cursor: pointer; font-family: inherit; font-size: 14px; font-weight: 600; color: #0B0B0C; display: flex; align-items: center; gap: 10px; padding: 6px 0">
-                    <span style="width: 18px; height: 18px; border-radius: 50%; border: 2px solid #FF0080; display: inline-flex; align-items: center; justify-content: center">
-                      <span style="width: 8px; height: 8px; border-radius: 50%; background: {{ o.dot }}"></span>
-                    </span>
-                    {{ o.label }}
-                  </button>
-                </sc-for>
-              </div>
+      <div style="padding: 24px 24px 20px; display: flex; flex-direction: column; gap: 14px; border-bottom: 1px solid #333338; border-color: #4C4C4CEB; position: static">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px">
+          <span style="font-size: 20px; font-weight: 600; letter-spacing: -0.005em">Бриф кампании</span>
+          <sc-if value="{{ hasCur }}" hint-placeholder-val="{{ true }}">
+            <span style="font-size: 13px; font-weight: 500; color: #A1A1AA; white-space: nowrap">{{ qStep }}</span>
+          </sc-if>
+        </div>
+        <div style="height: 8px; border-radius: 999px; background: #34343A; overflow: hidden">
+          <div style="height: 8px; border-radius: 999px; background: #FF4D9D; width: {{ qProgress }}; transition: width 260ms ease"></div>
+        </div>
+        <sc-if value="{{ hasPicked }}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; flex-wrap: wrap; gap: 6px">
+            <sc-for list="{{ picked }}" as="p" hint-placeholder-count="2">
+              <span style="display: inline-flex; align-items: center; gap: 4px; min-height: 26px; padding: 2px 2px 2px 8px; border-radius: 6px; background: #34343A; border: 1px solid #45454D; font-size: 13px; font-weight: 500; line-height: 1.35">
+                {{ p.name }}
+                <button onClick="{{ p.onRemove }}" type="button" aria-label="Убрать" style="flex: 0 0 22px; appearance: none; border: 0; cursor: pointer; width: 22px; height: 22px; border-radius: 4px; background: transparent; color: #A1A1AA; font-family: inherit; font-size: 14px; line-height: 1; padding: 0" style-hover="background: #3F3F46; color: #FFFFFF">×</button>
+              </span>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ noPicked }}" hint-placeholder-val="{{ true }}">
+          <span style="font-size: 14px; line-height: 1.5; color: #A1A1AA">Услуги ещё не выбраны</span>
+        </sc-if>
+      </div>
+
+      <sc-if value="{{ hasCur }}" hint-placeholder-val="{{ true }}">
+        <div style="padding: 24px; display: flex; flex-direction: column; gap: 20px">
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <label style="font-size: 18px; font-weight: 600; letter-spacing: -0.005em; line-height: 1.35; text-wrap: balance">{{ qLabel }}<sc-if value="{{ qReq }}" hint-placeholder-val="{{ false }}"><span style="color: #FF4D9D"> *</span></sc-if></label>
+            <sc-if value="{{ qHasHint }}" hint-placeholder-val="{{ false }}">
+              <span style="font-size: 14px; line-height: 1.5; color: #A1A1AA">{{ qHint }}</span>
             </sc-if>
           </div>
-        </sc-for>
-      </div>
 
-      <div style="padding-top: 36px; display: flex; align-items: center; justify-content: space-between; gap: 20px">
-        <span style="font-size: 12px; font-weight: 700; color: #C2005F">Шаг: {{ stepLabel }}</span>
-        <div style="display: flex; align-items: center; gap: 18px">
-          <button onClick="{{ onBack }}" type="button" style="appearance: none; border: 0; background: none; cursor: pointer; font-family: inherit; font-size: 18px; color: {{ backColor }}; padding: 8px 10px" style-hover="color: #0B0B0C">←</button>
-          <button onClick="{{ onNext }}" type="button" style="font-family: inherit; font-size: 14px; font-weight: 700; color: #FFFFFF; background: #FF0080; border: 0; cursor: pointer; border-radius: 8px; padding: 15px 28px; display: inline-flex; align-items: center; gap: 10px; white-space: nowrap" style-hover="background: #0B0B0C">{{ nextLabel }}</button>
-        </div>
-      </div>
-    </sc-if>
-
-    <sc-if value="{{ briefDone }}" hint-placeholder-val="{{ false }}">
-      <div style="padding-top: 32px; display: flex; flex-direction: column; gap: 18px">
-        <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #55555F">Бриф собран. Скопируйте текст и отправьте менеджеру — он уже включает выбранные услуги.</p>
-        <textarea ref="{{ briefTaRef }}" readonly="" value="{{ briefText }}" style="width: 100%; min-height: 380px; resize: vertical; font-family: inherit; font-size: 13px; line-height: 1.7; color: #0B0B0C; background: #FAFAFB; border: 1px solid #EDEDEF; border-radius: 8px; padding: 18px 20px; outline: none"></textarea>
-        <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap">
-          <button onClick="{{ onSend }}" type="button" style="font-family: inherit; font-size: 13px; font-weight: 700; color: #FFFFFF; background: {{ sendBg }}; border: 0; cursor: pointer; border-radius: 999px; padding: 13px 24px; white-space: nowrap; transition: background 180ms ease" style-hover="background: #0B0B0C">{{ sendLabel }}</button>
-          <button onClick="{{ onCopyBrief }}" type="button" style="font-family: inherit; font-size: 13px; font-weight: 700; color: #FFFFFF; background: {{ briefBtnBg }}; border: 0; cursor: pointer; border-radius: 999px; padding: 13px 24px; white-space: nowrap; transition: background 180ms ease" style-hover="background: #FF0080">{{ briefBtnLabel }}</button>
-          <sc-if value="{{ hasSendError }}" hint-placeholder-val="{{ false }}">
-            <span style="font-size: 12px; font-weight: 700; color: #C2005F">{{ sendError }}</span>
+          <sc-if value="{{ qIsInput }}" hint-placeholder-val="{{ true }}">
+            <input type="{{ qType }}" value="{{ draft }}" onChange="{{ onDraft }}" onKeyDown="{{ onDraftKey }}" placeholder="{{ qPlaceholder }}" style="width: 100%; height: 40px; font-family: inherit; font-size: 15px; letter-spacing: 0.01em; color: #FAFAFA; color-scheme: dark; padding: 0 12px; border: 1px solid #3F3F46; border-radius: 6px; background: #09090B; outline: none; {{ inputRing }}" style-focus="border-color: #52525B; box-shadow: 0 0 0 3px rgba(255,77,157,0.25)">
           </sc-if>
-          <button onClick="{{ onBriefEdit }}" type="button" style="appearance: none; border: 0; background: none; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 700; color: #8A8A93" style-hover="color: #0B0B0C">Вернуться к вопросам</button>
+          <sc-if value="{{ reqErr }}" hint-placeholder-val="{{ false }}">
+            <span style="margin-top: -12px; font-size: 13px; font-weight: 500; color: #FF8FC2">Обязательное поле — заполните, чтобы продолжить</span>
+          </sc-if>
+
+          <sc-if value="{{ qIsRadio }}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; flex-direction: column; gap: 8px">
+              <sc-for list="{{ qOptions }}" as="o" hint-placeholder-count="3">
+                <button onClick="{{ o.onClick }}" type="button" style="appearance: none; cursor: pointer; font-family: inherit; letter-spacing: 0.01em; text-align: left; min-height: 44px; display: flex; align-items: center; gap: 12px; padding: 0 14px; border: 1px solid {{ o.rb }}; border-radius: 8px; background: {{ o.bg }}; color: #FAFAFA; font-size: 15px; font-weight: 500; transition: background 140ms ease, border-color 140ms ease" style-hover="background: #2C2C31">
+                  <span style="flex: 0 0 16px; width: 16px; height: 16px; border-radius: 50%; border: 1px solid {{ o.dotB }}; display: flex; align-items: center; justify-content: center">
+                    <span style="width: 8px; height: 8px; border-radius: 50%; background: {{ o.dot }}"></span>
+                  </span>
+                  {{ o.label }}
+                </button>
+              </sc-for>
+            </div>
+          </sc-if>
         </div>
-      </div>
-    </sc-if>
-  </section>
+        <div style="padding: 16px 24px; border-top: 1px solid #27272A; display: flex; gap: 8px">
+          <button onClick="{{ onPrev }}" type="button" style="appearance: none; cursor: pointer; height: 40px; padding: 0 14px; border: 1px solid #3F3F46; border-radius: 6px; background: transparent; color: {{ prevColor }}; font-family: inherit; font-size: 14px; font-weight: 500" style-hover="background: #34343A">← Назад</button>
+          <sc-if value="{{ qIsInput }}" hint-placeholder-val="{{ true }}">
+            <button onClick="{{ onOk }}" type="button" style="flex: 1; height: 40px; font-family: inherit; font-size: 14px; font-weight: 600; letter-spacing: 0.01em; color: #09090B; background: #FAFAFA; border: 0; border-radius: 6px; cursor: pointer; padding: 0 16px; white-space: nowrap" style-hover="background: #E4E4E7">{{ okLabel }}</button>
+          </sc-if>
+          <sc-if value="{{ qIsRadio }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ onNextQ }}" type="button" style="flex: 1; height: 40px; font-family: inherit; font-size: 14px; font-weight: 600; letter-spacing: 0.01em; color: #09090B; background: #FAFAFA; border: 0; border-radius: 6px; cursor: pointer; padding: 0 16px; white-space: nowrap" style-hover="background: #E4E4E7">{{ skipLabel }}</button>
+          </sc-if>
+        </div>
+      </sc-if>
 
-  <section id="contact" style="margin-top: 96px; background: #0B0B0C; color: #FFFFFF; padding: 72px 64px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 40px">
-    <div style="max-width: 560px">
-      <h2 style="margin: 0; font-size: 38px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1">Соберём медиаплан под вашу задачу</h2>
-      <p style="margin: 18px 0 0; font-size: 16px; line-height: 1.6; color: #A8A8B0; text-wrap: pretty">Присылайте цель и период — вернёмся со сплитом каналов, прогнозом и сроками. Цены указаны без НДС и действуют в течение 2026 года.</p>
+      <sc-if value="{{ qDone }}" hint-placeholder-val="{{ false }}">
+        <div style="padding: 24px; display: flex; flex-direction: column; gap: 16px">
+          <span style="font-size: 18px; font-weight: 600">Бриф готов</span>
+          <textarea ref="{{ briefTaRef }}" readonly="" value="{{ finalText }}" style="width: 100%; min-height: 240px; resize: vertical; font-family: inherit; font-size: 14px; line-height: 1.6; color: #E4E4E7; background: #09090B; border: 1px solid #3F3F46; border-radius: 8px; padding: 12px 14px; outline: none"></textarea>
+          <button onClick="{{ onSend }}" type="button" style="width: 100%; height: 44px; font-family: inherit; font-size: 15px; font-weight: 600; letter-spacing: 0.01em; color: #FFFFFF; background: {{ sendBg }}; border: 0; border-radius: 6px; cursor: pointer; transition: background 160ms ease">{{ sendLabel }}</button>
+          <div style="display: flex; gap: 8px">
+            <button onClick="{{ onCopyBrief }}" type="button" style="flex: 1; height: 40px; font-family: inherit; font-size: 14px; font-weight: 500; color: #FAFAFA; background: transparent; border: 1px solid #3F3F46; border-radius: 6px; cursor: pointer" style-hover="background: #34343A">{{ briefBtnLabel }}</button>
+            <button onClick="{{ onRestart }}" type="button" style="flex: 1; height: 40px; font-family: inherit; font-size: 14px; font-weight: 500; color: #FAFAFA; background: transparent; border: 1px solid #3F3F46; border-radius: 6px; cursor: pointer" style-hover="background: #34343A">Изменить ответы</button>
+          </div>
+          <sc-if value="{{ hasSendError }}" hint-placeholder-val="{{ false }}">
+            <span style="font-size: 13px; font-weight: 500; color: #FF8FC2">{{ sendError }}</span>
+          </sc-if>
+        </div>
+      </sc-if>
     </div>
-    <div style="display: flex; flex-direction: column; gap: 12px">
-      <div style="position: relative; display: flex; justify-content: center">
-        <button onClick="{{ onCopy }}" type="button" style="font-family: inherit; font-size: 14px; font-weight: 700; padding: 16px 28px; border: 0; cursor: pointer; border-radius: 999px; background: {{ copyBg }}; color: {{ copyFg }}; display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; transform: scale({{ copyScale }}); transition: background 180ms ease, color 180ms ease, transform 180ms cubic-bezier(0.34, 1.56, 0.64, 1); border-color: #FFFFFF" style-hover="background: #FFFFFF; color: #0B0B0C">{{ copyLabel }}</button>
-        <span style="position: absolute; bottom: calc(100% + 12px); left: 50%; font-size: 12px; font-weight: 700; white-space: nowrap; padding: 8px 12px; border-radius: 6px; background: #FFFFFF; color: #0B0B0C; pointer-events: none; opacity: {{ toastOpacity }}; transform: translate(-50%, {{ toastY }}); transition: opacity 220ms ease, transform 220ms cubic-bezier(0.34, 1.56, 0.64, 1)">Адрес скопирован</span>
-      </div>
-      <span style="font-size: 12px; color: #A8A8B0; text-align: center">Ответ в течение 2 рабочих дней</span>
-    </div>
-  </section>
-
-  <footer style="padding-top: 32px; display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; font-size: 12px; color: #A8A8B0">
-    <span>© 2026 Mechta.kz · Marketing inventory</span>
-    <span>Все условия уточняются в рамках кампании</span>
-  </footer>
+  </aside>
+</main>
 </div>
+</div>
+
+<footer style="position: relative; height: 220px; margin-top: 96px; overflow: hidden; display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; padding: 0 32px 8px">{{ pxFooter }}<a href="https://mechta.kz" target="_blank" rel="noopener" style="position: relative; font-size: 14px; font-weight: 400; letter-spacing: 0.02em; color: #FFFFFF; text-decoration: none">Mechta.kz</a><span style="position: relative; font-size: 14px; font-weight: 400; letter-spacing: 0.02em; color: #FFFFFF">2027</span></footer>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;webhookUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Отправка брифа&quot;},&quot;web3formsKey&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Отправка брифа&quot;},&quot;emailTo&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;aidyn.argyn@mechta.kz&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Отправка брифа&quot;}}">
-const PINK = '#FF0080';
+const PINK = '#E0006E';
 
 const CATS = [
   { id: 'audience', label: 'Audience Intelligence', short: 'Audience', blurb: 'Активация first-party данных о покупках в 80+ магазинах, на mechta.kz и в приложении: детерминированные сегменты, look-alike, ML-модель Next-Best-Offer и каскадные CDP-сценарии.' },
@@ -269,7 +259,7 @@ const TOOLS = [
 
   { cat: 'creative', name: '3D-видео', what: 'Полноценный 3D-ролик о продукте — герой запуска.', tags: ['Drive Upgrade'], price: '2 500 000 ₸' },
   { cat: 'creative', name: 'AR-видео', what: 'Ролик с дополненной реальностью.', tags: ['Drive Upgrade'], price: '1 000 000 ₸' },
-  { cat: 'creative', name: 'AI-видео', what: 'Видео, созданное с помощью AI — быстрее и дешевле классического продакшна.', tags: ['Drive Upgrade'], price: '500 000 ₸' },
+  { cat: 'creative', name: 'AI-видео', what: 'Видео, созданное с помощью AI — быстрее и дешевле классического продакшна.', tags: ['Drive Upgrade'], price: '600 000 ₸' },
   { cat: 'creative', name: '3D-иммерсивный лендинг', what: 'Интерактивная 3D-страница кампании.', tags: ['Expand Online'], price: '1 500 000 ₸' },
   { cat: 'creative', name: 'Лендинг', what: 'Отдельная посадочная страница кампании.', tags: ['Expand Online'], price: '700 000 ₸' },
   { cat: 'creative', name: 'Геймификация (web и app)', what: 'Мини-игра или интерактивная вовлекающая механика.', tags: ['Scale Ecosystem'], price: '3 000 000 ₸' },
@@ -289,21 +279,21 @@ const TOOLS = [
 
 const STEPS = [
   [
-    { id: 'campaign', label: 'Кампания / повод', placeholder: 'напр. Back to School, launch iPhone' },
-    { id: 'vendor', label: 'Вендор / бренд', placeholder: 'Apple / Samsung / нет' },
-    { id: 'focus', label: 'Фокус-товары или категория', placeholder: 'SKU или категория' }
+    { id: 'campaign', req: true, label: 'Кампания / повод', placeholder: 'напр. Back to School, launch iPhone' },
+    { id: 'vendor', req: true, label: 'Вендор / бренд', placeholder: 'Apple / Samsung / нет' },
+    { id: 'focus', req: true, label: 'Фокус-товары или категория', placeholder: 'SKU или категория' }
   ],
   [
-    { id: 'goal', label: 'Главная цель кампании', radio: ['Продажи', 'Охват', 'Трафик в магазины', 'Активация/реактивация', 'Свой вариант'] },
+    { id: 'goal', req: true, label: 'Главная цель кампании', radio: ['Продажи', 'Охват', 'Трафик в магазины', 'Активация/реактивация', 'Свой вариант'] },
     { id: 'goal_other', label: 'Своя цель', placeholder: 'опишите цель', showIf: v => v.goal === 'Свой вариант' }
   ],
   [
-    { id: 'date_start', label: 'Начало кампании', type: 'date' },
-    { id: 'date_end', label: 'Конец кампании', type: 'date' },
+    { id: 'date_start', req: true, label: 'Начало кампании', type: 'date' },
+    { id: 'date_end', req: true, label: 'Конец кампании', type: 'date' },
     { id: 'dates_extra', label: 'Дополнительные даты и сроки', placeholder: '' }
   ],
   [
-    { id: 'budget', label: 'Бюджет кампании', placeholder: 'сумма + валюта' },
+    { id: 'budget', req: true, label: 'Бюджет кампании', placeholder: 'сумма + валюта' },
     { id: 'margin', label: 'Фронт-маржа по товару, %', placeholder: 'если знаете' },
     { id: 'aov', label: 'Средний чек (AOV), ₸', placeholder: 'если знаете' }
   ],
@@ -314,7 +304,7 @@ const STEPS = [
     { id: 'segments', label: 'Сегменты', placeholder: 'RFM, свой список сегментов, если есть' }
   ],
   [
-    { id: 'channels', label: 'Желаемые рекламные каналы', placeholder: 'свой список или «на усмотрение маркетинга»' },
+    { id: 'channels', req: true, label: 'Желаемые рекламные каналы', placeholder: 'свой список или «на усмотрение маркетинга»' },
     { id: 'content', label: 'Контент / макеты', radio: ['есть', 'будут к дате', 'нужна помощь'] },
     { id: 'content_date', label: 'Дата готовности макетов и материалов', type: 'date' }
   ],
@@ -325,14 +315,515 @@ const STEPS = [
   ],
   [
     { id: 'limits', label: 'Ограничения вендора', placeholder: 'бренд-гайды, запреты (если есть)' },
-    { id: 'owner', label: 'Ответственный', placeholder: 'имя / контакт' },
+    { id: 'owner', req: true, label: 'Ответственный', placeholder: 'имя / контакт' },
     { id: 'contact_email', label: 'Email для связи', type: 'email', hint: 'на него менеджер ответит по брифу', placeholder: 'name@company.kz' },
     { id: 'comment', label: 'Комментарий', placeholder: 'дополнительные условия (если есть)' }
   ]
 ];
 
+const PH = ['Найти: DMP-аудитории', 'Найти: WhatsApp-рассылку', 'Найти: баннер на главной', 'Найти: 3D-видео', 'Найти: Kaspi'];
+
 class Component extends DCLogic {
-  state = { cat: 'audience', goal: 'all', q: '', copied: false, picked: [], listCopied: false, step: 0, brief: {}, briefDone: false, briefCopied: false, sending: false, sent: false, mailed: false, sendError: '' };
+  buildPre() {
+    const W = 260, RH = 30, G = 5, N = 5, FH = N * RH + (N - 1) * G, TOP = 50, H = FH + TOP, P = 6, LP = 2;
+    const LBL = ['ОСВЕДОМЛЕННОСТЬ', 'ИНТЕРЕС', 'РЕШЕНИЕ', 'ДЕЙСТВИЕ', 'ПОКУПКА'];
+    const WF = [1, 0.845, 0.69, 0.535, 0.38, 0.25].map(v => v * 0.72);
+    const start = cv => {
+      if (!cv || this._preCv) return;
+      this._preCv = cv;
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      cv.width = W * dpr; cv.height = H * dpr;
+      const ctx = cv.getContext('2d');
+      const oc = document.createElement('canvas'); oc.width = W; oc.height = H;
+      const ox = oc.getContext('2d'); ox.fillStyle = '#fff'; ox.textAlign = 'center'; ox.textBaseline = 'middle';
+      ox.font = "700 12px 'Forma DJR', -apple-system, sans-serif";
+      if ('letterSpacing' in ox) ox.letterSpacing = '1px';
+      LBL.forEach((l, i) => ox.fillText(l, W / 2, i * (RH + G) + RH / 2 + 1));
+      const td = ox.getImageData(0, 0, W, H).data;
+      const cells = [];
+      for (let y = 0; y < H; y += P) {
+        if (y < TOP) continue;
+        const yy = y - TOP, ri = Math.floor(yy / (RH + G)), ly = yy - ri * (RH + G);
+        if (ri >= N || ly >= RH) continue;
+        const k = ly / RH, hw = (WF[ri] + (WF[ri + 1] - WF[ri]) * k) * W / 2;
+        for (let x = 0; x < W; x += P) {
+          if (Math.abs(x + P / 2 - W / 2) > hw) continue;
+          const txt = false;
+          cells.push(x, y, ri, txt ? 1 : 0, Math.random());
+        }
+      }
+      const lm = LBL.map(l => {
+        const c = document.createElement('canvas'); c.width = W; c.height = 32;
+        const x = c.getContext('2d'); x.fillStyle = '#fff'; x.textAlign = 'center'; x.textBaseline = 'middle';
+        x.font = "700 17px 'Forma DJR', -apple-system, sans-serif";
+        if ('letterSpacing' in x) x.letterSpacing = '2px';
+        x.fillText(l, W / 2, 17);
+        const d = x.getImageData(0, 0, W, 32).data, out = [];
+        for (let yy = 0; yy < 32; yy += LP) for (let xx = 0; xx < W; xx += LP) if (d[((yy + 1) * W + xx + 1) * 4 + 3] > 100) out.push(xx, yy, Math.random());
+        return out;
+      });
+      let lastPre = -1, lt0 = 0;
+      const t0s = [];
+      const tick = ts => {
+        if (!this._preCv) return;
+        const pre = this.state.pre || 0, t = ts / 1000;
+        for (let i = 0; i < pre; i++) if (t0s[i] == null) t0s[i] = ts;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
+        const li = Math.max(0, Math.min(4, (pre || 1) - 1));
+        if (li !== lastPre) { lastPre = li; lt0 = ts; }
+        const lp = Math.min(1, (ts - lt0) / 260), lc = lm[li];
+        for (let j = 0; j < lc.length; j += 3) {
+          if (lc[j + 2] > lp) continue;
+          const fl = 0.82 + 0.18 * Math.sin(lc[j] * 0.09 + t * 4);
+          ctx.fillStyle = 'rgba(255,0,128,' + fl.toFixed(3) + ')';
+          ctx.fillRect(lc[j], lc[j + 1], LP - 0.4, LP - 0.4);
+        }
+        for (let j = 0; j < cells.length; j += 5) {
+          const x = cells[j], y = cells[j + 1], ri = cells[j + 2], txt = cells[j + 3], r = cells[j + 4];
+          const p = t0s[ri] == null ? 0 : Math.min(1, (ts - t0s[ri]) / 450);
+          const pink = r < p;
+          const fl = 0.86 + 0.14 * Math.sin(x * 0.07 + y * 0.05 + t * 3);
+          if (txt) { if (!pink) continue; ctx.fillStyle = 'rgba(255,255,255,1)'; }
+          else ctx.fillStyle = pink ? 'rgba(255,0,128,' + fl.toFixed(3) + ')' : 'rgba(255,255,255,' + (fl * 0.92).toFixed(3) + ')';
+          ctx.fillRect(x, y, P - 1, P - 1);
+        }
+        if (!this.state.preGone) requestAnimationFrame(tick); else this._preCv = null;
+      };
+      requestAnimationFrame(tick);
+    };
+    return React.createElement('canvas', { ref: start, style: { width: 'min(' + W + 'px, 80vw)', height: 'auto', aspectRatio: W + ' / ' + H, display: 'block', imageRendering: 'pixelated' } });
+  }
+  buildFooter() {
+    const C = 10;
+    const start = cv => {
+      if (!cv || this._ftCv) return;
+      this._ftCv = cv;
+      let W = 0, H = 0, cols = 0, dpr = 1, last = 0;
+      const ps = [];
+      const tick = ts => {
+        if (!this._ftCv) return;
+        const w = cv.clientWidth, h = cv.clientHeight;
+        if (w !== W || h !== H) { W = w; H = h; dpr = Math.min(2, window.devicePixelRatio || 1); cv.width = W * dpr; cv.height = H * dpr; cols = Math.ceil(W / C); }
+        const dt = last ? Math.min(0.05, (ts - last) / 1000) : 0.016; last = ts;
+        const rows = Math.ceil(H / C);
+        for (let k = 0; k < cols * dt * 1.6; k++) if (Math.random() < 0.9) ps.push({ x: Math.floor(Math.random() * cols), y: rows - 1 - Math.floor(Math.random() * 2), v: 18 + Math.random() * 46, life: 0, max: 0.35 + Math.random() * 0.55, a: 0.5 + Math.random() * 0.5 });
+        const ctx = cv.getContext('2d');
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
+        for (let x = 0; x < cols; x++) for (let r = 0; r < 3; r++) {
+          const a = (0.75 - r * 0.25) * (0.75 + 0.25 * Math.sin(x * 0.7 + ts / 400 + r));
+          ctx.fillStyle = 'rgba(255,0,128,' + a.toFixed(3) + ')';
+          ctx.fillRect(x * C, (rows - 1 - r) * C, C - 1, C - 1);
+        }
+        for (let i = ps.length - 1; i >= 0; i--) {
+          const p = ps[i];
+          p.y -= p.v * dt / C; p.life += dt / (p.max * 4);
+          const a = p.a * Math.max(0, 1 - p.life) * Math.min(1, (rows - p.y) / rows * 1.4);
+          if (p.life >= 1 || p.y < 0 || a < 0.02) { ps.splice(i, 1); continue; }
+          ctx.fillStyle = 'rgba(255,0,128,' + a.toFixed(3) + ')';
+          ctx.fillRect(p.x * C, Math.round(p.y) * C, C - 1, C - 1);
+        }
+        requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    };
+    return React.createElement('canvas', { ref: start, style: { position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block' } });
+  }
+  buildTicker() {
+    const h = React.createElement, img = k => h('img', { key: k, src: './ticker.svg', alt: '', 'aria-hidden': true, style: { height: 22, width: 'auto', flex: '0 0 auto', paddingRight: 48, display: 'block' } });
+    return h('div', { style: { display: 'flex', width: 'max-content', animation: 'tick-run 40s linear infinite' } }, [0, 1, 2, 3].map(img));
+  }
+  buildSun() {
+    const h = React.createElement, CELL = 16, GAP = 3;
+    const start = cv => {
+      this._cv = cv;
+      if (!cv || this._raf) return;
+      const ctx = cv.getContext('2d');
+      const host = cv.parentElement;
+      let W = 0, H = 0, cols = 0, rows = 0, en = null, mx = -1e4, my = -1e4, dpr = 1;
+      const LC = 6, logoImg = host.querySelector('img[data-px-logo]');
+      let lg = null, lgKey = '', lgEn = null, tb = null;
+      const src = new Image(); let srcOk = false;
+      src.onload = () => { srcOk = true; lgKey = ''; };
+      if (logoImg) src.src = logoImg.currentSrc || logoImg.src;
+      const HAND = ['.....XXXXXXXXX', '....XXXXXXXXXX', 'XX.XXXXXX.....', 'XX.XXXXXXXX...', 'XX.XXXXX......', 'XX.XXXXXXXX...', 'XX.XXXXX......', 'XX.XXXXXXX....', 'XX..XXXXX.....'];
+      const LL = 5;
+      const buildLogo = () => {
+        if (!logoImg || !srcOk) return;
+        const cr = cv.getBoundingClientRect(), r = logoImg.getBoundingClientRect();
+        const txt = host.querySelector('[data-px-text]'), arrs = host.querySelectorAll('[data-px-arrow]');
+        const tr = txt ? txt.getBoundingClientRect() : null;
+        const key = [r.left - cr.left, r.top - cr.top, r.width, r.height, tr ? tr.left - cr.left : 0, tr ? tr.top - cr.top : 0, tr ? tr.width : 0, Array.from(host.querySelectorAll('[data-px-word]')).map(el => { const b = el.getBoundingClientRect(); return Math.round(b.left - cr.left) + ':' + Math.round(b.top - cr.top) + ':' + Math.round(b.width); }).join('|'), document.fonts ? document.fonts.status : ''].map(v => typeof v === 'number' ? Math.round(v) : v).join(',');
+        if (key === lgKey) return;
+        lgKey = key;
+        const pts = [];
+        const lx = r.left - cr.left, ly = r.top - cr.top, lc = Math.ceil(r.width / LC), lr = Math.ceil(r.height / LC);
+        if (lc > 0 && lr > 0) {
+          const oc = document.createElement('canvas'); oc.width = lc; oc.height = lr;
+          const ox = oc.getContext('2d'); ox.drawImage(src, 0, 0, lc, lr);
+          try { const data = ox.getImageData(0, 0, lc, lr).data;
+            for (let y = 0; y < lr; y++) for (let x = 0; x < lc; x++) { const a = data[(y * lc + x) * 4 + 3]; if (a > 60) pts.push(lx + x * LC, ly + y * LC, a / 255, 0); }
+          } catch (err) {}
+        }
+        if (tr && tr.width > 0) {
+          const w = Math.ceil(tr.width), hh = Math.ceil(tr.height);
+          const oc = document.createElement('canvas'); oc.width = w; oc.height = hh;
+          const ox = oc.getContext('2d'), cs = getComputedStyle(txt);
+          ox.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+          if ('letterSpacing' in ox) ox.letterSpacing = cs.letterSpacing;
+          ox.textBaseline = 'middle'; ox.fillStyle = '#fff'; ox.fillText(txt.textContent.trim().toUpperCase(), 0, hh / 2 + 1);
+          const data = ox.getImageData(0, 0, w, hh).data, tx = tr.left - cr.left, ty = tr.top - cr.top;
+          tb = { x: tx, y: ty, w: w, h: hh };
+          for (let y = 0; y < hh; y += LL) for (let x = 0; x < w; x += LL) {
+            const a = data[(Math.min(hh - 1, y + 2) * w + Math.min(w - 1, x + 2)) * 4 + 3];
+            if (a > 110) pts.push(tx + x, ty + y, 1, 1);
+          }
+        }
+        host.querySelectorAll('[data-px-word]').forEach(el => {
+          const br = el.getBoundingClientRect(); if (!br.width) return;
+          const w = Math.ceil(br.width), hh = Math.ceil(br.height), WS = 3;
+          const oc = document.createElement('canvas'); oc.width = w; oc.height = hh;
+          const ox = oc.getContext('2d'), cs = getComputedStyle(el);
+          ox.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+          if ('letterSpacing' in ox) ox.letterSpacing = cs.letterSpacing;
+          ox.textBaseline = 'middle'; ox.fillStyle = '#fff'; ox.fillText(el.textContent.trim(), 0, hh / 2 + 1);
+          const data = ox.getImageData(0, 0, w, hh).data, wx = br.left - cr.left, wy = br.top - cr.top;
+          for (let y = 0; y < hh; y += WS) for (let x = 0; x < w; x += WS) {
+            if (data[(Math.min(hh - 1, y + 1) * w + Math.min(w - 1, x + 1)) * 4 + 3] > 100) pts.push(wx + x, wy + y, 1, 4);
+          }
+          el.style.color = 'transparent';
+        });
+        arrs.forEach((el, ai) => {
+          const ar = el.getBoundingClientRect(), HW = HAND[0].length, ax = ar.left - cr.left + (ar.width - HW * LL) / 2, ay = ar.top - cr.top + (ar.height - HAND.length * LL) / 2;
+          HAND.forEach((row, y) => { for (let x = 0; x < HW; x++) if (row[ai ? HW - 1 - x : x] === 'X') pts.push(ax + x * LL, ay + y * LL, 1, ai ? 3 : 2); });
+        });
+        lg = new Float32Array(pts); lgEn = new Float32Array(pts.length / 4);
+        logoImg.style.opacity = '0';
+        if (txt) txt.parentElement.style.color = 'transparent';
+      };
+      const onMove = ev => { const r = cv.getBoundingClientRect(); mx = ev.clientX - r.left; my = ev.clientY - r.top; };
+      const onLeave = () => { mx = -1e4; my = -1e4; };
+      host.addEventListener('pointermove', onMove);
+      host.addEventListener('pointerleave', onLeave);
+      let hov = false, hovT = 0;
+      const bl = host.querySelector('a[aria-label="Заполнить бриф"]');
+      const onBE = () => { hov = true; }, onBL = () => { hov = false; };
+      if (bl) { bl.addEventListener('pointerenter', onBE); bl.addEventListener('pointerleave', onBL); }
+      this._pxOff = () => { host.removeEventListener('pointermove', onMove); host.removeEventListener('pointerleave', onLeave); if (bl) { bl.removeEventListener('pointerenter', onBE); bl.removeEventListener('pointerleave', onBL); } };
+      const tick = ts => {
+        const el = this._cv;
+        if (!el) { this._raf = 0; return; }
+        const w = el.clientWidth, hh = el.clientHeight;
+        if (w !== W || hh !== H) {
+          W = w; H = hh; dpr = Math.min(2, window.devicePixelRatio || 1);
+          el.width = W * dpr; el.height = H * dpr;
+          cols = Math.ceil(W / CELL); rows = Math.ceil(H / CELL); en = new Float32Array(cols * rows);
+        }
+        const t = ts / 1000, R = 50 - 36 * hovT;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, W, H);
+        const cxm = W / 2, cym = H / 2;
+        for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
+          const i = y * cols + x, px = x * CELL + CELL / 2, py = y * CELL + CELL / 2;
+          const dx = px - mx, dy = py - my, d = Math.sqrt(dx * dx + dy * dy);
+          if (d < R) { const fo = 1 - d / R; en[i] = Math.min(1, en[i] + fo * fo * (3 - 2 * fo) * 0.3); }
+          en[i] *= 0.955;
+          let n = Math.sin(x * 0.21 + t * 0.6) + Math.sin(y * 0.33 - t * 0.45) + Math.sin((x + y) * 0.13 + t * 0.3) + Math.sin(Math.sqrt((x - cols / 2) ** 2 + (y - rows / 2) ** 2) * 0.35 - t * 0.9);
+          n = (n + 4) / 8;
+          const base = Math.floor(Math.max(0, n - 0.42) * 2.4 * 4) / 4;
+          const ex = (px - cxm) / (W / 2), ey = (py - cym) / (H / 2);
+          const vign = Math.max(0, 1 - Math.sqrt(ex * ex * 0.7 + ey * ey * 0.9));
+          const e2 = Math.floor(en[i] * 12) / 12;
+          const a = base * 0.22 * (0.35 + vign) + e2;
+          if (a < 0.03) continue;
+          const k = Math.min(1, e2 * 1.3);
+          ctx.fillStyle = 'rgba(' + Math.round(63 + (255 - 63) * k) + ',' + Math.round(63 + (77 - 63) * k) + ',' + Math.round(70 + (157 - 70) * k) + ',' + Math.min(1, a).toFixed(3) + ')';
+          ctx.fillRect(x * CELL + GAP / 2, y * CELL + GAP / 2, CELL - GAP, CELL - GAP);
+        }
+        hovT += ((hov ? 1 : 0) - hovT) * 0.12;
+        buildLogo();
+        if (lg) {
+          const LR = 40 - 27 * hovT;
+          const step = Math.floor(t * 5) % 4, bobT = [0, -1, -1, 0][step] * LL, poke = [0, 1, 2, 1][step] * LL;
+          for (let j = 0, k = 0; j < lg.length; j += 4, k++) {
+            const grp = lg[j + 3], sz = grp === 4 ? 3 : grp ? LL : LC;
+            const px = lg[j] + (grp === 2 ? poke : grp === 3 ? -poke : 0), py = lg[j + 1] + (grp === 1 ? bobT : 0), dx = px - mx, dy = py - my, d = Math.sqrt(dx * dx + dy * dy);
+            const fo = d < LR ? 1 - d / LR : 0, target = fo * fo * (3 - 2 * fo);
+            lgEn[k] += (target - lgEn[k]) * 0.18;
+            const e = lgEn[k];
+            const fl = 0.88 + 0.12 * Math.sin(px * 0.05 + py * 0.04 + t * 2);
+            let ox = 0, oy = 0;
+            if ((!grp || grp === 4) && e > 0.01 && d > 0.001) { const push = e * e * 22; ox = dx / d * push; oy = dy / d * push; }
+            const r = Math.round(255), g = Math.round(255 - 178 * e), b = Math.round(255 - 98 * e);
+            ctx.fillStyle = 'rgba(' + r + ',' + g + ',' + b + ',' + (lg[j + 2] * fl).toFixed(3) + ')';
+            const s = sz - 1 - e * 1.5;
+            let sd = grp === 4 ? Math.max(1, 2.4 - e) : grp ? LL - 1 : s;
+            if (grp === 1) {
+              const pk = hovT * (0.5 + 0.5 * Math.sin(t * 7 - lg[j] * 0.015));
+              ctx.fillStyle = 'rgba(255,' + Math.round(255 - 178 * pk) + ',' + Math.round(255 - 98 * pk) + ',1)';
+              sd = LL - 1 + pk * 1.2;
+            } else if (grp === 2 || grp === 3) {
+              const pk = hovT * (0.5 + 0.5 * Math.sin(t * 7));
+              ctx.fillStyle = 'rgba(255,' + Math.round(77 + 60 * pk) + ',' + Math.round(157 + 40 * pk) + ',' + Math.max(fl, pk).toFixed(3) + ')';
+            }
+            ctx.fillRect(px + ox + (sz - sd) / 2, py + oy + (sz - sd) / 2, sd, sd);
+          }
+        }
+        if (tb && hovT > 0.02) {
+          const n = Math.floor(tb.w / LL), shown = Math.round(n * Math.min(1, hovT * 1.15)), st = Math.floor((n - shown) / 2);
+          const uy = tb.y + tb.h + LL * 2 + (Math.floor(t * 5) % 4 === 1 || Math.floor(t * 5) % 4 === 2 ? -LL : 0);
+          for (let q = st; q < st + shown; q++) {
+            const pk = 0.5 + 0.5 * Math.sin(t * 7 - q * LL * 0.015);
+            ctx.fillStyle = 'rgba(255,' + Math.round(77 + 60 * pk) + ',' + Math.round(157 + 40 * pk) + ',' + Math.min(1, hovT * 1.2).toFixed(3) + ')';
+            ctx.fillRect(tb.x + q * LL, uy, LL - 1, LL - 1);
+          }
+        }
+        this._raf = requestAnimationFrame(tick);
+      };
+      this._raf = requestAnimationFrame(tick);
+    };
+    const reveal = cv => {
+      this._rcv = cv;
+      if (!cv || this._rStarted) return;
+      this._rStarted = true;
+      const vid = cv.previousSibling, C = 20, DUR = 3200, BAND = 0.18;
+      let t0 = 0, thr = null, cols = 0, rows = 0;
+      const step = ts => {
+        const el = this._rcv; if (!el) return;
+        const W = el.clientWidth, H = el.clientHeight, dpr = Math.min(2, window.devicePixelRatio || 1);
+        const nc = Math.ceil(W / C), nr = Math.ceil(H / C);
+        if (nc !== cols || nr !== rows || !thr) {
+          cols = nc; rows = nr; el.width = W * dpr; el.height = H * dpr; thr = new Float32Array(cols * rows);
+          for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) thr[y * cols + x] = (1 - y / Math.max(1, rows - 1)) * 0.62 + Math.random() * 0.38;
+        }
+        if (!t0) t0 = ts;
+        const lin = Math.min(1, (ts - t0) / DUR), p = (lin < 0.5 ? 2 * lin * lin : 1 - Math.pow(-2 * lin + 2, 2) / 2) * (1 + BAND);
+        const ctx = el.getContext('2d');
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
+        for (let i = 0; i < thr.length; i++) {
+          const x = (i % cols) * C, y = Math.floor(i / cols) * C, lp = (p - thr[i]) / BAND;
+          if (lp <= 0) { ctx.fillStyle = '#09090B'; ctx.fillRect(x, y, C, C); continue; }
+          if (lp >= 1) continue;
+          const ea = 1 - Math.ceil(lp * lp * (3 - 2 * lp) * 4) / 4;
+          ctx.fillStyle = 'rgba(9,9,11,' + ea.toFixed(3) + ')'; ctx.fillRect(x, y, C, C);
+        }
+        if (lin < 1) requestAnimationFrame(step); else el.style.display = 'none';
+      };
+      const go = () => { const w = () => this.state.preHide ? requestAnimationFrame(step) : setTimeout(w, 80); w(); };
+      if (vid && vid.readyState >= 2) go(); else if (vid) { vid.addEventListener('loadeddata', go, { once: true }); setTimeout(() => { if (!t0) go(); }, 2500); } else go();
+    };
+    return h(React.Fragment, null,
+      h('video', { src: './hero-video.webm', autoPlay: true, muted: true, loop: true, playsInline: true, 'aria-hidden': true, style: { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block', pointerEvents: 'none', opacity: 0.9, filter: 'brightness(0.92) saturate(1.15)' } }),
+      h('canvas', { ref: reveal, 'aria-hidden': true, style: { position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block', pointerEvents: 'none' } }),
+      h('div', { 'aria-hidden': true, style: { position: 'absolute', inset: 0, pointerEvents: 'none', background: 'linear-gradient(to bottom, rgba(9,9,11,0.2), rgba(9,9,11,0) 40%, rgba(9,9,11,0.85))' } }),
+      h('canvas', { ref: start, 'aria-hidden': true, style: { position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block',
+        WebkitMaskImage: 'radial-gradient(ellipse at 50% 45%, #000 55%, transparent 92%)', maskImage: 'radial-gradient(ellipse at 50% 45%, #000 55%, transparent 92%)' } }));
+  }
+  renderVals() {
+    const v = this._rv2();
+    const s = this.state, P = '#E0006E';
+    const catChips = v.catChips.map(c => {
+      const on = c.bg === '#0A0A0A';
+      return Object.assign({}, c, { bg: on ? '#09090B' : 'transparent', fg: on ? '#FAFAFA' : (c.count ? '#A1A1AA' : '#52525B'), cnt: on ? '#FF4D9D' : '#71717A', sh: on ? '0 1px 2px rgba(0,0,0,0.6), inset 0 0 0 1px #27272A' : 'none' });
+    });
+    const groups = v.groups.map(g => Object.assign({}, g, { tools: g.tools.map(t => {
+      const on = String(t.badge).indexOf('Выбрано') === 0;
+      return Object.assign({}, t, {
+        cardBg: on ? 'rgba(224,0,110,0.08)' : 'transparent',
+        chkBg: on ? P : 'transparent', chkBorder: on ? P : '#52525B', chkMark: on ? '✓' : '',
+        rowName: on ? '#FFFFFF' : '#FAFAFA',
+        cardBorder: on ? 'rgba(255,77,157,0.55)' : '#262626',
+        badgeBg: on ? P : '#FAFAFA', badgeFg: on ? '#FFFFFF' : '#0A0A0A',
+        priceColor: /\d/.test(t.price) ? '#FAFAFA' : '#FF4D9D',
+        noteColor: '#FF4D9D'
+      });
+    }) }));
+    const qOptions = v.qOptions.map(o => {
+      const on = o.bg === P;
+      return Object.assign({}, o, { bg: on ? 'rgba(224,0,110,0.10)' : 'transparent', keyBg: on ? '#0A0A0A' : '#262626', rb: on ? '#FF4D9D' : '#3F3F46', dot: on ? '#FF4D9D' : 'transparent', dotB: on ? '#FF4D9D' : '#52525B' });
+    });
+    if (!this._ring) {
+      this._ring = React.createElement('span', { 'aria-hidden': true, style: { position: 'absolute', inset: '-150%', pointerEvents: 'none', background: 'conic-gradient(from 0deg, transparent 0deg 250deg, #FF4D9D 320deg, transparent 360deg)', animation: 'ace-spin 5s linear infinite' } });
+      this._spotlight = React.createElement('div', { 'aria-hidden': true, style: { position: 'absolute', top: '-260px', left: '-220px', width: '1100px', height: '520px', pointerEvents: 'none', transform: 'rotate(-28deg)', borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(255,255,255,0.14), rgba(255,77,157,0.10) 50%, transparent 100%)', filter: 'blur(30px)', opacity: 0, animation: 'ace-fade 1.6s ease 0.2s forwards' } });
+    }
+    return Object.assign({}, v, {
+      catChips, groups, qOptions,
+      ring: this._ring, spotlight: this._spotlight,
+      sun: this._sun || (this._sun = this.buildSun()),
+      mainRef: this._mainRef || (this._mainRef = React.createRef()),
+      ctrlRef: this._ctrlRef || (this._ctrlRef = React.createRef()),
+      asideRef: this._asideRef || (this._asideRef = React.createRef()),
+      briefOffset: (s.briefOff || 0) + 'px',
+      okBg: v.okBg === '#3A3A40' ? '#262626' : v.okBg,
+      sendBg: (s.sent || s.mailed) ? '#262626' : P,
+      phText: PH[s.phI % PH.length],
+      onSpot: e => { const el = e.currentTarget, r = el.getBoundingClientRect(); el.style.setProperty('--mx', (e.clientX - r.left) + 'px'); el.style.setProperty('--my', (e.clientY - r.top) + 'px'); el.style.setProperty('--spot', '1'); },
+      onSpotLeave: e => e.currentTarget.style.setProperty('--spot', '0')
+    });
+  }
+
+  componentDidMount() {
+    document.body.style.overflow = 'hidden';
+    this._preI = setInterval(() => {
+      const n = (this.state.pre || 0) + 1;
+      this.setState({ pre: n });
+      if (n >= 5) {
+        clearInterval(this._preI);
+        setTimeout(() => { this.setState({ preHide: true }); document.body.style.overflow = ''; }, 450);
+        setTimeout(() => this.setState({ preGone: true }), 1100);
+      }
+    }, 420);
+    this._onScroll = () => {
+      const el = document.getElementById('brief');
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      const near = r.top < window.innerHeight * 0.6 && r.bottom > 0;
+      if (near !== this.state.nearBrief) this.setState({ nearBrief: near });
+    };
+    this._onKey = e => {
+      if (!this.state.nearBrief) return;
+      const tag = document.activeElement && document.activeElement.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+      const qs = this.qsFor(this.state.brief);
+      const cur = qs[this.state.qi];
+      if (cur && cur.radio) {
+        const idx = 'abcdefgh'.indexOf(String(e.key).toLowerCase());
+        if (idx >= 0 && idx < cur.radio.length) { e.preventDefault(); this.answer(cur.radio[idx]); }
+      }
+    };
+    window.addEventListener('scroll', this._onScroll, { passive: true });
+    window.addEventListener('keydown', this._onKey);
+    this._ph = setInterval(() => this.setState(st => ({ phI: st.phI + 1 })), 2800);
+    window.addEventListener('resize', this.syncAlign);
+    if (window.ResizeObserver) { this._ro = new ResizeObserver(() => this.syncAlign()); setTimeout(() => { if (this._ctrlRef && this._ctrlRef.current) this._ro.observe(this._ctrlRef.current); this.syncAlign(); }, 0); }
+  }
+  syncAlign = () => {
+    const c = this._ctrlRef && this._ctrlRef.current, a = this._asideRef && this._asideRef.current;
+    if (!c || !a) return;
+    const sec = c.parentElement;
+    const same = a.offsetLeft > sec.offsetLeft + 10;
+    const off = same ? c.offsetHeight + 16 : 0;
+    if (off !== (this.state.briefOff || 0)) this.setState({ briefOff: off });
+  };
+  componentDidUpdate() { this.syncAlign(); }
+  componentWillUnmount() {
+    if (this._ro) this._ro.disconnect();
+    window.removeEventListener('resize', this.syncAlign);
+    window.removeEventListener('scroll', this._onScroll);
+    window.removeEventListener('keydown', this._onKey);
+    clearInterval(this._ph);
+    cancelAnimationFrame(this._raf); this._raf = 0; this._cv = null; if (this._pxOff) this._pxOff();
+    clearTimeout(this._t); clearTimeout(this._t2); clearTimeout(this._t3);
+  }
+  qsFor(b) {
+    const out = [];
+    STEPS.forEach(st => st.forEach(x => { if (!x.showIf || x.showIf(b)) out.push(x); }));
+    return out;
+  }
+  goQ(i) {
+    const qs = this.qsFor(this.state.brief);
+    const n = Math.max(0, Math.min(i, qs.length));
+    const q = qs[n];
+    this.setState({ qi: n, reqErr: false, draft: q ? String(this.state.brief[q.id] || '') : '' });
+  }
+  answer(val) {
+    const qs = this.qsFor(this.state.brief);
+    const i = Math.min(this.state.qi || 0, qs.length - 1);
+    const q = qs[i];
+    if (!q) return;
+    if (q.req && !String(val || '').trim()) { this.setState({ reqErr: true }); return; }
+    const nb = Object.assign({}, this.state.brief, { [q.id]: val });
+    const nx = this.qsFor(nb)[i + 1];
+    this.setState({ brief: nb, qi: i + 1, reqErr: false, draft: nx ? String(nb[nx.id] || '') : '' });
+  }
+  _rv2() {
+    const v = this._rv();
+    const s = this.state, P = '#E0006E';
+    const q = s.q.trim().toLowerCase();
+    const match = t => (s.goal === 'all' || t.tags.indexOf(s.goal) >= 0) &&
+      (!q || (t.name + ' ' + t.what + ' ' + t.tags.join(' ')).toLowerCase().indexOf(q) >= 0);
+    const catChips = [{ id: 'all', label: 'Все' }].concat(CATS).map(c => {
+      const n = TOOLS.filter(t => (c.id === 'all' || t.cat === c.id) && match(t)).length;
+      const on = s.cat === c.id;
+      return { label: c.label, count: n, bg: on ? '#0A0A0A' : '#F4F4F5', fg: on ? '#FFFFFF' : (n ? '#0A0A0A' : '#A1A1AA'), cnt: on ? '#A1A1AA' : '#71717A', onClick: () => this.setState({ cat: c.id }) };
+    });
+    const groups = CATS.filter(c => q || s.cat === 'all' || s.cat === c.id).map((c, i) => {
+      const ts = TOOLS.filter(t => t.cat === c.id && match(t));
+      const sel = TOOLS.filter(t => t.cat === c.id && s.picked.indexOf(t.name) >= 0).length;
+      const open = ts.length > 0;
+      return {
+        num: String(i + 1).padStart(2, '0'), label: c.label, blurb: c.blurb,
+        count: ts.length, hasSel: sel > 0, selLabel: sel + ' выбрано',
+        open, sign: open ? '−' : '+',
+        labelColor: ts.length ? '#0A0A0A' : '#B4B4BA',
+        rowBg: 'transparent', chevRot: open ? '180deg' : '0deg',
+        onToggle: () => this.setState(st => ({ openCats: st.openCats.indexOf(c.id) >= 0 ? st.openCats.filter(x => x !== c.id) : st.openCats.concat([c.id]) })),
+        tools: ts.map(t => {
+          const on = s.picked.indexOf(t.name) >= 0;
+          return {
+            name: t.name, what: t.what, price: t.price, tags: t.tags.join(' · '),
+            bg: on ? '#FFF0F6' : '#F4F4F5', fg: '#0A0A0A', sub: '#52525B',
+            priceColor: /\d/.test(t.price) ? '#0A0A0A' : '#B0005A',
+            badge: on ? 'Выбрано ✓' : 'Выбрать', badgeBg: on ? P : '#FFFFFF', badgeFg: on ? '#FFFFFF' : '#0A0A0A', badgeBorder: on ? P : '#F4F4F5',
+            hasNote: t.cat === 'smm', note: 'Продвижение от 100 000 ₸ на 3 дня (1 ролик)',
+            noteColor: '#B0005A',
+            onToggle: () => this.togglePick(t.name)
+          };
+        })
+      };
+    });
+    const goalChips = [{ id: 'all', label: 'Любая задача' }].concat(GOALS.map(g => ({ id: g, label: g }))).map(g => {
+      const on = s.goal === g.id;
+      return { label: g.label, bg: on ? '#0A0A0A' : '#FFFFFF', fg: on ? '#FFFFFF' : '#0A0A0A', onClick: () => this.setState({ goal: g.id }) };
+    });
+    const qs = this.qsFor(s.brief);
+    const qi = Math.min(s.qi || 0, qs.length);
+    const cur = qi < qs.length ? qs[qi] : null;
+    const L = 'ABCDEFGH';
+    const curVal = cur ? String(s.brief[cur.id] || '') : '';
+    const hasDraft = String(s.draft || '').trim().length > 0;
+    return Object.assign({}, v, {
+      groups, goalChips, catChips,
+      noGroups: groups.every(g => g.count === 0),
+      cornerOn: s.picked.length > 0 && !s.nearBrief,
+      hasCur: !!cur, qDone: !cur,
+      qNum: String(qi + 1).padStart(2, '0'), qTotal: String(qs.length).padStart(2, '0'),
+      qLabel: cur ? cur.label : '', qHint: cur && cur.hint ? cur.hint : '', qHasHint: !!(cur && cur.hint),
+      qIsRadio: !!(cur && cur.radio), qIsInput: !!(cur && !cur.radio),
+      qType: cur && cur.type ? cur.type : 'text',
+      qPlaceholder: cur && cur.placeholder ? cur.placeholder : 'Ваш ответ',
+      qStep: 'Вопрос ' + (qi + 1) + ' из ' + qs.length,
+      qOptions: cur && cur.radio ? cur.radio.map((o, i) => ({
+        key: L[i], label: o,
+        bg: curVal === o ? P : '#1F1F22', fg: '#FFFFFF',
+        keyBg: curVal === o ? '#0A0A0A' : '#3A3A40',
+        onClick: () => this.answer(o)
+      })) : [],
+      draft: s.draft,
+      onDraft: e => this.setState({ draft: e.target.value }),
+      onDraftKey: e => { if (e.key === 'Enter') { e.preventDefault(); this.answer(String(s.draft || '').trim()); } },
+      onOk: () => this.answer(String(s.draft || '').trim()),
+      okLabel: hasDraft || (cur && cur.req) ? 'Далее →' : 'Пропустить',
+      qReq: !!(cur && cur.req),
+      reqErr: !!(s.reqErr && cur && cur.req),
+      inputRing: s.reqErr && cur && cur.req ? 'box-shadow: 0 0 0 2px #FF4D9D' : '',
+      skipLabel: cur && cur.req ? 'Далее →' : 'Пропустить',
+      missingReq: (() => { const b = s.brief; return this.qsFor(b).filter(x => x.req && !String(b[x.id] || '').trim()).map(x => x.label); })(),
+      okBg: hasDraft ? P : (cur && cur.req ? '#3A3A40' : '#3A3A40'),
+      onPrev: () => this.goQ(qi - 1),
+      onNextQ: () => cur && cur.radio ? (cur.req && !String(s.brief[cur.id] || '').trim() ? this.setState({ reqErr: true }) : this.goQ(qi + 1)) : this.answer(String(s.draft || '').trim()),
+      prevColor: qi === 0 ? '#55555D' : '#FFFFFF',
+      qProgress: Math.round((qs.length ? qi / qs.length : 1) * 100) + '%',
+      finalText: !cur ? this.briefText() : '',
+      onRestart: () => this.goQ(0),
+      sendBg: (s.sent || s.mailed) ? '#3A3A40' : P,
+      briefBtnBg: s.briefCopied ? P : '#FFFFFF',
+      briefBtnFg: s.briefCopied ? '#FFFFFF' : '#0A0A0A',
+      picked: s.picked.map(n => ({ name: n, onRemove: () => this.togglePick(n) })),
+      mailLabel: s.copied ? 'Скопировано ✓' : this.sendConfig().emailTo
+    });
+  }
+
+  state = { cat: 'audience', goal: 'all', q: '', copied: false, picked: [], listCopied: false, step: 0, brief: {}, briefDone: false, briefCopied: false, sending: false, sent: false, mailed: false, sendError: '', reqErr: false, phI: 0, view: 'catalog', openCats: ['audience'], qi: 0, draft: '', nearBrief: false };
 
   setField = (id, value) => {
     this.setState(s => ({ brief: Object.assign({}, s.brief, { [id]: value }) }));
@@ -392,9 +883,79 @@ class Component extends DCLogic {
     return lines.join('\n').trim();
   }
 
-  // Конфиг берётся из window.MECHTA_CONFIG (блок настройки в автономной
-  // сборке), иначе из props. Так ключ правится в одном видном месте, а не
-  // внутри HTML-экранированного data-props.
+  sendBrief = () => {
+    const miss = this.qsFor(this.state.brief).filter(x => x.req && !String(this.state.brief[x.id] || '').trim());
+    if (miss.length) {
+      const all = this.qsFor(this.state.brief);
+      this.setState({ qi: all.indexOf(miss[0]), reqErr: true, briefDone: false, draft: '' });
+      return;
+    }
+    const cfg = this.sendConfig();
+    const v = this.state.brief;
+    const subject = this.briefSubject();
+
+    const payload = Object.assign({}, v, {
+      services: this.state.picked.join('; '),
+      brief_text: this.briefText(),
+      Name: v.owner || '',
+      subject: subject,
+      formservices: 'Mechta Inventory 2026'
+    });
+
+    this.setState({ sending: true, sent: false, mailed: false, sendError: '' });
+
+    // Каналы в порядке приоритета: первый успешный решает исход.
+    // «Отправлено ✓» ставит только канал, который реально доставляет письмо.
+    const channels = [];
+
+    // 1. Вебхук (Make.com или свой сервер) — основной канал.
+    if (cfg.webhookUrl) {
+      channels.push(() => this.postJson(cfg.webhookUrl, payload));
+    }
+
+    // 2. Web3Forms — запас, если вебхука нет.
+    if (cfg.web3formsKey) {
+      channels.push(() => {
+        // Служебные поля поверх payload, иначе одноимённое поле брифа их перетрёт.
+        const w3 = Object.assign({}, payload, {
+          access_key: cfg.web3formsKey,
+          subject: subject,
+          from_name: 'Mechta Inventory 2026'
+        });
+        // Web3Forms кладёт email в Reply-To. Адрес получателя туда ставить
+        // нельзя: письмо на свой же домен от стороннего сервера антиспуфинг
+        // считает подделкой. Только адрес вендора.
+        const replyTo = String(v.contact_email || '').trim();
+        if (replyTo) w3.email = replyTo;
+        return this.postJson('https://api.web3forms.com/submit', w3)
+          .then(r => r.json())
+          .then(d => {
+            // 200 с success: false — отказ (лимит, неподтверждённый адрес).
+            if (!d || d.success !== true) throw new Error((d && d.message) || 'web3forms');
+          });
+      });
+    }
+
+    if (!channels.length) { this.openMailto(); return; }
+
+    const attempt = (i) => {
+      if (i >= channels.length) {
+        this.setState(
+          { sending: false, sendError: 'Письмо не ушло — открываем почтовый клиент, текст брифа в буфере.' },
+          this.openMailto
+        );
+        return;
+      }
+      channels[i]().then(
+        () => this.setState({ sending: false, sent: true }),
+        () => attempt(i + 1)
+      );
+    };
+    attempt(0);
+  };
+
+  // Конфиг из window.MECHTA_CONFIG (блок в начале автономной сборки),
+  // иначе из props. Ключ правится в одном видном месте.
   sendConfig() {
     const c = (typeof window !== 'undefined' && window.MECHTA_CONFIG) || {};
     const pick = (a, b) => String(a !== undefined && a !== null && a !== '' ? a : (b || '')).trim();
@@ -416,81 +977,8 @@ class Component extends DCLogic {
     });
   }
 
-  sendBrief = () => {
-    const cfg = this.sendConfig();
-    const v = this.state.brief;
-    const subject = this.briefSubject();
-
-    const payload = Object.assign({}, v, {
-      services: this.state.picked.join('; '),
-      brief_text: this.briefText(),
-      Name: v.owner || '',
-      subject: subject,
-      formservices: 'Mechta Inventory 2026'
-    });
-
-    this.setState({ sending: true, sent: false, mailed: false, sendError: '' });
-
-    // Каналы в порядке приоритета: первый успешный решает исход.
-    // «Отправлено ✓» ставится только тем каналом, который реально
-    // доставляет письмо, — иначе статус врёт.
-    const channels = [];
-
-    // 1. Вебхук (Make.com и подобное) — основной канал. Сценарий на
-    //    приёмной стороне отправляет письмо через SMTP самой Яндекс-почты,
-    //    поэтому отправитель для Яндекса свой, а не сторонний сервис, и
-    //    письмо не уходит в карантин.
-    if (cfg.webhookUrl) {
-      channels.push(() => this.postJson(cfg.webhookUrl, payload));
-    }
-
-    // 2. Web3Forms — запас, если вебхука нет.
-    if (cfg.web3formsKey) {
-      channels.push(() => {
-        // Служебные поля идут поверх payload: иначе одноимённое поле брифа
-        // перетёрло бы access_key или subject.
-        const w3 = Object.assign({}, payload, {
-          access_key: cfg.web3formsKey,
-          subject: subject,
-          from_name: 'Mechta Inventory 2026'
-        });
-        // Web3Forms кладёт поле email в Reply-To. Адрес получателя туда
-        // ставить нельзя: письмо на свой же домен от стороннего сервера
-        // антиспуфинг-защита считает подделкой. Только адрес вендора.
-        const replyTo = String(v.contact_email || '').trim();
-        if (replyTo) w3.email = replyTo;
-        return this.postJson('https://api.web3forms.com/submit', w3)
-          .then(r => r.json())
-          .then(d => {
-            // 200 с success: false — это отказ (лимит, неподтверждённый
-            // адрес), а не отправка.
-            if (!d || d.success !== true) throw new Error((d && d.message) || 'web3forms');
-          });
-      });
-    }
-
-    if (!channels.length) { this.openMailto(); return; }
-
-    // Пробуем по очереди, пока какой-нибудь не сработает.
-    const attempt = (i) => {
-      if (i >= channels.length) {
-        this.setState(
-          { sending: false, sendError: 'Письмо не ушло — открываем почтовый клиент, текст брифа в буфере.' },
-          this.openMailto
-        );
-        return;
-      }
-      channels[i]().then(
-        () => this.setState({ sending: false, sent: true }),
-        () => attempt(i + 1)
-      );
-    };
-    attempt(0);
-  };
-
   openMailto = () => {
-    const full = this.briefText();
-    this.copyToClipboard(full);
+    this.copyToClipboard(this.briefText());
     try { window.location.href = this.mailtoHref(); } catch (e) {}
     this.setState({ sending: false, mailed: true });
   };
@@ -501,31 +989,25 @@ class Component extends DCLogic {
   }
 
   mailtoHref() {
-    const to = this.sendConfig().emailTo;
-    const full = this.state.briefDone ? this.briefText() : '';
+    const full = this.briefText();
     // mailto в Windows/Outlook обрезается примерно на 2000 символах — режем сами.
     const body = full.length > 1600
       ? full.slice(0, 1600) + '\n\n…(полный текст брифа скопирован в буфер обмена — вставьте его сюда)'
       : full;
-    return 'mailto:' + to
+    return 'mailto:' + this.sendConfig().emailTo
       + '?subject=' + encodeURIComponent(this.briefSubject())
       + '&body=' + encodeURIComponent(body);
   }
 
-  // В iframe (вставка в Тильду) navigator.clipboard существует, но
-  // writeText отклоняется permissions policy. Поэтому сначала пробуем
-  // execCommand через временную textarea — он в iframe работает, — и только
-  // затем асинхронный API. Прежний код считал отказ writeText успехом
-  // (.then(done, done)) и показывал «Скопировано ✓», ничего не скопировав.
+  // В iframe navigator.clipboard есть, но writeText отклоняется permissions
+  // policy. Поэтому сначала execCommand через временную textarea, затем API.
   copyToClipboard(text) {
     const ta = document.createElement('textarea');
     ta.value = text;
-    ta.setAttribute('readonly', '');
     ta.style.cssText = 'position:fixed;top:-1000px;left:-1000px;opacity:0';
     document.body.appendChild(ta);
     let ok = false;
     try {
-      ta.removeAttribute('readonly');
       ta.select();
       ta.setSelectionRange(0, ta.value.length);
       ok = document.execCommand('copy');
@@ -546,11 +1028,10 @@ class Component extends DCLogic {
     });
   };
 
-  componentWillUnmount() { clearTimeout(this._t); }
+
 
   copyEmail = () => {
-    const email = this.sendConfig().emailTo;
-    this.copyToClipboard(email).then(() => {
+    this.copyToClipboard(this.sendConfig().emailTo).then(() => {
       this.setState({ copied: true });
       clearTimeout(this._t);
       this._t = setTimeout(() => this.setState({ copied: false }), 2000);
@@ -566,7 +1047,7 @@ class Component extends DCLogic {
       (!q || (t.name + ' ' + t.what + ' ' + t.tags.join(' ')).toLowerCase().indexOf(q) >= 0));
   }
 
-  renderVals() {
+  _rv() {
     const { cat, goal } = this.state;
     const all = CATS;
     const active = all.find(c => c.id === cat) || all[0];
@@ -577,11 +1058,13 @@ class Component extends DCLogic {
       label: c.label,
       count: n,
       hasCount: n > 0,
-      color: c.id === cat ? '#FFFFFF' : (n === 0 ? '#B4B4BC' : '#0B0B0C'),
-      bg: c.id === cat ? '#0B0B0C' : '#FFFFFF',
+      num: String(CATS.indexOf(c) + 1).padStart(2, '0'),
+      numColor: c.id === cat ? PINK : '#A8A8B0',
+      color: c.id === cat ? '#0A0A0B' : (n === 0 ? '#55555D' : '#E4E4E7'),
+      bg: c.id === cat ? '#F4F4F5' : 'transparent',
       line: c.id === cat ? '#0B0B0C' : (n === 0 ? '#EDEDEF' : '#D8D8DE'),
       countBg: c.id === cat ? PINK : '#F4F4F6',
-      countColor: c.id === cat ? '#FFFFFF' : '#A8A8B0',
+      countColor: c.id === cat ? '#52525B' : '#A1A1AA',
       onClick: () => this.setState(s => ({
         cat: c.id,
         goal: TOOLS.some(t => t.cat === c.id && t.tags.indexOf(s.goal) >= 0) ? s.goal : 'all'
@@ -595,27 +1078,30 @@ class Component extends DCLogic {
 
     const goals = [{ id: 'all', label: 'Все задачи' }].concat(available.map(g => ({ id: g, label: g }))).map(g => ({
       label: g.label,
-      bg: g.id === goal ? '#0B0B0C' : '#FFFFFF',
-      color: g.id === goal ? '#FFFFFF' : '#55555F',
-      border: g.id === goal ? '#0B0B0C' : '#E4E4E8',
+      bg: g.id === goal ? '#F4F4F5' : '#323238',
+      color: g.id === goal ? '#0A0A0B' : '#E4E4E7',
+      border: g.id === goal ? '#F4F4F5' : '#323238',
       onClick: () => this.setState({ goal: g.id })
     }));
 
     const searching = this.state.q.trim().length > 0;
     const source = searching ? this.visible('all') : this.visible(cat);
-    const items = source.map(t => ({
+    const items = source.map((t, i) => ({
       name: t.name,
       what: t.what,
       tags: t.tags,
       price: t.price,
       onPick: () => this.togglePick(t.name),
+      idx: String(i + 1).padStart(2, '0'),
+      rowBg: this.state.picked.indexOf(t.name) >= 0 ? 'rgba(224,0,110,0.22)' : '#1C1C1F',
+      rowMark: this.state.picked.indexOf(t.name) >= 0 ? PINK : 'transparent',
       pickLabel: this.state.picked.indexOf(t.name) >= 0 ? 'Выбрано ✓' : 'Выбрать',
-      pickBg: this.state.picked.indexOf(t.name) >= 0 ? '#0B0B0C' : '#FFFFFF',
-      pickFg: this.state.picked.indexOf(t.name) >= 0 ? '#FFFFFF' : '#0B0B0C',
-      pickBorder: this.state.picked.indexOf(t.name) >= 0 ? '#0B0B0C' : '#D8D8DE',
+      pickBg: this.state.picked.indexOf(t.name) >= 0 ? PINK : '#323238',
+      pickFg: this.state.picked.indexOf(t.name) >= 0 ? '#FFFFFF' : '#F4F4F5',
+      pickBorder: this.state.picked.indexOf(t.name) >= 0 ? PINK : '#F2F2F4',
       note: t.cat === 'smm' ? 'Продвижение на минимальную сумму 100 000 ₸ на 3 дня (1 ролик).' : '',
       hasNote: t.cat === 'smm',
-      priceColor: /\d/.test(t.price) ? '#0B0B0C' : '#C2005F',
+      priceColor: /\d/.test(t.price) ? '#FAFAFA' : '#FF4D9D',
       catShort: (CATS.find(c => c.id === t.cat) || {}).short || ''
     }));
 
@@ -635,17 +1121,35 @@ class Component extends DCLogic {
         options: (f.radio || []).map(o => ({
           label: o,
           dot: this.state.brief[f.id] === o ? '#FF0080' : 'transparent',
+          bg: this.state.brief[f.id] === o ? PINK : '#323238',
+          border: this.state.brief[f.id] === o ? PINK : '#F2F2F4',
+          fg: this.state.brief[f.id] === o ? '#FFFFFF' : '#F4F4F5',
           onClick: () => this.setField(f.id, o)
         }))
       })),
       stepLabel: (this.state.step + 1) + '/' + STEPS.length,
+      stepNum: this.state.briefDone ? '✓' : String(this.state.step + 1).padStart(2, '0'),
+      stepTotal: '/' + String(STEPS.length).padStart(2, '0'),
+      stepTitle: this.state.briefDone ? 'Бриф готов' : ['Кампания', 'Цель', 'Сроки', 'Бюджет и экономика', 'Аудитория и гео', 'Каналы и контент', 'Оффер и сообщение', 'Финальные детали'][this.state.step],
+      stepList: ['Кампания', 'Цель', 'Сроки', 'Бюджет и экономика', 'Аудитория и гео', 'Каналы и контент', 'Оффер и сообщение', 'Финальные детали'].map((t, i) => ({
+        label: t,
+        num: this.state.briefDone || i < this.state.step ? '✓' : String(i + 1),
+        numBg: this.state.briefDone || i < this.state.step ? PINK : (i === this.state.step ? '#F4F4F5' : 'transparent'),
+        numFg: (this.state.briefDone || i < this.state.step) ? '#FFFFFF' : (i === this.state.step ? '#0A0A0B' : '#8E8E96'),
+        numBorder: this.state.briefDone || i < this.state.step ? PINK : (i === this.state.step ? '#F4F4F5' : '#3A3A40'),
+        color: i === this.state.step && !this.state.briefDone ? '#F4F4F5' : '#A1A1A9',
+        weight: i === this.state.step && !this.state.briefDone ? '700' : '500',
+        rowBg: i === this.state.step && !this.state.briefDone ? '#323238' : 'transparent',
+        onClick: () => this.setState({ step: i, briefDone: false })
+      })),
+      stepDots: STEPS.map((_, i) => ({ bg: (this.state.briefDone || i <= this.state.step) ? PINK : '#2A2A31' })),
       progress: Math.round((this.state.briefDone ? STEPS.length : this.state.step + 1) / STEPS.length * 100) + '%',
       briefOpen: !this.state.briefDone,
       briefDone: this.state.briefDone,
       briefText: this.state.briefDone ? this.briefText() : '',
-      backColor: this.state.step === 0 ? '#D8D8DE' : '#8A8A93',
+      backColor: '#E4E4E7',
       nextLabel: this.state.step === STEPS.length - 1 ? 'Отправить' : 'Далее →',
-      onBack: () => this.setState(s => ({ step: Math.max(0, s.step - 1) })),
+      onBack: () => this.state.step === 0 ? (this.setState({ view: 'catalog' }), window.scrollTo(0, 0)) : this.setState(s => ({ step: s.step - 1 })),
       onNext: () => this.setState(s => s.step === STEPS.length - 1 ? { briefDone: true } : { step: s.step + 1 }),
       onBriefEdit: () => this.setState({ briefDone: false, sent: false, mailed: false, sendError: '' }),
       onCopyBrief: () => {
@@ -673,12 +1177,62 @@ class Component extends DCLogic {
         : this.state.mailed ? 'Открыли письмо ✓'
         : this.state.sending ? 'Отправляем…'
         : 'Отправить бриф',
-      sendBg: (this.state.sent || this.state.mailed) ? '#0B0B0C' : '#FF0080',
+      sendBg: (this.state.sent || this.state.mailed) ? '#323237' : '#FF0080',
       sendError: this.state.sendError || '',
       hasSendError: !!this.state.sendError,
       briefBtnLabel: this.state.briefCopied ? 'Скопировано ✓' : 'Скопировать бриф',
-      briefBtnBg: this.state.briefCopied ? '#FF0080' : '#0B0B0C',
+      briefBtnBg: this.state.briefCopied ? '#FF0080' : '#323238',
       hasSelection: false,
+      hasPicked: this.state.picked.length > 0,
+      noPicked: this.state.picked.length === 0,
+      isCatalog: this.state.view === 'catalog',
+      isBrief: this.state.view === 'brief',
+      preShow: !this.state.preGone,
+      pxFooter: this._ftEl || (this._ftEl = this.buildFooter()),
+      ticker: this._tk || (this._tk = this.buildTicker()),
+      preLabel: ['Осведомленность', 'Интерес', 'Решение', 'Действие', 'Покупка'][Math.max(0, Math.min(4, (this.state.pre || 1) - 1))],
+      preCanvas: this._preEl || (this._preEl = this.buildPre()),
+      preOpacity: this.state.preHide ? 0 : 1,
+      prePE: this.state.preHide ? 'none' : 'auto',
+      funnel: ['Осведомлённость', 'Интерес', 'Решение', 'Действие', 'Покупка'].map((label, i) => {
+        const on = (this.state.pre || 0) > i;
+        return { label, top: (i * 44 / 216 * 100) + '%', h: (40 / 216 * 100) + '%', fg: on ? '#FFFFFF' : '#09090B' };
+      }),
+      formRows: this.state.formOpen ? '1fr' : '0fr',
+      formOpacity: this.state.formOpen ? 1 : 0,
+      formOverflow: this.state.formSettled ? 'visible' : 'hidden',
+      openForm: ev => {
+        if (ev) ev.preventDefault();
+        const go = () => { const m = this._mainRef && this._mainRef.current; if (m) window.scrollTo({ top: m.getBoundingClientRect().top + window.scrollY - 16, behavior: 'smooth' }); };
+        if (this.state.formOpen) { go(); return; }
+        this.setState({ formOpen: true });
+        setTimeout(go, 120);
+        setTimeout(() => { this.setState({ formSettled: true }); this.syncAlign(); }, 850);
+      },
+      goBrief: () => { this.setState({ view: 'brief' }); window.scrollTo(0, 0); },
+      goCatalog: () => { this.setState({ view: 'catalog' }); window.scrollTo(0, 0); },
+      segCatBg: this.state.view === 'catalog' ? '#F4F4F5' : 'transparent',
+      segCatFg: this.state.view === 'catalog' ? '#09090B' : '#A1A1AA',
+      segBriefBg: this.state.view === 'brief' ? '#F4F4F5' : 'transparent',
+      segBriefFg: this.state.view === 'brief' ? '#0A0A0A' : (this.state.picked.length ? '#E4E4E7' : '#8B8B94'),
+      barNames: this.state.picked.length ? this.state.picked.slice(0, 3).join(' · ') + (this.state.picked.length > 3 ? ' и ещё ' + (this.state.picked.length - 3) : '') : 'Отметьте услуги, которые хотите запустить',
+      barTitle: this.state.picked.length ? 'Выбрано: ' + this.state.picked.length : 'Ничего не выбрано',
+      barBtnBg: this.state.picked.length ? PINK : '#3A3A40',
+      barBtnFg: this.state.picked.length ? '#FFFFFF' : '#A1A1AA',
+      basket: this.state.picked.map(n => ({ name: n, onRemove: () => this.togglePick(n) })),
+      ...(() => {
+        const done1 = this.state.picked.length > 0, done2 = this.state.briefDone;
+        return {
+          s1Bg: done1 ? 'transparent' : '#F4F4F5', s1Fg: done1 ? '#F4F4F5' : '#0A0A0B',
+          s1Num: done1 ? '✓' : '1', s1NumBg: PINK, s1NumFg: '#FFFFFF',
+          s2Bg: done1 && !done2 ? '#F4F4F5' : 'transparent', s2Fg: done1 && !done2 ? '#0A0A0B' : (done2 ? '#F4F4F5' : '#8E8E96'),
+          s2Num: done2 ? '✓' : '2', s2NumBg: done1 ? PINK : '#323237', s2NumFg: done1 ? '#FFFFFF' : '#8E8E96',
+          ctaLabel: done1 ? 'Далее: заполнить бриф →' : 'Отметьте хотя бы одну услугу',
+          ctaHref: done1 ? '#brief' : '#catalog',
+          ctaBg: done1 ? PINK : '#323238', ctaFg: done1 ? '#FFFFFF' : '#8E8E96'
+        };
+      })(),
+      pickedWord: (n => (n % 10 === 1 && n % 100 !== 11) ? 'услуга' : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14)) ? 'услуги' : 'услуг')(this.state.picked.length),
       selectedCount: this.state.picked.length,
       selectionText: this.selectionText(),
       taRef: el => { this._ta = el; },
@@ -687,17 +1241,18 @@ class Component extends DCLogic {
       listBtnLabel: this.state.listCopied ? 'Скопировано ✓' : 'Скопировать список',
       listBtnBg: this.state.listCopied ? '#FF0080' : '#0B0B0C',
       listBtnFg: this.state.listCopied ? '#0B0B0C' : '#FFFFFF',
-      copyLabel: this.state.copied ? 'Скопировано ✓' : 'aidyn.argyn@mechta.kz',
-      copyBg: this.state.copied ? '#FFFFFF' : PINK,
-      copyFg: '#0B0B0C',
-      headLabel: this.state.copied ? 'Скопировано ✓' : 'aidyn.argyn@mechta.kz',
-      headBg: this.state.copied ? '#FF0080' : '#0B0B0C',
+      copyLabel: this.state.copied ? 'Скопировано ✓' : this.sendConfig().emailTo,
+      copyBg: this.state.copied ? '#F4F4F5' : PINK,
+      copyFg: this.state.copied ? '#0B0B0C' : '#FFFFFF',
+      headLabel: this.state.copied ? 'Скопировано ✓' : this.sendConfig().emailTo,
+      headBg: this.state.copied ? '#FF0080' : '#323238',
       copyScale: this.state.copied ? 1.04 : 1,
       toastOpacity: this.state.copied ? 1 : 0,
       toastY: this.state.copied ? '0px' : '8px',
       query: this.state.q,
       onQuery: e => this.setState({ q: e.target.value }),
       noResults: items.length === 0,
+      activeNum: searching ? '—' : String(CATS.indexOf(active) + 1).padStart(2, '0'),
       activeTitle: searching ? 'Результаты поиска' : active.label,
       activeBlurb: searching
         ? 'Найдено ' + items.length + ' инструментов по запросу «' + this.state.q.trim() + '» во всех категориях. Очистите поиск, чтобы вернуться к категориям.'
