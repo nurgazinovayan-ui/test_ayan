@@ -277,5 +277,45 @@ soft_group([
      "        h('source', { src: './hero-video.webm', type: 'video/webm' }))"),
 ], "видео хиро: MP4 для iPhone")
 
+# Пиксельные заголовки на телефонах. Шаг «пикселя» был задан константами
+# в CSS-пикселях (логотип 6, «Заполнить бриф» и руки 5, подзаголовки 3), а на
+# телефоне текст и логотип в 2–3 раза мельче — буквы складывались из 6–8
+# рядов точек и не читались. Шаг теперь зависит от ширины экрана; от 768 px —
+# как в дизайне. Заодно кнопка «Заполнить бриф» с руками была 513 px при
+# экране 390 и обрезалась: на телефонах руки по размеру мелкой сетки, текст
+# масштабируется с шириной. Всё одной группой: размер рук в CSS рассчитан
+# под новый шаг сетки.
+soft_group([
+    ("      const LC = 6, logoImg = host.querySelector('img[data-px-logo]');",
+     "      let LC = 6, LL = 5, WS = 3;\n      const logoImg = host.querySelector('img[data-px-logo]');"),
+    ("      const LL = 5;\n", ""),
+    ("const w = Math.ceil(br.width), hh = Math.ceil(br.height), WS = 3;",
+     "const w = Math.ceil(br.width), hh = Math.ceil(br.height);"),
+    ("          cols = Math.ceil(W / CELL); rows = Math.ceil(H / CELL); en = new Float32Array(cols * rows);\n",
+     "          cols = Math.ceil(W / CELL); rows = Math.ceil(H / CELL); en = new Float32Array(cols * rows);\n"
+     "          // На узких экранах логотип и текст в 2–3 раза мельче, а «пиксель» был\n"
+     "          // прежним — буквы складывались из 6–8 рядов точек и не читались.\n"
+     "          // Шаг сетки уменьшается вместе с экраном; от 768 px — как в дизайне.\n"
+     "          const fine = W < 600 ? [3, 3, 2] : W < 768 ? [4, 4, 2] : [6, 5, 3];\n"
+     "          if (fine[0] !== LC || fine[1] !== LL || fine[2] !== WS) { LC = fine[0]; LL = fine[1]; WS = fine[2]; lgKey = ''; }\n"),
+    ("const grp = lg[j + 3], sz = grp === 4 ? 3 : grp ? LL : LC;",
+     "const grp = lg[j + 3], sz = grp === 4 ? WS : grp ? LL : LC;"),
+    ("let sd = grp === 4 ? Math.max(1, 2.4 - e) : grp ? LL - 1 : s;",
+     "let sd = grp === 4 ? Math.max(1, WS - 0.6 - e) : grp ? LL - 1 : s;"),
+    ("  html, body { margin: 0; padding: 0; background: #09090B; color-scheme: dark; scroll-behavior: smooth; }",
+     "  html, body { margin: 0; padding: 0; background: #09090B; color-scheme: dark; scroll-behavior: smooth; }\n"
+     "  /* Телефоны: кнопка «Заполнить бриф» с руками была 513 px при экране 390 —\n"
+     "     руки обрезались по краям. Руки — по размеру мелкой сетки (14x9 точек),\n"
+     "     текст масштабируется с шириной экрана. */\n"
+     "  @media (max-width: 599px) {\n"
+     "    [data-px-arrow] { width: 42px !important; height: 27px !important; }\n"
+     "    a[aria-label=\"Заполнить бриф\"] { gap: 12px !important; }\n"
+     "    [data-px-text] { font-size: clamp(20px, 6.4vw, 32px) !important; }\n"
+     "  }\n"
+     "  @media (min-width: 600px) and (max-width: 767px) {\n"
+     "    [data-px-arrow] { width: 56px !important; height: 36px !important; }\n"
+     "  }"),
+], "пиксельные заголовки и кнопка «Заполнить бриф» на телефонах")
+
 io.open(p, "w", encoding="utf-8").write(s)
 print("перенос выполнен")

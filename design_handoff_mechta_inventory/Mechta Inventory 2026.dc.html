@@ -13,6 +13,17 @@
   @font-face { font-family: 'Forma DJR'; src: url('fonts/FormaDJRCyrillicDisplay-Bold.otf') format('opentype'); font-weight: 600 900; font-display: swap; }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: #09090B; color-scheme: dark; scroll-behavior: smooth; }
+  /* Телефоны: кнопка «Заполнить бриф» с руками была 513 px при экране 390 —
+     руки обрезались по краям. Руки — по размеру мелкой сетки (14x9 точек),
+     текст масштабируется с шириной экрана. */
+  @media (max-width: 599px) {
+    [data-px-arrow] { width: 42px !important; height: 27px !important; }
+    a[aria-label="Заполнить бриф"] { gap: 12px !important; }
+    [data-px-text] { font-size: clamp(20px, 6.4vw, 32px) !important; }
+  }
+  @media (min-width: 600px) and (max-width: 767px) {
+    [data-px-arrow] { width: 56px !important; height: 36px !important; }
+  }
   body { font-family: 'Forma DJR', -apple-system, sans-serif; letter-spacing: 0.01em; color: #FAFAFA; -webkit-font-smoothing: antialiased; }
   a { color: #FF4D9D; text-decoration: none; }
   a:hover { color: #FFFFFF; }
@@ -440,13 +451,13 @@ class Component extends DCLogic {
       const ctx = cv.getContext('2d');
       const host = cv.parentElement;
       let W = 0, H = 0, cols = 0, rows = 0, en = null, mx = -1e4, my = -1e4, dpr = 1;
-      const LC = 6, logoImg = host.querySelector('img[data-px-logo]');
+      let LC = 6, LL = 5, WS = 3;
+      const logoImg = host.querySelector('img[data-px-logo]');
       let lg = null, lgKey = '', lgEn = null, tb = null;
       const src = new Image(); let srcOk = false;
       src.onload = () => { srcOk = true; lgKey = ''; };
       if (logoImg) src.src = logoImg.currentSrc || logoImg.src;
       const HAND = ['.....XXXXXXXXX', '....XXXXXXXXXX', 'XX.XXXXXX.....', 'XX.XXXXXXXX...', 'XX.XXXXX......', 'XX.XXXXXXXX...', 'XX.XXXXX......', 'XX.XXXXXXX....', 'XX..XXXXX.....'];
-      const LL = 5;
       const buildLogo = () => {
         if (!logoImg || !srcOk) return;
         const cr = cv.getBoundingClientRect(), r = logoImg.getBoundingClientRect();
@@ -480,7 +491,7 @@ class Component extends DCLogic {
         }
         host.querySelectorAll('[data-px-word]').forEach(el => {
           const br = el.getBoundingClientRect(); if (!br.width) return;
-          const w = Math.ceil(br.width), hh = Math.ceil(br.height), WS = 3;
+          const w = Math.ceil(br.width), hh = Math.ceil(br.height);
           const oc = document.createElement('canvas'); oc.width = w; oc.height = hh;
           const ox = oc.getContext('2d'), cs = getComputedStyle(el);
           ox.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
@@ -517,6 +528,11 @@ class Component extends DCLogic {
           W = w; H = hh; dpr = Math.min(2, window.devicePixelRatio || 1);
           el.width = W * dpr; el.height = H * dpr;
           cols = Math.ceil(W / CELL); rows = Math.ceil(H / CELL); en = new Float32Array(cols * rows);
+          // На узких экранах логотип и текст в 2–3 раза мельче, а «пиксель» был
+          // прежним — буквы складывались из 6–8 рядов точек и не читались.
+          // Шаг сетки уменьшается вместе с экраном; от 768 px — как в дизайне.
+          const fine = W < 600 ? [3, 3, 2] : W < 768 ? [4, 4, 2] : [6, 5, 3];
+          if (fine[0] !== LC || fine[1] !== LL || fine[2] !== WS) { LC = fine[0]; LL = fine[1]; WS = fine[2]; lgKey = ''; }
         }
         const t = ts / 1000, R = 50 - 36 * hovT;
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -545,7 +561,7 @@ class Component extends DCLogic {
           const LR = 40 - 27 * hovT;
           const step = Math.floor(t * 5) % 4, bobT = [0, -1, -1, 0][step] * LL, poke = [0, 1, 2, 1][step] * LL;
           for (let j = 0, k = 0; j < lg.length; j += 4, k++) {
-            const grp = lg[j + 3], sz = grp === 4 ? 3 : grp ? LL : LC;
+            const grp = lg[j + 3], sz = grp === 4 ? WS : grp ? LL : LC;
             const px = lg[j] + (grp === 2 ? poke : grp === 3 ? -poke : 0), py = lg[j + 1] + (grp === 1 ? bobT : 0), dx = px - mx, dy = py - my, d = Math.sqrt(dx * dx + dy * dy);
             const fo = d < LR ? 1 - d / LR : 0, target = fo * fo * (3 - 2 * fo);
             lgEn[k] += (target - lgEn[k]) * 0.18;
@@ -556,7 +572,7 @@ class Component extends DCLogic {
             const r = Math.round(255), g = Math.round(255 - 178 * e), b = Math.round(255 - 98 * e);
             ctx.fillStyle = 'rgba(' + r + ',' + g + ',' + b + ',' + (lg[j + 2] * fl).toFixed(3) + ')';
             const s = sz - 1 - e * 1.5;
-            let sd = grp === 4 ? Math.max(1, 2.4 - e) : grp ? LL - 1 : s;
+            let sd = grp === 4 ? Math.max(1, WS - 0.6 - e) : grp ? LL - 1 : s;
             if (grp === 1) {
               const pk = hovT * (0.5 + 0.5 * Math.sin(t * 7 - lg[j] * 0.015));
               ctx.fillStyle = 'rgba(255,' + Math.round(255 - 178 * pk) + ',' + Math.round(255 - 98 * pk) + ',1)';
