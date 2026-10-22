@@ -2367,7 +2367,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
     </div>
   </section>
 
-  <aside id="brief" ref="{{ asideRef }}" style="flex: 0 1 400px; min-width: 320px; max-width: 100%; scroll-margin-top: 24px; margin-top: {{ briefOffset }}">
+  <aside id="brief" ref="{{ asideRef }}" style="flex: 0 1 400px; min-width: min(320px, 100%); max-width: 100%; scroll-margin-top: 24px; margin-top: {{ briefOffset }}">
     <div style="position: sticky; top: 88px; max-height: calc(100vh - 104px); overflow-y: auto; border: 1px solid #27272A; border-radius: 12px; background: #232327; box-shadow: 0 1px 2px rgba(0,0,0,0.5), 0 24px 60px -30px rgba(224,0,110,0.35); display: flex; flex-direction: column">
 
       <div style="padding: 24px 24px 20px; display: flex; flex-direction: column; gap: 14px; border-bottom: 1px solid #333338; border-color: #4C4C4CEB; position: static">
@@ -2864,7 +2864,9 @@ class Component extends DCLogic {
       if (vid && vid.readyState >= 2) go(); else if (vid) { vid.addEventListener('loadeddata', go, { once: true }); setTimeout(() => { if (!t0) go(); }, 2500); } else go();
     };
     return h(React.Fragment, null,
-      h('video', { src: './hero-video.webm', autoPlay: true, muted: true, loop: true, playsInline: true, 'aria-hidden': true, style: { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block', pointerEvents: 'none', opacity: 0.9, filter: 'brightness(0.92) saturate(1.15)' } }),
+      h('video', { autoPlay: true, muted: true, loop: true, playsInline: true, 'aria-hidden': true, style: { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block', pointerEvents: 'none', opacity: 0.9, filter: 'brightness(0.92) saturate(1.15)' } },
+        h('source', { src: './hero-video.mp4', type: 'video/mp4' }),
+        h('source', { src: './hero-video.webm', type: 'video/webm' })),
       h('canvas', { ref: reveal, 'aria-hidden': true, style: { position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block', pointerEvents: 'none' } }),
       h('div', { 'aria-hidden': true, style: { position: 'absolute', inset: 0, pointerEvents: 'none', background: 'linear-gradient(to bottom, rgba(9,9,11,0.2), rgba(9,9,11,0) 40%, rgba(9,9,11,0.85))' } }),
       h('canvas', { ref: start, 'aria-hidden': true, style: { position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block',

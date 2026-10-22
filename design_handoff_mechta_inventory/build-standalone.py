@@ -93,7 +93,11 @@ INLINE_ASSETS = [
     ('src="./mechta-logo-small.svg"', "mechta-logo-small.svg", "image/svg+xml", 'src="%s"'),
     ("src: './ticker.svg'", "ticker.svg", "image/svg+xml", "src: '%s'"),
 ]
-SIDE_FILES = ["hero-video.webm"]
+# MP4 (H.264) идёт первым источником: его аппаратно декодирует любой iPhone.
+# Исходный WebM — VP9 2206 px с объявленным, но не используемым альфа-каналом:
+# Safari WebM с альфой не поддерживает, а VP9 такого размера на старых
+# iPhone декодируется программно. WebM остаётся запасным для браузеров без H.264.
+SIDE_FILES = ["hero-video.mp4", "hero-video.webm"]
 
 # Настройки отправки живут отдельно от вёрстки: при новой версии дизайна
 # их не нужно вводить заново — сборка подставит их сама.

@@ -252,5 +252,30 @@ soft_group([
      'min-height: calc(clamp(480px, 72vh, 760px) + 50px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 114px 32px 64px"'),
 ], "бегущая строка без фона (строка поверх видео + отступ хиро)")
 
+# Панель брифа на узких телефонах (320 px): min-width 320px плюс отступы
+# страницы по 32 px не помещались — правый край панели и кнопка «Далее»
+# уходили за экран. min(320px, 100%) не даёт панели стать шире экрана.
+soft_group([
+    ('<aside id="brief" ref="{{ asideRef }}" style="flex: 0 1 400px; min-width: 320px; max-width: 100%;',
+     '<aside id="brief" ref="{{ asideRef }}" style="flex: 0 1 400px; min-width: min(320px, 100%); max-width: 100%;'),
+], "панель брифа на экранах 320 px")
+
+# Видео хиро для iPhone: MP4 (H.264) первым источником, исходный WebM —
+# запасным. WebM у дизайнера — VP9 2206 px с объявленным, но не используемым
+# альфа-каналом: Safari WebM с альфой не поддерживает, а VP9 такого размера
+# на старых iPhone декодируется программно. Файл hero-video.mp4 делается из
+# WebM так:
+#   ffmpeg -c:v libvpx-vp9 -i hero-video.webm -an \
+#     -vf "scale=1920:-2:flags=lanczos,format=yuv420p" -c:v libx264 \
+#     -profile:v high -level:v 4.1 -preset slow -crf 23 -movflags +faststart \
+#     hero-video.mp4
+soft_group([
+    ("h('video', { src: './hero-video.webm', autoPlay: true,", "h('video', { autoPlay: true,"),
+    ("filter: 'brightness(0.92) saturate(1.15)' } })",
+     "filter: 'brightness(0.92) saturate(1.15)' } },\n"
+     "        h('source', { src: './hero-video.mp4', type: 'video/mp4' }),\n"
+     "        h('source', { src: './hero-video.webm', type: 'video/webm' }))"),
+], "видео хиро: MP4 для iPhone")
+
 io.open(p, "w", encoding="utf-8").write(s)
 print("перенос выполнен")
