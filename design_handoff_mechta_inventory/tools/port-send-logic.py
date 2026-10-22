@@ -317,5 +317,37 @@ soft_group([
      "  }"),
 ], "пиксельные заголовки и кнопка «Заполнить бриф» на телефонах")
 
+# Большая надпись и «by Mechta.kz» на телефонах. Опирается на предыдущую
+# группу: без мелкой сетки этих фрагментов нет, и группа пропустится сама.
+# Надпись на мелкой сетке просвечивала (точка 2 px в ячейке 3 px — 44 %
+# площади против 69 % в дизайне): на телефонах зазор между точками вдвое
+# меньше и альфа выше. «by Mechta.kz» почти касалась надписи — зазор 7 px
+# против 20 px в дизайне, — опущена на 14 px. От 768 px — как в дизайне.
+soft_group([
+    ("      let LC = 6, LL = 5, WS = 3;\n",
+     "      let LC = 6, LL = 5, WS = 3, LG = 1, LA = 1;\n"),
+    ("          if (fine[0] !== LC || fine[1] !== LL || fine[2] !== WS) { LC = fine[0]; LL = fine[1]; WS = fine[2]; lgKey = ''; }\n",
+     "          if (fine[0] !== LC || fine[1] !== LL || fine[2] !== WS) { LC = fine[0]; LL = fine[1]; WS = fine[2]; lgKey = ''; }\n"
+     "          // Большая надпись на мелкой сетке просвечивала: точка 2 px в ячейке 3 px\n"
+     "          // покрывает 44 % площади против 69 % в дизайне. На телефонах зазор между\n"
+     "          // точками вдвое меньше и альфа выше; от 768 px — как в дизайне.\n"
+     "          LG = W < 768 ? 0.5 : 1; LA = W < 768 ? 1.25 : 1;\n"),
+    ("            const s = sz - 1 - e * 1.5;",
+     "            const s = sz - LG - e * 1.5;"),
+    ("ctx.fillStyle = 'rgba(' + r + ',' + g + ',' + b + ',' + (lg[j + 2] * fl).toFixed(3) + ')';",
+     "ctx.fillStyle = 'rgba(' + r + ',' + g + ',' + b + ',' + Math.min(1, lg[j + 2] * fl * (grp ? 1 : LA)).toFixed(3) + ')';"),
+    ("  @media (min-width: 600px) and (max-width: 767px) {\n"
+     "    [data-px-arrow] { width: 56px !important; height: 36px !important; }\n"
+     "  }",
+     "  @media (min-width: 600px) and (max-width: 767px) {\n"
+     "    [data-px-arrow] { width: 56px !important; height: 36px !important; }\n"
+     "  }\n"
+     "  /* Телефоны: строка «by Mechta.kz» почти касалась большой надписи (зазор 7 px\n"
+     "     против 20 px в дизайне) — отрицательные отступы надписи заданы в vw. */\n"
+     "  @media (max-width: 767px) {\n"
+     "    img[data-px-logo] + div { margin-top: 14px !important; }\n"
+     "  }"),
+], "большая надпись и «by Mechta.kz» на телефонах")
+
 io.open(p, "w", encoding="utf-8").write(s)
 print("перенос выполнен")

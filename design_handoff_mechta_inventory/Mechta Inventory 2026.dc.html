@@ -24,6 +24,11 @@
   @media (min-width: 600px) and (max-width: 767px) {
     [data-px-arrow] { width: 56px !important; height: 36px !important; }
   }
+  /* Телефоны: строка «by Mechta.kz» почти касалась большой надписи (зазор 7 px
+     против 20 px в дизайне) — отрицательные отступы надписи заданы в vw. */
+  @media (max-width: 767px) {
+    img[data-px-logo] + div { margin-top: 14px !important; }
+  }
   body { font-family: 'Forma DJR', -apple-system, sans-serif; letter-spacing: 0.01em; color: #FAFAFA; -webkit-font-smoothing: antialiased; }
   a { color: #FF4D9D; text-decoration: none; }
   a:hover { color: #FFFFFF; }
@@ -451,7 +456,7 @@ class Component extends DCLogic {
       const ctx = cv.getContext('2d');
       const host = cv.parentElement;
       let W = 0, H = 0, cols = 0, rows = 0, en = null, mx = -1e4, my = -1e4, dpr = 1;
-      let LC = 6, LL = 5, WS = 3;
+      let LC = 6, LL = 5, WS = 3, LG = 1, LA = 1;
       const logoImg = host.querySelector('img[data-px-logo]');
       let lg = null, lgKey = '', lgEn = null, tb = null;
       const src = new Image(); let srcOk = false;
@@ -533,6 +538,10 @@ class Component extends DCLogic {
           // Шаг сетки уменьшается вместе с экраном; от 768 px — как в дизайне.
           const fine = W < 600 ? [3, 3, 2] : W < 768 ? [4, 4, 2] : [6, 5, 3];
           if (fine[0] !== LC || fine[1] !== LL || fine[2] !== WS) { LC = fine[0]; LL = fine[1]; WS = fine[2]; lgKey = ''; }
+          // Большая надпись на мелкой сетке просвечивала: точка 2 px в ячейке 3 px
+          // покрывает 44 % площади против 69 % в дизайне. На телефонах зазор между
+          // точками вдвое меньше и альфа выше; от 768 px — как в дизайне.
+          LG = W < 768 ? 0.5 : 1; LA = W < 768 ? 1.25 : 1;
         }
         const t = ts / 1000, R = 50 - 36 * hovT;
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -570,8 +579,8 @@ class Component extends DCLogic {
             let ox = 0, oy = 0;
             if ((!grp || grp === 4) && e > 0.01 && d > 0.001) { const push = e * e * 22; ox = dx / d * push; oy = dy / d * push; }
             const r = Math.round(255), g = Math.round(255 - 178 * e), b = Math.round(255 - 98 * e);
-            ctx.fillStyle = 'rgba(' + r + ',' + g + ',' + b + ',' + (lg[j + 2] * fl).toFixed(3) + ')';
-            const s = sz - 1 - e * 1.5;
+            ctx.fillStyle = 'rgba(' + r + ',' + g + ',' + b + ',' + Math.min(1, lg[j + 2] * fl * (grp ? 1 : LA)).toFixed(3) + ')';
+            const s = sz - LG - e * 1.5;
             let sd = grp === 4 ? Math.max(1, WS - 0.6 - e) : grp ? LL - 1 : s;
             if (grp === 1) {
               const pk = hovT * (0.5 + 0.5 * Math.sin(t * 7 - lg[j] * 0.015));
