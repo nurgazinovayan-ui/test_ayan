@@ -456,7 +456,7 @@ class Component extends DCLogic {
       const ctx = cv.getContext('2d');
       const host = cv.parentElement;
       let W = 0, H = 0, cols = 0, rows = 0, en = null, mx = -1e4, my = -1e4, dpr = 1;
-      let LC = 6, LL = 5, WS = 3, LG = 1, LA = 1;
+      let LC = 6, LL = 5, WS = 3, LG = 1, LA = 1, TG = 1;
       const logoImg = host.querySelector('img[data-px-logo]');
       let lg = null, lgKey = '', lgEn = null, tb = null;
       const src = new Image(); let srcOk = false;
@@ -538,10 +538,11 @@ class Component extends DCLogic {
           // Шаг сетки уменьшается вместе с экраном; от 768 px — как в дизайне.
           const fine = W < 600 ? [3, 3, 2] : W < 768 ? [4, 4, 2] : [6, 5, 3];
           if (fine[0] !== LC || fine[1] !== LL || fine[2] !== WS) { LC = fine[0]; LL = fine[1]; WS = fine[2]; lgKey = ''; }
-          // Большая надпись на мелкой сетке просвечивала: точка 2 px в ячейке 3 px
-          // покрывает 44 % площади против 69 % в дизайне. На телефонах зазор между
-          // точками вдвое меньше и альфа выше; от 768 px — как в дизайне.
-          LG = W < 768 ? 0.5 : 1; LA = W < 768 ? 1.25 : 1;
+          // Большая надпись и «Заполнить бриф» — ярче и белее, на всех экранах:
+          // точки крупнее относительно ячейки (в дизайне зазор 1 px, и сквозь
+          // буквы просвечивало видео, на мелкой сетке телефона особенно), у
+          // надписи альфа без провалов от мерцания (было до 0,76).
+          LG = W < 768 ? 0.35 : 0.6; LA = 1.5; TG = W < 768 ? 0.5 : 0.6;
         }
         const t = ts / 1000, R = 50 - 36 * hovT;
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -585,7 +586,7 @@ class Component extends DCLogic {
             if (grp === 1) {
               const pk = hovT * (0.5 + 0.5 * Math.sin(t * 7 - lg[j] * 0.015));
               ctx.fillStyle = 'rgba(255,' + Math.round(255 - 178 * pk) + ',' + Math.round(255 - 98 * pk) + ',1)';
-              sd = LL - 1 + pk * 1.2;
+              sd = LL - TG + pk * 1.2;
             } else if (grp === 2 || grp === 3) {
               const pk = hovT * (0.5 + 0.5 * Math.sin(t * 7));
               ctx.fillStyle = 'rgba(255,' + Math.round(77 + 60 * pk) + ',' + Math.round(157 + 40 * pk) + ',' + Math.max(fl, pk).toFixed(3) + ')';
