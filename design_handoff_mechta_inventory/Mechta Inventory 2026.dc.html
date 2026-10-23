@@ -13,16 +13,17 @@
   @font-face { font-family: 'Forma DJR'; src: url('fonts/FormaDJRCyrillicDisplay-Bold.otf') format('opentype'); font-weight: 600 900; font-display: swap; }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: #09090B; color-scheme: dark; scroll-behavior: smooth; }
-  /* Телефоны: кнопка «Заполнить бриф» с руками была 513 px при экране 390 —
-     руки обрезались по краям. Руки — по размеру мелкой сетки (14x9 точек),
-     текст масштабируется с шириной экрана. */
-  @media (max-width: 599px) {
-    [data-px-arrow] { width: 42px !important; height: 27px !important; }
-    a[aria-label="Заполнить бриф"] { gap: 12px !important; }
-    [data-px-text] { font-size: clamp(20px, 6.4vw, 32px) !important; }
-  }
-  @media (min-width: 600px) and (max-width: 767px) {
+  /* Телефоны и планшеты до 768 px: «Заполнить бриф» в две строки и крупнее
+     (в одну строку с руками она не помещалась в ширину экрана). Руки — по
+     размеру сетки 4 px (14x9 точек). Отрисовка точек переносит строки по
+     ширине блока; width: min-content ставит каждое слово на свою строку. */
+  @media (max-width: 767px) {
     [data-px-arrow] { width: 56px !important; height: 36px !important; }
+    a[aria-label="Заполнить бриф"] { gap: 8px !important; padding-left: 0 !important; padding-right: 0 !important; }
+    /* Кнопка в две строки выше — шапке больше места снизу, чтобы кнопка не
+       попадала в плавное затухание нижнего края. */
+    section[style*="clamp(480px"] { padding-bottom: 104px !important; }
+    [data-px-text] { white-space: normal !important; width: min-content; text-align: center; line-height: 1.05 !important; font-size: clamp(28px, 9vw, 44px) !important; }
   }
   /* Телефоны: строка «by Mechta.kz» почти касалась большой надписи (зазор 7 px
      против 20 px в дизайне) — отрицательные отступы надписи заданы в vw. */
@@ -495,7 +496,15 @@ class Component extends DCLogic {
           const ox = oc.getContext('2d'), cs = getComputedStyle(txt);
           ox.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
           if ('letterSpacing' in ox) ox.letterSpacing = cs.letterSpacing;
-          ox.textBaseline = 'middle'; ox.fillStyle = '#fff'; ox.fillText(txt.textContent.trim().toUpperCase(), 0, hh / 2 + 1);
+          ox.textBaseline = 'middle'; ox.fillStyle = '#fff';
+          // Перенос строк по ширине блока, как у самого текста (на телефонах
+          // «Заполнить бриф» в две строки). В одну строку — как в дизайне.
+          const words = txt.textContent.trim().toUpperCase().split(/\s+/), lines = [];
+          let cur = '';
+          words.forEach(wd => { const t = cur ? cur + ' ' + wd : wd; if (cur && ox.measureText(t).width > w + 1) { lines.push(cur); cur = wd; } else cur = t; });
+          if (cur) lines.push(cur);
+          if (lines.length === 1) ox.fillText(lines[0], 0, hh / 2 + 1);
+          else { const lh = hh / lines.length; lines.forEach((ln, li) => ox.fillText(ln, (w - ox.measureText(ln).width) / 2, lh * li + lh / 2 + 1)); }
           const data = ox.getImageData(0, 0, w, hh).data, tx = tr.left - cr.left, ty = tr.top - cr.top;
           tb = { x: tx, y: ty, w: w, h: hh };
           for (let y = 0; y < hh; y += LL) for (let x = 0; x < w; x += LL) {
@@ -547,7 +556,7 @@ class Component extends DCLogic {
           // Шаг сетки уменьшается вместе с экраном; от 768 px — как в дизайне.
           // Телефоны: большая надпись и «Make marketing great again» — на ещё более
           // мелкой сетке (шаг подзаголовка дробный — выборка ниже округляет координаты).
-          const fine = W < 600 ? [2, 3, 1.5] : W < 768 ? [3, 4, 2] : [6, 5, 3];
+          const fine = W < 600 ? [2, 4, 1.5] : W < 768 ? [3, 4, 2] : [6, 5, 3];
           if (fine[0] !== LC || fine[1] !== LL || fine[2] !== WS) { LC = fine[0]; LL = fine[1]; WS = fine[2]; lgKey = ''; }
           // Большая надпись и «Заполнить бриф» — ярче и белее, на всех экранах:
           // точки крупнее относительно ячейки (в дизайне зазор 1 px, и сквозь
