@@ -28,6 +28,15 @@
      против 20 px в дизайне) — отрицательные отступы надписи заданы в vw. */
   @media (max-width: 767px) {
     img[data-px-logo] + div { margin-top: 14px !important; }
+    /* Нижний край видео хиро обрывался ровной линией — плавный переход в фон. */
+    section video { -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 100%); mask-image: linear-gradient(to bottom, #000 55%, transparent 100%); }
+    /* …и пиксельная сетка фона поверх него: её радиальная маска не гасит низ до
+       конца, по последнему ряду квадратов читалась граница. Маски пересекаются. */
+    section canvas[style*="radial-gradient"] {
+      -webkit-mask-image: radial-gradient(ellipse at 50% 45%, #000 55%, transparent 92%), linear-gradient(to bottom, #000 90%, transparent 100%) !important;
+      mask-image: radial-gradient(ellipse at 50% 45%, #000 55%, transparent 92%), linear-gradient(to bottom, #000 90%, transparent 100%) !important;
+      -webkit-mask-composite: source-in; mask-composite: intersect;
+    }
   }
   body { font-family: 'Forma DJR', -apple-system, sans-serif; letter-spacing: 0.01em; color: #FAFAFA; -webkit-font-smoothing: antialiased; }
   a { color: #FF4D9D; text-decoration: none; }
@@ -456,7 +465,7 @@ class Component extends DCLogic {
       const ctx = cv.getContext('2d');
       const host = cv.parentElement;
       let W = 0, H = 0, cols = 0, rows = 0, en = null, mx = -1e4, my = -1e4, dpr = 1;
-      let LC = 6, LL = 5, WS = 3, LG = 1, LA = 1, TG = 1;
+      let LC = 6, LL = 5, WS = 3, LG = 1, LA = 1, TG = 1, WA = 1, WG = 0.6;
       const logoImg = host.querySelector('img[data-px-logo]');
       let lg = null, lgKey = '', lgEn = null, tb = null;
       const src = new Image(); let srcOk = false;
@@ -504,7 +513,7 @@ class Component extends DCLogic {
           ox.textBaseline = 'middle'; ox.fillStyle = '#fff'; ox.fillText(el.textContent.trim(), 0, hh / 2 + 1);
           const data = ox.getImageData(0, 0, w, hh).data, wx = br.left - cr.left, wy = br.top - cr.top;
           for (let y = 0; y < hh; y += WS) for (let x = 0; x < w; x += WS) {
-            if (data[(Math.min(hh - 1, y + 1) * w + Math.min(w - 1, x + 1)) * 4 + 3] > 100) pts.push(wx + x, wy + y, 1, 4);
+            if (data[(Math.min(hh - 1, Math.floor(y + 1)) * w + Math.min(w - 1, Math.floor(x + 1))) * 4 + 3] > 100) pts.push(wx + x, wy + y, 1, 4);
           }
           el.style.color = 'transparent';
         });
@@ -536,13 +545,18 @@ class Component extends DCLogic {
           // На узких экранах логотип и текст в 2–3 раза мельче, а «пиксель» был
           // прежним — буквы складывались из 6–8 рядов точек и не читались.
           // Шаг сетки уменьшается вместе с экраном; от 768 px — как в дизайне.
-          const fine = W < 600 ? [3, 3, 2] : W < 768 ? [4, 4, 2] : [6, 5, 3];
+          // Телефоны: большая надпись и «Make marketing great again» — на ещё более
+          // мелкой сетке (шаг подзаголовка дробный — выборка ниже округляет координаты).
+          const fine = W < 600 ? [2, 3, 1.5] : W < 768 ? [3, 4, 2] : [6, 5, 3];
           if (fine[0] !== LC || fine[1] !== LL || fine[2] !== WS) { LC = fine[0]; LL = fine[1]; WS = fine[2]; lgKey = ''; }
           // Большая надпись и «Заполнить бриф» — ярче и белее, на всех экранах:
           // точки крупнее относительно ячейки (в дизайне зазор 1 px, и сквозь
           // буквы просвечивало видео, на мелкой сетке телефона особенно), у
           // надписи альфа без провалов от мерцания (было до 0,76).
           LG = W < 768 ? 0.35 : 0.6; LA = 1.5; TG = W < 768 ? 0.5 : 0.6;
+          // «Make marketing great again» на телефонах ярче: альфа без провалов от
+          // мерцания и точки крупнее относительно ячейки. От 768 px — как в дизайне.
+          WA = W < 768 ? 1.5 : 1; WG = W < 768 ? 0.3 : 0.6;
         }
         const t = ts / 1000, R = 50 - 36 * hovT;
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -570,6 +584,9 @@ class Component extends DCLogic {
         if (lg) {
           const LR = 40 - 27 * hovT;
           const step = Math.floor(t * 5) % 4, bobT = [0, -1, -1, 0][step] * LL, poke = [0, 1, 2, 1][step] * LL;
+          // Цвет присваивается в canvas только при смене: почти все точки надписи
+          // в покое одного цвета, а на мелкой сетке телефона их тысячи за кадр.
+          let lastFs = '';
           for (let j = 0, k = 0; j < lg.length; j += 4, k++) {
             const grp = lg[j + 3], sz = grp === 4 ? WS : grp ? LL : LC;
             const px = lg[j] + (grp === 2 ? poke : grp === 3 ? -poke : 0), py = lg[j + 1] + (grp === 1 ? bobT : 0), dx = px - mx, dy = py - my, d = Math.sqrt(dx * dx + dy * dy);
@@ -579,18 +596,21 @@ class Component extends DCLogic {
             const fl = 0.88 + 0.12 * Math.sin(px * 0.05 + py * 0.04 + t * 2);
             let ox = 0, oy = 0;
             if ((!grp || grp === 4) && e > 0.01 && d > 0.001) { const push = e * e * 22; ox = dx / d * push; oy = dy / d * push; }
-            const r = Math.round(255), g = Math.round(255 - 178 * e), b = Math.round(255 - 98 * e);
-            ctx.fillStyle = 'rgba(' + r + ',' + g + ',' + b + ',' + Math.min(1, lg[j + 2] * fl * (grp ? 1 : LA)).toFixed(3) + ')';
+            const al = Math.min(1, lg[j + 2] * fl * (grp === 4 ? WA : grp ? 1 : LA));
+            // Белая непрозрачная точка в покое — самый частый случай: строку не собираем.
+            let fs = e < 0.003 && al === 1 ? 'rgba(255,255,255,1)'
+              : 'rgba(255,' + Math.round(255 - 178 * e) + ',' + Math.round(255 - 98 * e) + ',' + al.toFixed(3) + ')';
             const s = sz - LG - e * 1.5;
-            let sd = grp === 4 ? Math.max(1, WS - 0.6 - e) : grp ? LL - 1 : s;
+            let sd = grp === 4 ? Math.max(0.8, WS - WG - e) : grp ? LL - 1 : s;
             if (grp === 1) {
               const pk = hovT * (0.5 + 0.5 * Math.sin(t * 7 - lg[j] * 0.015));
-              ctx.fillStyle = 'rgba(255,' + Math.round(255 - 178 * pk) + ',' + Math.round(255 - 98 * pk) + ',1)';
+              fs = 'rgba(255,' + Math.round(255 - 178 * pk) + ',' + Math.round(255 - 98 * pk) + ',1)';
               sd = LL - TG + pk * 1.2;
             } else if (grp === 2 || grp === 3) {
               const pk = hovT * (0.5 + 0.5 * Math.sin(t * 7));
-              ctx.fillStyle = 'rgba(255,' + Math.round(77 + 60 * pk) + ',' + Math.round(157 + 40 * pk) + ',' + Math.max(fl, pk).toFixed(3) + ')';
+              fs = 'rgba(255,' + Math.round(77 + 60 * pk) + ',' + Math.round(157 + 40 * pk) + ',' + Math.max(fl, pk).toFixed(3) + ')';
             }
+            if (fs !== lastFs) { ctx.fillStyle = fs; lastFs = fs; }
             ctx.fillRect(px + ox + (sz - sd) / 2, py + oy + (sz - sd) / 2, sd, sd);
           }
         }
