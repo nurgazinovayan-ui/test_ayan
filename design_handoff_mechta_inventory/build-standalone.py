@@ -110,6 +110,15 @@ DIST = os.path.join(HERE, "dist")
 DIST_NAMES = ["index.html", "Mechta Inventory 2026.html"]
 
 
+VERCEL_JSON = """{
+  "headers": [
+    { "source": "/hero-video.mp4",  "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400" }] },
+    { "source": "/hero-video.webm", "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400" }] }
+  ]
+}
+"""
+
+
 def site_config():
     cfg = dict(DEFAULTS)
     if os.path.isfile(SITE_CONFIG):
@@ -170,6 +179,10 @@ def main():
         io.open(os.path.join(DIST, name), "w", encoding="utf-8").write(html)
     for name in SIDE_FILES:
         shutil.copyfile(os.path.join(HERE, name), os.path.join(DIST, name))
+    # Vercel: dist/ выкладывается как статический сайт без сборки. Видео
+    # кешируются на сутки — они тяжёлые и меняются редко; HTML Vercel и так
+    # перепроверяет при каждом заходе, поэтому правки видны сразу.
+    io.open(os.path.join(DIST, "vercel.json"), "w", encoding="utf-8").write(VERCEL_JSON)
 
     print("собрано: %s (%.0f КБ) + %s" % (
         ", ".join(DIST_NAMES), len(html.encode()) / 1024, ", ".join(SIDE_FILES)))
