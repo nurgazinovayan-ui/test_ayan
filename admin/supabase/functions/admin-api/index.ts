@@ -11,7 +11,8 @@
 //   ticket-update { id, status?, reply? } → change status; a reply is also delivered in-app (admin_messages) when the
 //                                      ticket's contact is the email of a registered account
 //   content-save  { key, value }     → upsert a landing text override; value null/'' deletes it (back to default)
-//   banners-save  { slides }         → validate + store the app home-screen banners (site_content 'app.home.banners');
+//   banners-save  { slides, side }   → validate + store the app home-screen banners (site_content 'app.home.banners':
+//                                      `slides` the 16:9 banner, `side` the square one beside it);
 //                                      an empty list deletes the row, so the app shows its built-in banners again
 //   media-upload-url { name, type, size } → one-time signed upload URL for a banner image/video in the public
 //                                      'site-media' bucket (admin.sql); the page uploads the file straight to Storage
@@ -73,6 +74,7 @@ const BANNERS_KEY = 'app.home.banners';
 const MEDIA_BUCKET = 'site-media';
 const MEDIA_DIR = 'home-banners';
 const MAX_SLIDES = 12;
+const MAX_SIDE = 6; // square banners next to the 16:9 one
 const APP_MODES = ['canvas', 'generate', 'text', 'trends', 'evaluate', 'onelaunch', 'musicaudio', 'motion', 'strategy'];
 const MEDIA_TYPES: Record<string, { ext: string; max: number }> = {
   'image/jpeg': { ext: 'jpg', max: 10 * 1024 * 1024 },
@@ -150,9 +152,9 @@ function cleanNews(input: unknown, publicPrefix: string) {
   });
 }
 
-function cleanSlides(input: unknown, publicPrefix: string) {
-  if (!Array.isArray(input)) throw new BadInput('Неверный формат баннеров.');
-  if (input.length > MAX_SLIDES) throw new BadInput(`Не больше ${MAX_SLIDES} баннеров.`);
+function cleanSlides(input: unknown, publicPrefix: string, max = MAX_SLIDES, what = 'баннеров') {
+  if (!Array.isArray(input)) throw new BadInput(`Неверный формат ${what}.`);
+  if (input.length > max) throw new BadInput(`Не больше ${max} ${what}.`);
   // texts are optional: a banner may be just a picture or a video
   return input.map((raw) => {
     const x = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
@@ -327,19 +329,21 @@ Deno.serve(async (req) => {
     const publicPrefix = `${SUPABASE_URL}/storage/v1/object/public/${MEDIA_BUCKET}/`;
 
     if (action === 'banners-save') {
-      let slides;
+      let slides, side;
       try {
         slides = cleanSlides(body.slides, publicPrefix);
+        side = cleanSlides(body.side ?? [], publicPrefix, MAX_SIDE, 'квадратных баннеров');
       } catch (e) {
         if (e instanceof BadInput) return json({ error: e.message }, 400);
         throw e;
       }
-      if (!slides.length) {
+      // both lists empty → the app shows its built-in banners again
+      if (!slides.length && !side.length) {
         const { error } = await admin.from('site_content').delete().eq('key', BANNERS_KEY);
         if (error) throw error;
         return json({ ok: true, reset: true });
       }
-      const value = JSON.stringify({ v: 1, slides });
+      const value = JSON.stringify({ v: 1, slides, side });
       const { error } = await admin.from('site_content')
         .upsert({ key: BANNERS_KEY, value, updated_at: new Date().toISOString(), updated_by: caller.email });
       if (error) throw error;
