@@ -135,7 +135,8 @@ function cleanSiteLink(v: unknown): string {
 function cleanNews(input: unknown, publicPrefix: string) {
   if (!Array.isArray(input)) throw new BadInput('Неверный формат новинок.');
   if (input.length > MAX_NEWS) throw new BadInput(`Не больше ${MAX_NEWS} карточек.`);
-  return input.map((raw, i) => {
+  // texts are optional: a card may be just a picture or a video
+  return input.map((raw) => {
     const x = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
     const type = x.type === 'video' ? 'video' : 'image';
     const lang = (l: unknown) => {
@@ -143,7 +144,6 @@ function cleanNews(input: unknown, publicPrefix: string) {
       return { title: cleanText(o.title, 80), text: cleanText(o.text, 160) };
     };
     const ru = lang(x.ru), en = lang(x.en);
-    if (!ru.title && !en.title) throw new BadInput(`Карточка ${i + 1}: добавьте заголовок.`);
     const id = cleanText(x.id, 64).replace(/[^A-Za-z0-9_-]/g, '') || crypto.randomUUID();
     return { id, type, media: cleanMedia(x.media, publicPrefix, true), poster: type === 'video' ? cleanMedia(x.poster, publicPrefix, false) : '',
       isNew: x.isNew !== false, link: cleanSiteLink(x.link), ru, en };
@@ -153,7 +153,8 @@ function cleanNews(input: unknown, publicPrefix: string) {
 function cleanSlides(input: unknown, publicPrefix: string) {
   if (!Array.isArray(input)) throw new BadInput('Неверный формат баннеров.');
   if (input.length > MAX_SLIDES) throw new BadInput(`Не больше ${MAX_SLIDES} баннеров.`);
-  return input.map((raw, i) => {
+  // texts are optional: a banner may be just a picture or a video
+  return input.map((raw) => {
     const x = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
     const type = x.type === 'video' ? 'video' : 'image';
     const lang = (l: unknown) => {
@@ -161,7 +162,6 @@ function cleanSlides(input: unknown, publicPrefix: string) {
       return { tag: cleanText(o.tag, 60), title: cleanText(o.title, 140), text: cleanText(o.text, 400), button: cleanText(o.button, 40) };
     };
     const ru = lang(x.ru), en = lang(x.en);
-    if (!ru.title && !en.title) throw new BadInput(`Баннер ${i + 1}: добавьте заголовок.`);
     const id = cleanText(x.id, 64).replace(/[^A-Za-z0-9_-]/g, '') || crypto.randomUUID();
     return { id, type, media: cleanMedia(x.media, publicPrefix, true), poster: type === 'video' ? cleanMedia(x.poster, publicPrefix, false) : '', link: cleanLink(x.link), ru, en };
   });
