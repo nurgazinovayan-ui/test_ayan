@@ -18,6 +18,8 @@ APP, REG, MARK, IMGS = v.APP, v.REG, v.MARK, v.IMGS
 reg = v.reg
 
 NAV = [('#modes', 'Возможности'), ('#tpl', 'Для бизнеса'), ('#ai', 'Ассистент'), ('#pricing', 'Цены'), ('#faq', 'Вопросы')]
+# tabs left out of the page for now (the owner hid Trendswatching in the app on 2026-11-01); empty the set to show them again
+HIDDEN_TABS = {'trend'}
 
 # ------------------------------------------------------------------------------------------------ tabs content
 # key, tab label, eyebrow-free headline, lead, four benefits (big value, label, detail)
@@ -704,12 +706,13 @@ def build(docs='', lang='ru', theme='ice'):
             f'<div class="mrow"><div class="wrap">{models}<p class="fnote">{FNOTE}</p></div></div>')
     q, a = FAQ_AI  # right after the first question: «какие нейросети» is the most common pre-sale question
     faq = faq.replace('</details>', f'</details><details><summary>{q}</summary><p>{a}</p></details>', 1)
+    tabs = [t for t in TABS if t[0] not in HIDDEN_TABS]
     buttons = '<i class="dv" aria-hidden="true"></i>'.join(
         f'<button type="button" role="tab" id="{k}" aria-controls="p-{k}" aria-selected="{"true" if i == 0 else "false"}" tabindex="{0 if i == 0 else -1}">{lb}</button>'
-        for i, (k, lb, *_x) in enumerate(TABS))
+        for i, (k, lb, *_x) in enumerate(tabs))
     modes = ('<section class="sec" id="modes"><div class="wrap"><div class="sh rv"><span class="k">Возможности</span><h2>Всё для контента — в одном окне</h2></div>'
              f'<div class="ed" role="tablist" aria-label="Режимы ONEFLOW">{buttons}</div>'
-             '<div class="mpanel">' + ''.join(tab_panel(i, *t) for i, t in enumerate(TABS)) + '</div></div></section>')
+             '<div class="mpanel">' + ''.join(tab_panel(i, *t) for i, t in enumerate(tabs)) + '</div></div></section>')
     import made
     main = f'<main id="main">{hero}{made.made_html()}{modes}{pricing}{faq}{end}</main>'
     # nav: new anchors + EN/RU switch; head: language alternates; theme colour; styles; no v4 feature-card demos
