@@ -22,11 +22,46 @@ const json = (body: unknown, status = 200) =>
 const sha256 = async (s: string) =>
   [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)))].map((b) => b.toString(16).padStart(2, '0')).join('');
 
+// The form's fields fit into this many times over (even written as \u escapes); anything bigger is not the
+// form. Read in pieces and stopped at the limit, so a huge or endless body from anyone on the internet never
+// lands in memory as a whole (this function needs no sign-in).
+const MAX_BODY_BYTES = 64 * 1024;
+async function readSmallJson(req: Request): Promise<Record<string, unknown> | null> {
+  if (Number(req.headers.get('content-length') ?? '0') > MAX_BODY_BYTES) return null;
+  const reader = req.body?.getReader();
+  if (!reader) return {};
+  const chunks: Uint8Array[] = [];
+  let size = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    size += value.length;
+    if (size > MAX_BODY_BYTES) {
+      await reader.cancel().catch(() => {});
+      return null;
+    }
+    chunks.push(value);
+  }
+  const bytes = new Uint8Array(size);
+  let offset = 0;
+  for (const c of chunks) {
+    bytes.set(c, offset);
+    offset += c.length;
+  }
+  try {
+    const parsed = JSON.parse(new TextDecoder().decode(bytes));
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
+  } catch {
+    return {}; // not JSON: the checks below answer «укажите контакт»
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
   if (req.method !== 'POST') return new Response('Method not allowed', { status: 405, headers: corsHeaders });
   try {
-    const body = await req.json().catch(() => ({}));
+    const body = await readSmallJson(req);
+    if (!body) return json({ error: 'Слишком большое сообщение.' }, 413);
     if (body.website) return json({ ok: true }); // honeypot filled → a bot; pretend success
     const name = String(body.name ?? '').trim().slice(0, 100);
     const contact = String(body.contact ?? '').trim();
