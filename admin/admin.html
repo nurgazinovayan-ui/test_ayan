@@ -23,6 +23,9 @@ a { color: var(--acc); text-decoration: none; } a:hover { text-decoration: under
 .login { min-height: 100vh; display: grid; place-items: center; padding: 16px; }
 .login form { width: 100%; max-width: 360px; display: grid; gap: 12px; padding: 28px; border-radius: 20px; background: var(--surface); box-shadow: 0 0 0 1px var(--line), 0 30px 60px -40px rgba(0,0,0,.35); }
 .login h1 { display: flex; align-items: center; gap: 10px; font-size: 20px; margin-bottom: 6px; }
+.mfa-enroll { display: grid; gap: 10px; }
+.mqr { width: 200px; height: 200px; justify-self: center; background: #fff; border-radius: 12px; padding: 8px; }
+.msecret { display: block; padding: 8px 10px; border-radius: 10px; background: var(--soft); box-shadow: inset 0 0 0 1px var(--line); font-size: 13px; word-break: break-all; user-select: all; }
 .field { display: grid; gap: 6px; font-size: 13px; color: var(--muted); }
 .in { width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); outline: none; }
 .in:focus { border-color: var(--acc); box-shadow: 0 0 0 3px var(--acc-soft); }
@@ -141,6 +144,24 @@ tbody tr.cl { cursor: pointer; } tbody tr.cl:hover td { background: var(--soft);
     <p class="or">или</p>
     <button class="btn s" type="button" id="lg">Войти через Google</button>
     <p class="err" id="lerr" role="alert"></p>
+  </form>
+</section>
+
+<section class="login hide" id="mfa">
+  <form id="mf" autocomplete="off">
+    <h1><svg class="mk"><use href="#mk"/></svg>Второй фактор</h1>
+    <div id="menroll" class="mfa-enroll hide">
+      <p class="dim">Отсканируйте QR-код приложением-аутентификатором (Google Authenticator, Яндекс Ключ, 1Password и т. п.) и введите 6-значный код из него.</p>
+      <img id="mqr" class="mqr" alt="QR-код для приложения-аутентификатора">
+      <p class="dim">Не сканируется — введите ключ вручную:</p>
+      <code id="msecret" class="msecret"></code>
+      <p class="dim">Совет: добавьте этот ключ сразу в два места (телефон и менеджер паролей) — тогда потеря телефона не закроет вам админку.</p>
+    </div>
+    <p id="mverify" class="dim hide">Введите 6-значный код из приложения-аутентификатора.</p>
+    <label class="field">Код<input class="in" id="mcode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" required></label>
+    <button class="btn" type="submit" id="mb">Подтвердить</button>
+    <button class="btn s" type="button" id="mout">Выйти</button>
+    <p class="err" id="merr" role="alert"></p>
   </form>
 </section>
 
@@ -593,15 +614,59 @@ tbody tr.cl { cursor: pointer; } tbody tr.cl:hover td { background: var(--soft);
   $('#shade').addEventListener('click', closeDrawer); addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDrawer(); });
   $('#rf').addEventListener('click', load);
   const logout = (msg) => { if (session?.access && !DEMO) fetch(SB + '/auth/v1/logout?scope=local', { method: 'POST', headers: { apikey: KEY, Authorization: 'Bearer ' + session.access } }).catch(() => {});  // revoke the refresh token server-side
-    session = null; store.set(null); $('#app').classList.add('hide'); $('#login').classList.remove('hide'); $('#lerr').textContent = typeof msg === 'string' ? msg : ''; };
+    session = null; store.set(null); $('#app').classList.add('hide'); $('#mfa').classList.add('hide'); $('#login').classList.remove('hide'); $('#lerr').textContent = typeof msg === 'string' ? msg : ''; };
   $('#out').addEventListener('click', () => logout());
-  const start = () => { $('#login').classList.add('hide'); $('#app').classList.remove('hide'); $('#who').textContent = DEMO ? 'demo@oneflow.art' : (session?.email || ''); $('#demo').classList.toggle('hide', !DEMO); load(); };
+  const start = () => { $('#login').classList.add('hide'); $('#mfa').classList.add('hide'); $('#app').classList.remove('hide'); $('#who').textContent = DEMO ? 'demo@oneflow.art' : (session?.email || ''); $('#demo').classList.toggle('hide', !DEMO); load(); };
+
+  // ---------------------------------------------------------------- second factor (TOTP code from an authenticator app)
+  // The admin API answers only a session that has passed the second factor (aal2; ADMIN_REQUIRE_MFA=1 on the
+  // server). After the password or Google the page asks for the code; the first time it shows a QR code.
+  // The QR is an image set through .src and the key goes in as text: nothing from the server becomes HTML.
+  const claim = (t, k) => { try { const p = String(t).split('.')[1].replace(/-/g, '+').replace(/_/g, '/'); return JSON.parse(atob(p.padEnd(Math.ceil(p.length / 4) * 4, '=')))[k]; } catch { return undefined; } };
+  const authApi = async (path, method, body) => {
+    const r = await fetch(SB + '/auth/v1/' + path, { method, headers: { apikey: KEY, Authorization: 'Bearer ' + await token(), 'Content-Type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) { const e = new Error(d.msg || d.error_description || d.message || ('Ошибка ' + r.status)); e.status = r.status; throw e; }
+    return d;
+  };
+  let mfaFactor = null;
+  const showMfa = (enroll) => { $('#login').classList.add('hide'); $('#app').classList.add('hide'); $('#mfa').classList.remove('hide');
+    $('#menroll').classList.toggle('hide', !enroll); $('#mverify').classList.toggle('hide', enroll); $('#merr').textContent = ''; $('#mcode').value = ''; $('#mcode').focus(); };
+  const gate = async () => {
+    if (DEMO) return start();
+    try {
+      if (claim(await token(), 'aal') === 'aal2') return start();
+      const user = await authApi('user', 'GET');
+      const totp = (user.factors || []).filter((f) => f.factor_type === 'totp');
+      const done = totp.find((f) => f.status === 'verified');
+      if (done) { mfaFactor = done.id; return showMfa(false); }
+      for (const f of totp) await authApi('factors/' + encodeURIComponent(f.id), 'DELETE').catch(() => {});  // an earlier setup left unfinished
+      const f = await authApi('factors', 'POST', { factor_type: 'totp', issuer: 'ONEFLOW', friendly_name: 'ONEFLOW admin ' + new Date().toISOString().slice(0, 16).replace('T', ' ') });
+      mfaFactor = f.id;
+      $('#mqr').src = typeof f.totp?.qr_code === 'string' && f.totp.qr_code.startsWith('data:image/') ? f.totp.qr_code : '';
+      $('#msecret').textContent = f.totp?.secret || '';
+      showMfa(true);
+    } catch (e) { logout(e.message); }
+  };
+  $('#mf').addEventListener('submit', async (e) => { e.preventDefault();
+    const code = $('#mcode').value.replace(/\s/g, '');
+    if (!/^\d{6}$/.test(code)) { $('#merr').textContent = 'Нужен код из 6 цифр.'; return; }
+    $('#mb').disabled = true; $('#merr').textContent = '';
+    try {
+      const ch = await authApi(`factors/${encodeURIComponent(mfaFactor)}/challenge`, 'POST', {});
+      const d = await authApi(`factors/${encodeURIComponent(mfaFactor)}/verify`, 'POST', { challenge_id: ch.id, code });
+      saveTokens(d); start();
+    } catch (err) {
+      // 429: the per-account limit of wrong codes (its own message) or Auth's rate limit
+      $('#merr').textContent = err.status === 429 ? err.message : (err.status === 400 || err.status === 422) ? 'Неверный код. Проверьте время на телефоне и введите новый код.' : err.message;
+    } finally { $('#mb').disabled = false; } });
+  $('#mout').addEventListener('click', () => logout());
   $('#lf').addEventListener('submit', async (e) => { e.preventDefault(); $('#lb').disabled = true; $('#lerr').textContent = '';
     try { const r = await fetch(SB + '/auth/v1/token?grant_type=password', { method: 'POST', headers: { apikey: KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ email: $('#le').value.trim(), password: $('#lp').value }) });
-      const d = await r.json(); if (!r.ok) throw new Error(d.error_description || d.msg || 'Неверный email или пароль'); saveTokens(d); start(); }
+      const d = await r.json(); if (!r.ok) throw new Error(d.error_description || d.msg || 'Неверный email или пароль'); saveTokens(d); gate(); }
     catch (err) { $('#lerr').textContent = err.message; } finally { $('#lb').disabled = false; } });
   $('#lg').addEventListener('click', () => { location.href = `${SB}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(location.origin + location.pathname)}`; });
-  (DEMO || session) ? start() : logout();
+  (DEMO || session) ? gate() : logout();
 
   // ---------------------------------------------------------------- demo data (?demo=1): lets the page be previewed without the backend
   function demoApi() {
