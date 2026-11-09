@@ -629,6 +629,13 @@ tbody tr.cl { cursor: pointer; } tbody tr.cl:hover td { background: var(--soft);
     if (!r.ok) { const e = new Error(d.msg || d.error_description || d.message || ('Ошибка ' + r.status)); e.status = r.status; throw e; }
     return d;
   };
+  // Auth answers the QR as SVG markup (<?xml …><svg …>); supabase-js adds the data: prefix itself, this page
+  // talks to Auth directly, so it does it here. An SVG shown through <img> cannot run anything.
+  const qrSrc = (q) => {
+    if (typeof q !== 'string' || !q) return '';
+    if (q.startsWith('data:image/')) return q;
+    return /<svg[\s>]/i.test(q) ? 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(q) : '';
+  };
   let mfaFactor = null;
   const showMfa = (enroll) => { $('#login').classList.add('hide'); $('#app').classList.add('hide'); $('#mfa').classList.remove('hide');
     $('#menroll').classList.toggle('hide', !enroll); $('#mverify').classList.toggle('hide', enroll); $('#merr').textContent = ''; $('#mcode').value = ''; $('#mcode').focus(); };
@@ -643,7 +650,7 @@ tbody tr.cl { cursor: pointer; } tbody tr.cl:hover td { background: var(--soft);
       for (const f of totp) await authApi('factors/' + encodeURIComponent(f.id), 'DELETE').catch(() => {});  // an earlier setup left unfinished
       const f = await authApi('factors', 'POST', { factor_type: 'totp', issuer: 'ONEFLOW', friendly_name: 'ONEFLOW admin ' + new Date().toISOString().slice(0, 16).replace('T', ' ') });
       mfaFactor = f.id;
-      $('#mqr').src = typeof f.totp?.qr_code === 'string' && f.totp.qr_code.startsWith('data:image/') ? f.totp.qr_code : '';
+      $('#mqr').src = qrSrc(f.totp?.qr_code);
       $('#msecret').textContent = f.totp?.secret || '';
       showMfa(true);
     } catch (e) { logout(e.message); }
