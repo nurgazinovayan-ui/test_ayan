@@ -204,6 +204,9 @@ EN = {
     'Как к вам обращаться': 'Your name', 'Email или телефон для ответа': 'Email or phone for our reply', 'Сообщение': 'Message', 'Сайт': 'Website', 'Отправить': 'Send',
 }
 
+from why_en import WHY_EN  # noqa: E402
+EN.update(WHY_EN)
+
 JS = {
     'Закрыть меню': 'Close menu', 'Открыть меню': 'Open menu', 'Укажите email или телефон для ответа.': 'Please add an email or phone so we can reply.',
     'Опишите вопрос чуть подробнее.': 'Please describe your question in a little more detail.', 'Отправляем…': 'Sending…',

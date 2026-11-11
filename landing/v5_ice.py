@@ -17,7 +17,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 APP, REG, MARK, IMGS = v.APP, v.REG, v.MARK, v.IMGS
 reg = v.reg
 
-NAV = [('#modes', 'Возможности'), ('#tpl', 'Для бизнеса'), ('#ai', 'Ассистент'), ('#pricing', 'Цены'), ('#faq', 'Вопросы')]
+NAV = [('#why', 'Почему ONEFLOW'), ('#pricing', 'Цены'), ('#faq', 'Вопросы')]  # the tabbed «Возможности» gave way to «Почему ONEFLOW» (why.py, 2026-11-11)
 # tabs left out of the page for now (the owner hid Trendswatching in the app on 2026-11-01); empty the set to show them again
 HIDDEN_TABS = {'trend'}
 
@@ -692,7 +692,7 @@ def build(docs='', lang='ru', theme='ice'):
     main_old, tail = rest.split('</main>', 1)
     # keep v4's hero texts, pricing, faq and closing card; everything in between becomes the modes tabs
     sections = re.split(r'(?=<section class="sec"|<div class="wrap"><section class="end)', main_old)
-    hero_old = sections[0].replace('href="#how"', 'href="#modes"')
+    hero_old = sections[0].replace('href="#how"', 'href="#why"')
     pick = lambda pat: next(s for s in sections if pat in s)  # noqa: E731
     faq, end = pick('id="faq"'), pick('class="end')
     pricing = pricing_html()  # top-up slider instead of v4's plan cards
@@ -713,8 +713,9 @@ def build(docs='', lang='ru', theme='ice'):
     modes = ('<section class="sec" id="modes"><div class="wrap"><div class="sh rv"><span class="k">Возможности</span><h2>Всё для контента — в одном окне</h2></div>'
              f'<div class="ed" role="tablist" aria-label="Режимы ONEFLOW">{buttons}</div>'
              '<div class="mpanel">' + ''.join(tab_panel(i, *t) for i, t in enumerate(tabs)) + '</div></div></section>')
-    import made
-    main = f'<main id="main">{hero}{made.made_html()}{modes}{pricing}{faq}{end}</main>'
+    import made, why
+    # the advantages as a bento grid (why.py) stand where the tabbed modes were; `modes` is kept for the dark «Ice» preview only
+    main = f'<main id="main">{hero}{made.made_html()}{why.why_html()}{pricing}{faq}{end}</main>'
     # nav: new anchors + EN/RU switch; head: language alternates; theme colour; styles; no v4 feature-card demos
     links = ''.join(f'<a href="{h}">{t}</a>' for h, t in NAV)
     cur = lambda l: ' aria-current="page"' if l == lang else ''  # noqa: E731
@@ -732,7 +733,7 @@ def build(docs='', lang='ru', theme='ice'):
         head = head.replace("<script>document.documentElement.classList.add('js')</script>",
                             "<script>document.documentElement.classList.add('js');try{if(localStorage.getItem('of-lang')==='ru'&&!/cms-edit/.test(location.search))location.replace('/ru'+location.hash)}catch(e){}</script>", 1)
     head = head.replace(protos.CSS, '').replace(protos.DARK, '')
-    head = head.replace('</style>', ICE + TABS_CSS.replace('ANIM', '\n  '.join(ANIM)) + HERO_CSS + PRICE_CSS + made.MADE_CSS + news.NEWS_CSS + '</style>', 1)
+    head = head.replace('</style>', ICE + TABS_CSS.replace('ANIM', '\n  '.join(ANIM)) + HERO_CSS + PRICE_CSS + made.MADE_CSS + news.NEWS_CSS + why.why_css() + '</style>', 1)
     tail = tail.replace(protos.js(), '').replace('</body>', JS_TABS + JS_LANG + JS_PRICE + made.JS_MADE + news.JS_NEWS + '</body>')
     if theme == 'soft':
         import soft, dark
