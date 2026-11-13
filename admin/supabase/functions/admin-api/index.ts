@@ -18,7 +18,16 @@
 //                                      'site-media' bucket (admin.sql); the page uploads the file straight to Storage
 //   media-delete  { path }           → remove a banner file from that bucket (only home-banners/<uuid>.<ext>)
 //   news-save     { items }          → validate + store the landing's «new AI models» cards under the top menu
+//   made-save     { items }          → validate + store the pictures of the landing's «made in ONEFLOW» row
+//                                      ('landing.made': [{ id, media, w, h }]); an empty list brings the built-in ones back
 //                                      (site_content 'landing.news'); an empty list deletes the row → built-in cards
+//   efir-save     { playlists }      → validate + store the playlists of the online player «Эфир Мечта KZ»
+//                                      (site_content 'efir.playlists', read by the public page oneflow.art/эфир);
+//                                      an empty list deletes the row. A playlist: a name, a wide cover, its own
+//                                      jingle (played after every track when it is on) and its tracks in order
+//   efir-upload-url { type, size }   → one-time signed upload URL for a track or a jingle (MP3 up to 30 MB) or a
+//                                      cover (JPG / PNG / WebP up to 10 MB) in 'site-media' under efir/
+//   efir-delete   { path }           → remove such a file (only efir/<uuid>.<ext>)
 //   generation-pause { paused }      → kill switch for all new paid generations (app_settings)
 //   credits-grant { userId, credits, note? } → add a pack of credits to an account by hand (credit_packs, source
 //                                      'admin', valid 12 months); requires the app's 202610060001_credits.sql
@@ -75,7 +84,10 @@ const MEDIA_BUCKET = 'site-media';
 const MEDIA_DIR = 'home-banners';
 const MAX_SLIDES = 12;
 const MAX_SIDE = 6; // square banners next to the 16:9 one
-const APP_MODES = ['canvas', 'generate', 'text', 'trends', 'evaluate', 'onelaunch', 'musicaudio', 'motion', 'strategy'];
+// what a banner can open: a section of the app, or a tab inside one ('<section>/<tab>'); the same
+// lists as in the admin page and in the app (src/modes.ts, src/subview.ts)
+const APP_MODES = ['canvas', 'generate', 'text', 'trends', 'evaluate', 'onelaunch', 'musicaudio', 'motion', 'strategy', 'cinema', 'model3d', 'learn', 'assets',
+  'cinema/eclipse', 'cinema/ugc', 'cinema/atlas', 'musicaudio/music', 'musicaudio/speech'];
 const MEDIA_TYPES: Record<string, { ext: string; max: number }> = {
   'image/jpeg': { ext: 'jpg', max: 10 * 1024 * 1024 },
   'image/png': { ext: 'png', max: 10 * 1024 * 1024 },
@@ -104,7 +116,70 @@ function cleanMedia(v: unknown, publicPrefix: string, required: boolean): string
   throw new BadInput('Недопустимый адрес файла баннера.');
 }
 
-// Banner link: one of the app's modes ('mode:<id>') or an https:// URL.
+// ---- the online player «Эфир Мечта KZ» (by request, 2026-11-13) ---------------------------------
+// Its playlists are one document in site_content, readable by anyone like the landing's texts: the
+// player page needs no sign-in. Only an admin writes it, through efir-save; every file it names must
+// be one of ours — a file of the efir/ folder of the public bucket, of the type its place takes.
+const EFIR_KEY = 'efir.playlists';
+const EFIR_DIR = 'efir';
+const EFIR_MAX_PLAYLISTS = 30;
+const EFIR_MAX_TRACKS = 300; // in one playlist
+const EFIR_MAX_ALL_TRACKS = 2000;
+const EFIR_TYPES: Record<string, { ext: string; max: number }> = {
+  'audio/mpeg': { ext: 'mp3', max: 30 * 1024 * 1024 },
+  'image/jpeg': { ext: 'jpg', max: 10 * 1024 * 1024 },
+  'image/png': { ext: 'png', max: 10 * 1024 * 1024 },
+  'image/webp': { ext: 'webp', max: 10 * 1024 * 1024 },
+};
+const EFIR_UUID = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
+const EFIR_PATH_RE = new RegExp(`^${EFIR_DIR}/${EFIR_UUID}\\.(mp3|jpg|png|webp)$`);
+const EFIR_AUDIO_RE = new RegExp(`^${EFIR_DIR}/${EFIR_UUID}\\.mp3$`);
+const EFIR_IMAGE_RE = new RegExp(`^${EFIR_DIR}/${EFIR_UUID}\\.(jpg|png|webp)$`);
+const EFIR_ID_RE = /^[a-z0-9]{6,24}$/;
+
+// a file of ours of the right kind, as its public address; anything else is refused
+function efirFile(v: unknown, publicPrefix: string, kind: RegExp, what: string): string {
+  const s = typeof v === 'string' ? v : '';
+  if (s.length <= 400 && s.startsWith(publicPrefix) && kind.test(s.slice(publicPrefix.length))) return s;
+  throw new BadInput(`${what}: файл нужно загрузить через эту страницу.`);
+}
+const efirSeconds = (v: unknown, max: number) => (typeof v === 'number' && Number.isFinite(v) && v > 0 ? Math.min(max, Math.round(v)) : 0);
+function efirId(v: unknown, seen: Set<string>): string {
+  if (typeof v !== 'string' || !EFIR_ID_RE.test(v) || seen.has(v)) throw new BadInput('Плейлисты не сохранены: обновите страницу и попробуйте ещё раз.');
+  seen.add(v);
+  return v;
+}
+function cleanEfir(v: unknown, publicPrefix: string) {
+  if (!Array.isArray(v)) throw new BadInput('Плейлисты не сохранены: обновите страницу и попробуйте ещё раз.');
+  if (v.length > EFIR_MAX_PLAYLISTS) throw new BadInput(`Не больше ${EFIR_MAX_PLAYLISTS} плейлистов.`);
+  const ids = new Set<string>();
+  let all = 0;
+  return v.map((raw) => {
+    const p = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
+    const name = cleanText(p.name, 40);
+    if (!name) throw new BadInput('У каждого плейлиста должно быть название.');
+    const tracksIn = Array.isArray(p.tracks) ? p.tracks : [];
+    if (tracksIn.length > EFIR_MAX_TRACKS) throw new BadInput(`В плейлисте «${name}» больше ${EFIR_MAX_TRACKS} треков.`);
+    all += tracksIn.length;
+    if (all > EFIR_MAX_ALL_TRACKS) throw new BadInput(`Всего не больше ${EFIR_MAX_ALL_TRACKS} треков.`);
+    const j = p.jingle && typeof p.jingle === 'object' ? (p.jingle as Record<string, unknown>) : null;
+    return {
+      id: efirId(p.id, ids),
+      name,
+      cover: p.cover ? efirFile(p.cover, publicPrefix, EFIR_IMAGE_RE, `Обложка плейлиста «${name}»`) : '',
+      jingle: j ? { url: efirFile(j.url, publicPrefix, EFIR_AUDIO_RE, `Джингл плейлиста «${name}»`), title: cleanText(j.title, 80), duration: efirSeconds(j.duration, 600) } : null,
+      jingleOn: p.jingleOn !== false,
+      tracks: tracksIn.map((rawTrack) => {
+        const t = (rawTrack && typeof rawTrack === 'object' ? rawTrack : {}) as Record<string, unknown>;
+        const title = cleanText(t.title, 120);
+        if (!title) throw new BadInput(`В плейлисте «${name}» есть трек без названия.`);
+        return { id: efirId(t.id, ids), title, artist: cleanText(t.artist, 120), url: efirFile(t.url, publicPrefix, EFIR_AUDIO_RE, `Трек «${title}»`), duration: efirSeconds(t.duration, 7200) };
+      }),
+    };
+  });
+}
+
+// Banner link: one of the app's modes ('mode:<id>'), a tab inside one ('mode:<id>/<tab>') or an https:// URL.
 function cleanLink(v: unknown): string {
   const s = cleanText(v, 1000);
   if (!s) return '';
@@ -132,6 +207,25 @@ function cleanSiteLink(v: unknown): string {
     // fall through
   }
   throw new BadInput('Ссылка должна начинаться с https:// или быть адресом на сайте (/app…).');
+}
+
+// ---- the landing's «made in ONEFLOW» row: pictures only, each with its own size in pixels (the row
+// gives every picture the same height and a width from its proportions, so nothing is cropped)
+const MADE_KEY = 'landing.made';
+const MAX_MADE = 24;
+function cleanMade(input: unknown, publicPrefix: string) {
+  if (!Array.isArray(input)) throw new BadInput('Неверный формат списка картинок.');
+  if (input.length > MAX_MADE) throw new BadInput(`Не больше ${MAX_MADE} картинок.`);
+  return input.map((raw) => {
+    const x = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
+    const media = cleanMedia(x.media, publicPrefix, true);
+    if (!/\.(jpg|png|webp|gif)$/i.test(media)) throw new BadInput('В этом разделе только картинки: JPG, PNG, WebP или GIF.');
+    const side = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) && v >= 16 && v <= 20000 ? Math.round(v) : 0);
+    const w = side(x.w), h = side(x.h);
+    if (!w || !h) throw new BadInput('Не удалось определить размер одной из картинок — загрузите её ещё раз.');
+    const id = cleanText(x.id, 64).replace(/[^A-Za-z0-9_-]/g, '') || crypto.randomUUID();
+    return { id, media, w, h };
+  });
 }
 
 function cleanNews(input: unknown, publicPrefix: string) {
@@ -370,6 +464,26 @@ Deno.serve(async (req) => {
       return json({ ok: true, value });
     }
 
+    if (action === 'made-save') {
+      let items;
+      try {
+        items = cleanMade(body.items, publicPrefix);
+      } catch (e) {
+        if (e instanceof BadInput) return json({ error: e.message }, 400);
+        throw e;
+      }
+      if (!items.length) {
+        const { error } = await admin.from('site_content').delete().eq('key', MADE_KEY);
+        if (error) throw error;
+        return json({ ok: true, reset: true });
+      }
+      const value = JSON.stringify({ v: 1, items });
+      const { error } = await admin.from('site_content')
+        .upsert({ key: MADE_KEY, value, updated_at: new Date().toISOString(), updated_by: caller.email });
+      if (error) throw error;
+      return json({ ok: true, value });
+    }
+
     if (action === 'media-upload-url') {
       const type = String(body.type ?? '');
       const size = Number(body.size ?? 0);
@@ -399,6 +513,51 @@ Deno.serve(async (req) => {
       return json({ ok: true });
     }
 
+    if (action === 'efir-save') {
+      let playlists;
+      try {
+        playlists = cleanEfir(body.playlists, publicPrefix);
+      } catch (e) {
+        if (e instanceof BadInput) return json({ error: e.message }, 400);
+        throw e;
+      }
+      if (!playlists.length) {
+        const { error } = await admin.from('site_content').delete().eq('key', EFIR_KEY);
+        if (error) throw error;
+        return json({ ok: true, reset: true });
+      }
+      const value = JSON.stringify({ v: 1, playlists });
+      const { error } = await admin.from('site_content')
+        .upsert({ key: EFIR_KEY, value, updated_at: new Date().toISOString(), updated_by: caller.email });
+      if (error) throw error;
+      return json({ ok: true, value });
+    }
+
+    if (action === 'efir-upload-url') {
+      const type = String(body.type ?? '');
+      const size = Number(body.size ?? 0);
+      const spec = EFIR_TYPES[type];
+      if (!spec) return json({ error: 'Подходят треки MP3 и обложки JPG, PNG или WebP.' }, 400);
+      if (!Number.isFinite(size) || size <= 0 || size > spec.max) {
+        return json({ error: `Файл слишком большой: максимум ${Math.round(spec.max / 1024 / 1024)} МБ.` }, 400);
+      }
+      const path = `${EFIR_DIR}/${crypto.randomUUID()}.${spec.ext}`;
+      const { data, error } = await admin.storage.from(MEDIA_BUCKET).createSignedUploadUrl(path);
+      if (error || !data) {
+        console.error('efir-upload-url', error);
+        return json({ error: 'Хранилище файлов не ответило. Попробуйте ещё раз; если повторится — пришлите скриншот.' }, 500);
+      }
+      return json({ path, signedUrl: data.signedUrl, publicUrl: publicPrefix + path });
+    }
+
+    if (action === 'efir-delete') {
+      const path = String(body.path ?? '');
+      if (!EFIR_PATH_RE.test(path)) return json({ error: 'Неверный путь файла.' }, 400);
+      const { error } = await admin.storage.from(MEDIA_BUCKET).remove([path]);
+      if (error) throw error;
+      return json({ ok: true });
+    }
+
     if (action === 'credits-grant') {
       const userId = String(body.userId ?? '');
       const amount = Number(body.credits);
@@ -421,7 +580,7 @@ Deno.serve(async (req) => {
     if (action === 'content-save') {
       const key = String(body.key ?? '').trim();
       if (!/^[a-z0-9._-]{1,120}$/.test(key)) return json({ error: 'Неверный ключ.' }, 400);
-      if (key === BANNERS_KEY || key === NEWS_KEY) return json({ error: 'Баннеры и новинки сохраняются отдельно.' }, 400);
+      if (key === BANNERS_KEY || key === NEWS_KEY || key === MADE_KEY) return json({ error: 'Баннеры, новинки и картинки ленты сохраняются отдельно.' }, 400);
       const value = typeof body.value === 'string' ? body.value : null;
       if (value === null || value.trim() === '') {
         const { error } = await admin.from('site_content').delete().eq('key', key);
