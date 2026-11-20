@@ -60,3 +60,7 @@ Header buttons with small corner radii, the pricing calculator counted by the sa
 ## 2026-11-20: v19.67
 
 The squares and rolling numbers replace the old slider in the pricing card of the landing (`patch_pricing_squares.py`) and in the top-up window of the app (`patch_topup_app.py`); the app counts its three examples from its Atlas price tables. Pictures: `site-pricing.png`, `app-topup.png`.
+
+## 2026-11-20: v19.68
+
+A section with the node flow (idea, photo, copy, video, adaptation, done) after «made in ONEFLOW»: `patch_flow_section.py`, pictures `site-flow.png`, `site-flow-phone.png`.
