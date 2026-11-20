@@ -5,14 +5,14 @@ python3 -I patch_flow_section.py <ru.html> <index.html>"""
 import sys
 
 T = {
-    'ru': dict(k='Ноды и адаптация', h='От идеи до рекламы — одним потоком',
-               p='Соедините ноды в цепочку: из одного описания получаются фото, текст, видео и форматы под каждую площадку.',
+    'ru': dict(k='Ноды', h='От идеи до рекламы — одним потоком',
+               p='Адаптация и автоматизация процесса под свои задачи',
                idea=('Идея', 'ваш текст', 'Кроссовки на чёрном фоне, лаймовые акценты, слоган «Беги быстрее»'),
                photo='Фото', text=('Текст', 'Беги быстрее', 'Заголовок, подпись и призыв — под каждую площадку.'),
                video=('Видео', '7 с', '♪ музыка'), adapt=('Адаптация', 'любой формат', 'Лента'),
                done=('Готово', 'Реклама готова', 'Скачать'), aria='Схема: как из идеи получается реклама'),
-    'en': dict(k='Nodes & adaptation', h='From idea to ad — in one flow',
-               p='Link nodes into a chain: one brief turns into a photo, copy, a video and formats for every platform.',
+    'en': dict(k='Nodes', h='From idea to ad — in one flow',
+               p='Adapt and automate the process for your own tasks',
                idea=('Idea', 'your text', 'Sneakers on a black background, lime accents, the slogan “Run faster”'),
                photo='Photo', text=('Copy', 'Run faster', 'Headline, caption and call to action — for every platform.'),
                video=('Video', '7 s', '♪ music'), adapt=('Adaptation', 'any format', 'Feed'),
