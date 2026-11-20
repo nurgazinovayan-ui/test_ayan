@@ -56,3 +56,7 @@ The hero and the strip went into `landing/ru.html` and `landing/index.html` of t
 ## 2026-11-20: v19.66
 
 Header buttons with small corner radii, the pricing calculator counted by the same models as the strip (Seedance 2.5 480p 5 s = 48 credits, Suno V6 = 14), footer links wrap on a phone (the Russian page was 8 px wider than the screen). Patch: `patch_head_price.py`; pictures `site-header.png`, `site-pricing.png`, `site-phone-menu.png`.
+
+## 2026-11-20: v19.67
+
+The squares and rolling numbers replace the old slider in the pricing card of the landing (`patch_pricing_squares.py`) and in the top-up window of the app (`patch_topup_app.py`); the app counts its three examples from its Atlas price tables. Pictures: `site-pricing.png`, `app-topup.png`.
