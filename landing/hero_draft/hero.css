@@ -61,15 +61,15 @@ html[lang] .hero.hq35 .hq-desk { height: 540px; margin-top: -60px; pointer-event
   -webkit-mask-composite: source-in; mask-composite: intersect; }
 html[lang] .hero.hq35 .w-c { top: 140px; }
 html[lang] .hero.hq35 .w-l, html[lang] .hero.hq35 .w-r { top: 216px; }
-/* three cones of light, one rising from each window, apart from one another (the owner, 2026-11-20): each
-   sways a little on its foot and changes its tint */
-html[lang] .hero.hq35 .hq-w .hq-blob { left: 22%; right: 22%; top: -214px; height: 250px; border-radius: 0; background: linear-gradient(0deg, hsl(var(--h) 100% 66% / .95) 0, hsl(var(--h) 100% 62% / .5) 45%, hsl(var(--h) 100% 60% / 0) 100%); -webkit-clip-path: polygon(44% 100%, 56% 100%, 100% 0, 0 0); clip-path: polygon(44% 100%, 56% 100%, 100% 0, 0 0); filter: blur(28px); transform-origin: 50% 100%; animation: hq-sway 9s ease-in-out infinite alternate; will-change: transform, opacity; }
-html[lang] .hero.hq35 .hq-w .hq-blob::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, hsl(calc(var(--h) + 56) 100% 68% / .95) 0, hsl(calc(var(--h) + 56) 100% 64% / .5) 45%, hsl(calc(var(--h) + 56) 100% 60% / 0) 100%); opacity: 0; animation: hq-tint 7s ease-in-out infinite alternate; }
-html[lang] .hero.hq35 .w-c .hq-blob { left: 30%; right: 30%; }
-html[lang] .hero.hq35 .w-l .hq-blob { left: 6%; right: 46%; animation-delay: -4s; animation-duration: 11s; }
+/* three blurred half-circles of light, one over each window, apart from one another (the owner, 2026-11-20):
+   each breathes a little and changes its tint */
+html[lang] .hero.hq35 .hq-w .hq-blob { left: 14%; right: 14%; top: -118px; height: 150px; border-radius: 50% 50% 0 0 / 100% 100% 0 0; background: radial-gradient(ellipse 50% 100% at 50% 100%, hsl(var(--h) 100% 66% / .95) 0, hsl(var(--h) 100% 62% / .55) 55%, hsl(var(--h) 100% 60% / 0) 100%); filter: blur(30px); transform-origin: 50% 100%; animation: hq-breathe 9s ease-in-out infinite alternate; will-change: transform, opacity; }
+html[lang] .hero.hq35 .hq-w .hq-blob::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: radial-gradient(ellipse 50% 100% at 50% 100%, hsl(calc(var(--h) + 56) 100% 68% / .95) 0, hsl(calc(var(--h) + 56) 100% 64% / .55) 55%, hsl(calc(var(--h) + 56) 100% 60% / 0) 100%); opacity: 0; animation: hq-tint 7s ease-in-out infinite alternate; }
+html[lang] .hero.hq35 .w-c .hq-blob { left: 26%; right: 26%; top: -84px; height: 112px; }
+html[lang] .hero.hq35 .w-l .hq-blob { left: 4%; right: 36%; animation-delay: -4s; animation-duration: 11s; }
 html[lang] .hero.hq35 .w-l .hq-blob::after { animation-delay: -2.5s; }
-html[lang] .hero.hq35 .w-r .hq-blob { left: 46%; right: 6%; animation-delay: -7s; animation-duration: 13s; }
+html[lang] .hero.hq35 .w-r .hq-blob { left: 36%; right: 4%; animation-delay: -7s; animation-duration: 13s; }
 html[lang] .hero.hq35 .w-r .hq-blob::after { animation-delay: -5s; }
-@keyframes hq-sway { 0% { transform: rotate(-7deg) scaleY(.92); opacity: .65; } 50% { transform: rotate(2deg) scaleY(1.06); opacity: 1; } 100% { transform: rotate(7deg) scaleY(.96); opacity: .75; } }
+@keyframes hq-breathe { 0% { transform: scale(.9, .86); opacity: .65; } 50% { transform: scale(1.06, 1.1); opacity: 1; } 100% { transform: scale(.97, .95); opacity: .8; } }
 @keyframes hq-tint { 0% { opacity: 0; } 100% { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { html[lang] .hero.hq35 .hq-w .hq-blob, html[lang] .hero.hq35 .hq-w .hq-blob::after { animation: none; } }
