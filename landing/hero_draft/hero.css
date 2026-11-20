@@ -52,18 +52,8 @@ html[lang] .hero.hq35 h1 { font-size: clamp(40px, 5.3vw, 76px); line-height: 1.0
 .hero.hq35 .hq-copy { position: relative; padding: 56px 20px 38px 34px; }
 .hero.hq35 .hq-copy h3 { margin: 0; font: 200 34px/1.08 var(--d); letter-spacing: -.04em; color: var(--ink); }
 .hero.hq35 .hq-copy p { margin: 14px 0 0; font: 400 16px/1.5 var(--d); color: var(--muted); }
-.hero.hq35 .hq-calc { position: relative; padding: 44px 38px 38px 30px; }
-.hero.hq35 .hq-top { display: flex; justify-content: space-between; align-items: flex-end; gap: 30px; }
-.hero.hq35 .hq-top > div:last-child { text-align: right; }
-.hero.hq35 .hq-lab { display: block; font: 400 16px/1 var(--d); color: var(--muted); }
-.hero.hq35 .hq-val { margin-top: 10px; font: 200 62px/1 var(--d); letter-spacing: -.055em; color: var(--ink); white-space: nowrap; }
-.hero.hq35 .hq-val small { margin-left: 10px; font: 400 19px/1 var(--d); letter-spacing: 0; color: var(--ink2); }
-.hero.hq35 input[type=range] { -webkit-appearance: none; appearance: none; display: block; width: 100%; height: 8px; margin: 22px 0 0; border: 0; border-radius: 3px; background: linear-gradient(90deg, hsl(158 72% 56%) var(--hqpos, 8.16%), var(--field, #26262a) var(--hqpos, 8.16%)); outline-offset: 8px; cursor: pointer; }
-.hero.hq35 input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 34px; border-radius: 4px; background: #f2f2f4; box-shadow: 0 6px 16px rgba(0,0,0,.55); }
-.hero.hq35 input[type=range]::-moz-range-thumb { width: 14px; height: 34px; border: 0; border-radius: 4px; background: #f2f2f4; }
-.hero.hq35 .hq-rate { margin-top: 18px; font: 400 16px/1.2 var(--d); color: var(--muted); text-align: right; }
-.hero.hq35 .hq-enough { margin-top: 4px; font: 400 16px/1.2 var(--d); color: var(--muted); }
-.hero.hq35 .hq-for { margin-top: 14px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-.hero.hq35 .hq-for b { display: block; font: 200 48px/1 var(--d); letter-spacing: -.05em; color: var(--ink); white-space: nowrap; }
-.hero.hq35 .hq-for span { display: block; margin-top: 10px; font: 500 18px/1.2 var(--d); letter-spacing: -.01em; color: var(--ink); }
-.hero.hq35 .hq-for em { display: block; margin-top: 5px; font: 400 16px/1.3 var(--d); font-style: normal; color: var(--muted); white-space: nowrap; }
+/* the card «Баланс» without the top-up slider (removed by the owner, 2026-11-20): one row, the words only */
+.hero.hq35 .hq-bal.hq-slim { display: block; }
+.hero.hq35 .hq-slim .hq-copy { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 44px; padding: 50px 40px 36px 34px; }
+.hero.hq35 .hq-slim .hq-copy h3 { white-space: nowrap; }
+.hero.hq35 .hq-slim .hq-copy p { margin: 0; font-size: 18px; }
