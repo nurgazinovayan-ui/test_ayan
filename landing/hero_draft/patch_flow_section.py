@@ -24,8 +24,8 @@ EDGES = ['M236,235 C276,235 276,125 316,125', 'M236,235 C276,235 276,376 316,376
 PORTS = [(236, 235), (316, 125), (316, 376), (528, 125), (612, 125), (528, 212), (612, 330), (528, 376), (612, 396), (912, 125), (968, 125)]
 SVG = ('<svg viewBox="0 0 1120 452" aria-hidden="true">' + ''.join(f'<path d="{d}"/><path class="run" d="{d}"/>' for d in EDGES)
        + ''.join(f'<circle cx="{x}" cy="{y}" r="4.5"/>' for x, y in PORTS) + '</svg>')
-SCENE = ('<video autoplay muted loop playsinline preload="metadata" poster="/pe/scene.jpg" tabindex="-1">'
-         '<source src="/pe/scene.mp4" type="video/mp4"><source src="/pe/scene.webm" type="video/webm"></video>')
+SCENE = ('<video autoplay muted loop playsinline preload="metadata" poster="/pe/run.jpg" tabindex="-1">'
+         '<source src="/pe/run.mp4" type="video/mp4"><source src="/pe/run.webm" type="video/webm"></video>')
 
 
 def node(cls, color, title, model, body):
