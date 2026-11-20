@@ -52,3 +52,7 @@
 ## 2026-11-20: put on the site (v19.65)
 
 The hero and the strip went into `landing/ru.html` and `landing/index.html` of the main repo with a phone and tablet layout, theme-following colours and the video covering the player bar. Pictures: `site-*.jpg`. Builder: `hero_pick35l.py` (made from the previous builder by `mk35l.py`).
+
+## 2026-11-20: v19.66
+
+Header buttons with small corner radii, the pricing calculator counted by the same models as the strip (Seedance 2.5 480p 5 s = 48 credits, Suno V6 = 14), footer links wrap on a phone (the Russian page was 8 px wider than the screen). Patch: `patch_head_price.py`; pictures `site-header.png`, `site-pricing.png`, `site-phone-menu.png`.
