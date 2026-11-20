@@ -97,6 +97,8 @@ html[data-theme="dark"] .flow .fl-n { box-shadow: 0 30px 60px -30px rgba(0,0,0,.
 .flow .n-done .fl-nb { align-items: flex-start; gap: 8px; }
 .flow .n-done .fl-ok { width: 30px; height: 30px; border-radius: 6px; display: grid; place-items: center; font: 600 15px/1 var(--d); color: #0b0b0d; background: #6fe3a5; }
 .flow .n-done .fl-dl { margin-top: auto; align-self: stretch; height: 32px; border-radius: 6px; display: grid; place-items: center; font: 600 13px/1 var(--d); color: #fff; background: #0a6cff; }
+/* the English page: this heading in the same thin face as the hero, not the wide display face of the other English headings */
+html[lang="en"] .flow .sh h2 { font-family: var(--d); font-weight: 200; font-size: clamp(34px, 4.6vw, 60px); line-height: 1.08; letter-spacing: -.045em; word-spacing: normal; text-transform: none; font-stretch: normal; }
 /* a phone: the nodes in a column, a dashed line between them */
 @media (max-width: 760px) {
   .flow .fl-fit { height: auto; margin-top: 36px; }
