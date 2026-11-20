@@ -48,3 +48,7 @@
 ## Не решено
 
 - Телефон, светлая тема и нынешнее фоновое видео в этом макете не сделаны.
+
+## 2026-11-20: put on the site (v19.65)
+
+The hero and the strip went into `landing/ru.html` and `landing/index.html` of the main repo with a phone and tablet layout, theme-following colours and the video covering the player bar. Pictures: `site-*.jpg`. Builder: `hero_pick35l.py` (made from the previous builder by `mk35l.py`).
