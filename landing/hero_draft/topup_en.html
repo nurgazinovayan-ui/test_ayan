@@ -1,14 +1,49 @@
-<section class="hs" id="topup"><div class="wrap hs-in"><div class="hs-pay"><label for="hsTop">You top up</label><b data-o="usd">$50</b></div><input id="hsTop" type="range" min="10" max="500" step="10" value="50" aria-label="Top-up amount in dollars"><div class="hs-out"><div><b data-o="credits">2,750</b><span>credits</span></div><div><b data-o="photo">≈ 687</b><span>images<button type="button" class="hs-q" aria-label="How it is counted: Nano Banana 2.1 · 1K · 4 credits per image">?<i role="tooltip">Nano Banana 2.1 · 1K · 4 credits per image</i></button></span></div><div><b data-o="video">≈ 57</b><span>5 s videos<button type="button" class="hs-q r" aria-label="How it is counted: Seedance 2.5 · 480p · 5 seconds with sound · 48 credits">?<i role="tooltip">Seedance 2.5 · 480p · 5 seconds with sound · 48 credits</i></button></span></div><div><b data-o="music">≈ 196</b><span>tracks<button type="button" class="hs-q r" aria-label="How it is counted: Suno V6 · two takes per request · 14 credits">?<i role="tooltip">Suno V6 · two takes per request · 14 credits</i></button></span></div></div></div><script>
+<section class="hs" id="topup"><div class="wrap">
+<div class="hs-top"><div class="hs-sum"><label for="hsTop">You top up</label><b class="hs-roll" data-o="usd"></b></div>
+<div class="hs-out"><span><b class="hs-roll" data-o="credits"></b> credits</span><span><b class="hs-roll" data-o="photo"></b> images<button type="button" class="hs-q" aria-label="How it is counted: Nano Banana 2.1 · 1K · 4 credits per image">?<i role="tooltip">Nano Banana 2.1 · 1K · 4 credits per image</i></button></span><span><b class="hs-roll" data-o="video"></b> 5 s videos<button type="button" class="hs-q r" aria-label="How it is counted: Seedance 2.5 · 480p · 5 seconds with sound · 48 credits">?<i role="tooltip">Seedance 2.5 · 480p · 5 seconds with sound · 48 credits</i></button></span><span><b class="hs-roll" data-o="music"></b> tracks<button type="button" class="hs-q r" aria-label="How it is counted: Suno V6 · two takes per request · 14 credits">?<i role="tooltip">Suno V6 · two takes per request · 14 credits</i></button></span></div></div>
+<div class="hs-px"><div class="hs-cells" aria-hidden="true"></div><input id="hsTop" type="range" min="10" max="500" step="10" value="50" aria-label="Top-up amount in dollars"></div>
+</div><script>
+/* The top-up strip: the squares light up to the chosen sum and the last lit ones pulse — the larger the sum, the
+   stronger; every number rolls to its new value like a drum. Credits per $1 as in the pricing section; a photo
+   is Nano Banana 2.1 (4 credits), a video Seedance 2.5, 5 s at 480p (48), a track Suno V6 (14). */
 (function () {
   var root = document.getElementById('topup'); if (!root) return;
-  var COST = { photo: 4, video: 48, music: 14 }, GAP = ',', r = root.querySelector('input');
+  var COST = { photo: 4, video: 48, music: 14 }, GAP = ',', N = 48, PULSE = 7;
+  var HUES = [326, 300, 262, 236, 212, 190, 158, 110, 70, 36];
+  var r = root.querySelector('input'), box = root.querySelector('.hs-cells'), cells = [];
+  for (var i = 0; i < N; i++) {
+    var c = document.createElement('i');
+    c.style.setProperty('--c', 'hsl(' + HUES[Math.min(HUES.length - 1, Math.floor(i * HUES.length / N))] + ' 100% 62%)');
+    box.appendChild(c); cells.push(c);
+  }
   function sp(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, GAP); }
+  /* a number as columns of digits: a column slides to its digit; columns are added and taken away on the left */
+  function roll(el, text) {
+    var want = text.split(''), have = [].slice.call(el.children);
+    while (have.length > want.length) el.removeChild(have.shift());
+    while (have.length < want.length) { var s = document.createElement('span'); el.insertBefore(s, el.firstChild); have.unshift(s); }
+    want.forEach(function (ch, k) {
+      var s = have[k], digit = ch >= '0' && ch <= '9';
+      if (!digit) { s.className = 'hs-ch'; s.textContent = ch; return; }
+      if (s.className !== 'hs-col') { s.className = 'hs-col'; s.innerHTML = '<u>0<br>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9</u>'; }
+      s.firstChild.style.transform = 'translateY(' + (-Number(ch) * 10) + '%)';
+    });
+    el.setAttribute('aria-label', text);
+  }
   function draw() {
-    var usd = Number(r.value), credits = usd * (usd < 50 ? 50 : usd < 200 ? 55 : 60);
-    root.querySelector('[data-o=usd]').textContent = '$' + usd;
-    root.querySelector('[data-o=credits]').textContent = sp(credits);
-    for (var k in COST) root.querySelector('[data-o=' + k + ']').textContent = '≈ ' + sp(Math.floor(credits / COST[k]));
-    r.style.setProperty('--hspos', ((usd - 10) / 490 * 100) + '%');
+    var usd = Number(r.value), credits = usd * (usd < 50 ? 50 : usd < 200 ? 55 : 60), part = (usd - 10) / 490;
+    var lit = Math.max(1, Math.round(part * (N - 1)) + 1), amp = usd / 500;
+    roll(root.querySelector('[data-o=usd]'), '$' + usd);
+    roll(root.querySelector('[data-o=credits]'), sp(credits));
+    for (var k in COST) roll(root.querySelector('[data-o=' + k + ']'), sp(Math.floor(credits / COST[k])));
+    box.style.setProperty('--amp', amp.toFixed(3));
+    box.style.setProperty('--beat', (1.5 - amp * 0.85).toFixed(2) + 's');
+    cells.forEach(function (c, i) {
+      var back = lit - 1 - i; /* 0 is the square under the thumb */
+      c.className = i < lit - 1 ? 'on' : i === lit - 1 ? 'on at' : '';
+      /* the last lit squares pulse, the nearer to the end the more */
+      if (back > 0 && back <= PULSE) { c.classList.add('beat'); c.style.setProperty('--near', (1 - (back - 1) / PULSE).toFixed(2)); c.style.animationDelay = (-back * 0.09).toFixed(2) + 's'; }
+    });
   }
   r.addEventListener('input', draw); draw();
 })();
