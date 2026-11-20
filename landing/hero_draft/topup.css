@@ -7,6 +7,13 @@
 .hs .hs-out { display: flex; gap: 40px; }
 .hs .hs-out > div { display: flex; flex-direction: column-reverse; }
 .hs .hs-out b { margin: 10px 0 0; }
+.hs .hs-out span { display: flex; align-items: center; gap: 8px; min-height: 20px; }
+/* the small «?» beside a name: what model, size and price the number is counted by */
+.hs .hs-q { position: relative; flex: none; width: 20px; height: 20px; padding: 0; border: 0; border-radius: 50%; background: rgba(255,255,255,.14); color: #d6d7de; font: 600 12px/20px var(--d); text-align: center; cursor: help; }
+.hs .hs-q:hover, .hs .hs-q:focus-visible { background: #0a6cff; color: #fff; outline: 0; }
+.hs .hs-q i { position: absolute; z-index: 5; left: 50%; bottom: 30px; transform: translateX(-50%); width: max-content; max-width: 280px; padding: 12px 14px; border-radius: 8px; background: #1f2026; color: #f2f2f4; font: 400 15px/1.4 var(--d); font-style: normal; text-align: left; white-space: normal; box-shadow: 0 14px 30px rgba(0,0,0,.5); opacity: 0; visibility: hidden; transition: opacity .12s; pointer-events: none; }
+.hs .hs-q.r i { left: auto; right: -12px; transform: none; }
+.hs .hs-q:hover i, .hs .hs-q:focus i, .hs .hs-q.open i { opacity: 1; visibility: visible; }
 .hs input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; margin: 0; border: 0; border-radius: 2px; background: linear-gradient(90deg, #0a6cff var(--hspos, 8.16%), rgba(255,255,255,.14) var(--hspos, 8.16%)); cursor: pointer; }
 .hs input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 28px; border-radius: 3px; background: #f2f2f4; }
 .hs input[type=range]::-moz-range-thumb { width: 12px; height: 28px; border: 0; border-radius: 3px; background: #f2f2f4; }
