@@ -1,0 +1,15 @@
+<section class="hs" id="topup"><div class="wrap hs-in"><div class="hs-pay"><label for="hsTop">You top up</label><b data-o="usd">$50</b></div><input id="hsTop" type="range" min="10" max="500" step="10" value="50" aria-label="Top-up amount in dollars"><div class="hs-out"><div><b data-o="credits">2,750</b><span>credits</span></div><div title="Nano Banana 2.1"><b data-o="photo">≈ 687</b><span>images</span></div><div title="Seedance 2.5, 480p"><b data-o="video">≈ 57</b><span>5 s videos</span></div><div title="Suno V6"><b data-o="music">≈ 196</b><span>tracks</span></div></div></div><script>
+(function () {
+  var root = document.getElementById('topup'); if (!root) return;
+  var COST = { photo: 4, video: 48, music: 14 }, GAP = ',', r = root.querySelector('input');
+  function sp(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, GAP); }
+  function draw() {
+    var usd = Number(r.value), credits = usd * (usd < 50 ? 50 : usd < 200 ? 55 : 60);
+    root.querySelector('[data-o=usd]').textContent = '$' + usd;
+    root.querySelector('[data-o=credits]').textContent = sp(credits);
+    for (var k in COST) root.querySelector('[data-o=' + k + ']').textContent = '≈ ' + sp(Math.floor(credits / COST[k]));
+    r.style.setProperty('--hspos', ((usd - 10) / 490 * 100) + '%');
+  }
+  r.addEventListener('input', draw); draw();
+})();
+</script></section>
