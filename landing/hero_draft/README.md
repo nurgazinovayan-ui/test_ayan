@@ -64,3 +64,7 @@ The squares and rolling numbers replace the old slider in the pricing card of th
 ## 2026-11-20: v19.68
 
 A section with the node flow (idea, photo, copy, video, adaptation, done) after «made in ONEFLOW»: `patch_flow_section.py`, pictures `site-flow.png`, `site-flow-phone.png`.
+
+## 2026-11-20: v19.74
+
+No demo buttons (hero, pricing, login screen); Recraft and Krea removed from the landing and the app; the app shows one notice for every failed generation (`app-notices.png`) and the top-up window when credits run short. Server side (functions package): text models, UGC clips, GPT Image 2.5, service pictures and the vector (SVG) through Atlas Cloud first; team accounts at @mechta.kz spend and see the Atlas balance at 50 credits per dollar. Patches: `patch_*.py`.
