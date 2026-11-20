@@ -46,10 +46,27 @@ html[lang] .hero.hq35 h1 { font-size: clamp(40px, 5.3vw, 76px); line-height: 1.0
 .hero.hq35 .hq-desk { height: 420px; margin-top: 60px; }
 .hero.hq35 .w-l .hq-logo { left: 30%; }
 .hero.hq35 .w-r .hq-logo { left: 70%; }
-/* three plain buttons (the owner, 2026-11-20): «Демо» beside the two, small corner radii, no arrow, no glow */
-html[lang] .hero.hq35 .acts { gap: 10px; margin-top: 30px; }
-html[lang] .hero.hq35 .acts .btn { height: 52px; padding: 0 26px; border-radius: 6px; font: 500 16px/1 var(--d); letter-spacing: 0; box-shadow: none; transform: none; transition: background .15s; }
-html[lang] .hero.hq35 .acts .btn.p { background: #f2f2f4; color: #0c0c10; }
-html[lang] .hero.hq35 .acts .btn.p:hover { background: #fff; }
-html[lang] .hero.hq35 .acts .btn.g { background: #1d1e23; color: #f2f2f4; backdrop-filter: none; -webkit-backdrop-filter: none; }
-html[lang] .hero.hq35 .acts .btn.g:hover { background: #282a31; }
+/* buttons, style C (the owner, 2026-11-20): one blue main button, the other two as underlined words */
+html[lang] .hero.hq35 .acts { position: relative; z-index: 3; gap: 10px; margin-top: 30px; }
+html[lang] .hero.hq35 .acts .btn { height: 52px; padding: 0 26px; border-radius: 8px; font: 500 16px/1 var(--d); letter-spacing: 0; box-shadow: none; transform: none; transition: background .15s, text-decoration-color .15s; }
+html[lang] .hero.hq35 .acts .btn.p { background: #0a6cff; color: #fff; }
+html[lang] .hero.hq35 .acts .btn.p:hover { background: #2a80ff; }
+html[lang] .hero.hq35 .acts .btn.g { background: transparent; color: #f2f2f4; padding: 0 16px; backdrop-filter: none; -webkit-backdrop-filter: none; text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 1px; text-decoration-color: rgba(255,255,255,.35); }
+html[lang] .hero.hq35 .acts .btn.g:hover { text-decoration-color: #fff; }
+/* the light behind the windows (the owner, 2026-11-20): never cut by an edge — the block reaches up behind the
+   buttons and fades out on every side — and it drifts and changes its tint slowly */
+html[lang] .hero.hq35 .hq-desk { height: 540px; margin-top: -60px; pointer-events: none;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 120px, #000 73%, transparent 100%), linear-gradient(90deg, transparent 0, #000 5%, #000 95%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0, #000 120px, #000 73%, transparent 100%), linear-gradient(90deg, transparent 0, #000 5%, #000 95%, transparent 100%);
+  -webkit-mask-composite: source-in; mask-composite: intersect; }
+html[lang] .hero.hq35 .w-c { top: 140px; }
+html[lang] .hero.hq35 .w-l, html[lang] .hero.hq35 .w-r { top: 216px; }
+html[lang] .hero.hq35 .hq-w .hq-blob { left: -4%; right: -4%; top: -96px; height: 210px; background: hsl(var(--h) 100% 62% / .5); filter: blur(64px); animation: hq-drift 11s ease-in-out infinite alternate; will-change: transform, opacity; }
+html[lang] .hero.hq35 .hq-w .hq-blob::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: hsl(calc(var(--h) + 56) 100% 64% / .6); opacity: 0; animation: hq-tint 7s ease-in-out infinite alternate; }
+html[lang] .hero.hq35 .w-l .hq-blob { animation-delay: -4s; animation-duration: 13s; }
+html[lang] .hero.hq35 .w-l .hq-blob::after { animation-delay: -2.5s; }
+html[lang] .hero.hq35 .w-r .hq-blob { animation-delay: -8s; animation-duration: 15s; }
+html[lang] .hero.hq35 .w-r .hq-blob::after { animation-delay: -5s; }
+@keyframes hq-drift { 0% { transform: translate(-9%, 6px) scale(.9, .92); opacity: .7; } 50% { transform: translate(5%, -10px) scale(1.08, 1.12); opacity: 1; } 100% { transform: translate(10%, 4px) scale(.96, 1); opacity: .8; } }
+@keyframes hq-tint { 0% { opacity: 0; } 100% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { html[lang] .hero.hq35 .hq-w .hq-blob, html[lang] .hero.hq35 .hq-w .hq-blob::after { animation: none; } }
