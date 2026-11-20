@@ -36,7 +36,7 @@ def node(cls, color, title, model, body):
 def section(lang):
     t = T[lang]
     pe = f'/pe/{lang}'
-    return (f'<section class="sec flow" id="flow"><div class="wrap"><div class="sh rv"><span class="k">{t["k"]}</span><h2>{t["h"]}</h2><p>{t["p"]}</p></div>'
+    return (f'<section class="sec flow" id="flow"><div class="wrap"><div class="sh rv"><h2>{t["p"]}</h2></div>'
             f'<div class="fl-fit rv" role="img" aria-label="{t["aria"]}"><div class="fl-stage">{SVG}'
             + node('n-idea', 'var(--ink)', t['idea'][0], t['idea'][1], f'<p>{t["idea"][2]}</p><div class="fl-tags"><em>1:1</em><em>2K</em></div>')
             + node('n-photo', '#4c9bff', t['photo'], 'Nano Banana 2.1', f'<img src="{pe}/ad-11.webp" alt="" loading="lazy">')
