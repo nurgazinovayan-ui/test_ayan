@@ -2,7 +2,7 @@ const { chromium } = require('playwright'); const path = require('path');
 const dir = process.argv[2];
 (async () => {
   const b = await chromium.launch(); const notes = [];
-  for (const v of ['a', 'b', 'c']) for (const [name, w, h, scale] of [['desk', 1440, 900, 1], ['phone', 390, 844, 2]]) {
+  for (const v of (process.argv[3] || 'a,b,c').split(',')) for (const [name, w, h, scale] of [['desk', 1440, 900, 1], ['phone', 390, 844, 2]]) {
     const ctx = await b.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: scale }); const p = await ctx.newPage();
     await p.goto('file://' + path.join(dir, v + '.html')); await p.waitForTimeout(700);
     const wide = await p.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
