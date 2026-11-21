@@ -1,0 +1,70 @@
+<!doctype html><html lang="ru" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>C</title><link rel="stylesheet" href="fonts.css"><link rel="stylesheet" href="common.css"><style>
+.hero{padding:40px 0 0}
+.hero h1{font-size:clamp(52px,9.2vw,148px);letter-spacing:-.06em;line-height:.96}
+.hero .row{display:flex;justify-content:space-between;align-items:flex-end;gap:40px;margin-top:40px;flex-wrap:wrap}
+.hero .sub{max-width:520px;color:var(--ink2)}
+.hero .cta{display:flex;gap:28px;align-items:center}
+.flow{position:relative;margin-top:64px;height:420px}
+.flow .say{position:absolute;left:0;top:0;z-index:3;background:var(--ink);color:var(--bg);padding:16px 22px;border-radius:14px 14px 14px 4px;font-size:20px;max-width:430px;line-height:1.35}
+.flow .ims{position:absolute;inset:70px 0 0 0;display:flex;gap:18px;align-items:flex-end}
+.flow .ims img{flex:1;min-width:0;border-radius:14px;object-fit:cover;box-shadow:0 30px 60px -30px rgba(17,17,20,.45)}
+.flow .ims img:nth-child(1){height:230px}.flow .ims img:nth-child(2){height:300px}.flow .ims img:nth-child(3){height:350px}.flow .ims img:nth-child(4){height:290px}.flow .ims img:nth-child(5){height:220px}
+.sec{padding:130px 0 0}
+.sec h2{font-size:clamp(40px,6vw,88px);letter-spacing:-.055em}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:60px;margin-top:60px}
+.steps .n{font:500 22px/1 var(--d);margin-bottom:22px;display:flex;align-items:center;gap:14px}
+.steps .n:after{content:"";flex:1;height:2px;background:var(--ink)}
+.steps h3{font-size:32px;font-weight:500;letter-spacing:-.03em;line-height:1.12;margin-bottom:12px}
+.steps p{color:var(--ink2)}
+.demo{display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:center;margin-top:60px}
+.demo .pane{background:var(--s1);border-radius:22px;padding:28px;box-shadow:0 40px 90px -50px rgba(17,17,40,.4)}
+.demo ul{list-style:none;display:grid;gap:30px}
+.demo q{display:block;quotes:"«" "»";font:200 clamp(28px,3vw,42px)/1.14 var(--d);letter-spacing:-.04em}
+.demo li p{color:var(--ink2);margin-top:8px}
+.nums{display:grid;grid-template-columns:repeat(3,1fr);gap:60px;margin-top:56px}
+.nums b{display:block;font:200 clamp(72px,9vw,140px)/.95 var(--d);letter-spacing:-.07em}
+.nums span{display:block;margin-top:14px;color:var(--ink2);font-size:20px}
+.dark{margin-top:140px;background:var(--ink);color:var(--bg);padding:96px 0 104px}
+.dark h2{font-size:clamp(40px,6vw,88px);letter-spacing:-.055em}
+.dark .addr{display:flex;align-items:center;gap:16px;margin-top:44px;background:rgba(255,255,255,.1);border-radius:12px;padding:14px 14px 14px 28px}
+.dark code{flex:1;min-width:0;font:400 clamp(17px,2vw,24px)/1.3 var(--m);overflow-wrap:anywhere}
+.dark .tr{display:grid;grid-template-columns:repeat(3,1fr);gap:50px;margin-top:64px}
+.dark .tr h3{font-size:24px;font-weight:500;letter-spacing:-.02em;margin-bottom:8px}
+.dark .tr p{opacity:.72}
+@media (max-width:760px){.hero{padding-top:16px}.hero .row{margin-top:26px}.hero .cta{flex-wrap:wrap}.flow{height:330px;margin-top:44px}.flow .say{font-size:17px;max-width:86%}.flow .ims{gap:10px;inset:96px -80px 0 0}.flow .ims img:nth-child(1){height:150px}.flow .ims img:nth-child(2){height:200px}.flow .ims img:nth-child(3){height:230px}.flow .ims img:nth-child(4){height:190px}.flow .ims img:nth-child(5){display:none}.sec{padding-top:84px}.steps,.nums,.dark .tr{grid-template-columns:1fr;gap:40px;margin-top:40px}.demo{grid-template-columns:1fr;gap:36px;margin-top:40px}.demo .pane{padding:18px 16px}.dark{margin-top:90px;padding:64px 0 72px}.dark .addr{flex-direction:column;align-items:stretch;padding:20px 16px 16px}}
+</style></head><body>
+<header class="nav"><div class="wrap in"><a class="logo" href="#"><svg viewBox="0 0 76 52" aria-hidden="true"><path fill="currentColor" d="M17 0C18.66 0 20 1.34 20 3V14C20 15.1 20.9 16 22 16H32C33.66 16 35 17.34 35 19V30C35 31.1 35.9 32 37 32H38C39.1 32 40 31.1 40 30V19C40 17.34 41.34 16 43 16H57C58.66 16 60 17.34 60 19V30C60 31.1 60.9 32 62 32H73C74.66 32 76 33.34 76 35V49C76 50.66 74.66 52 73 52H59C57.34 52 56 50.66 56 49V38C56 36.9 55.1 36 54 36H51C49.9 36 49 36.9 49 38V49C49 50.66 47.66 52 46 52H32C30.34 52 29 50.66 29 49V38C29 36.9 28.1 36 27 36H24C22.9 36 22 36.9 22 38V49C22 50.66 20.66 52 19 52H5C3.34 52 2 50.66 2 49V35C2 33.34 3.34 32 5 32H13C14.1 32 15 31.1 15 30V22C15 20.9 14.1 20 13 20H3C1.34 20 0 18.66 0 17V3C0 1.34 1.34 0 3 0H17Z"/></svg> ONEFLOW</a><nav><a>Почему ONEFLOW</a><a>Цены</a><a><b style="font-weight:600;color:var(--ink)">Claude</b></a><a>Вопросы</a></nav><span class="sp"></span><a class="lg">Войти</a><a class="btn sm ink">Регистрация</a></div></header>
+<main>
+<section class="hero"><div class="wrap">
+<h1>Claude рисует.<br><b>Через ONEFLOW.</b></h1>
+<div class="row"><p class="sub">Подключите ONEFLOW к Claude — и получайте картинки и видео для рекламы прямо в чате. Те же кредиты, без подписки.</p>
+<div class="cta"><a class="btn ink">Подключить</a><a class="link">Как это работает</a></div></div>
+<div class="flow"><div class="say">Сделай пять вариантов баннера для новой колонки</div>
+<div class="ims"><img src="img/coffee.webp" alt=""><img src="img/speaker.webp" alt=""><img src="img/hot-vision.webp" alt=""><img src="img/feel-the-sound.webp" alt=""><img src="img/pop-off.webp" alt=""></div></div>
+</div></section>
+<section class="sec"><div class="wrap">
+<h2>Три шага. <b>Один раз.</b></h2>
+<div class="steps">
+<div><div class="n">01</div><h3>Скопируйте адрес</h3><p>Он один для всех и есть внизу страницы.</p></div>
+<div><div class="n">02</div><h3>Добавьте в Claude</h3><p>Настройки → Коннекторы → Добавить свой коннектор.</p></div>
+<div><div class="n">03</div><h3>Нажмите «Разрешить»</h3><p>Войдите в ONEFLOW как обычно. Пароль Claude не видит.</p></div>
+</div></div></section>
+<section class="sec"><div class="wrap">
+<h2>Говорите <b>как с человеком</b></h2>
+<div class="demo"><ul>
+<li><q>Сделай картинку: кулон в жидком серебре</q><p>Результат в чате, от 2 кредитов.</p></li>
+<li><q>Сними из неё видео на 5 секунд</q><p>Окно само покажет прогресс и готовое видео.</p></li>
+<li><q>Покажи мои последние работы</q><p>Галерея всего, что сделано в ONEFLOW.</p></li>
+</ul>
+<div class="pane"><div class="chat"><div class="me">Покажи мои последние работы</div><div class="tool"><i></i>ONEFLOW · галерея</div><img class="w" src="img/w-gallery-light.png" alt=""></div></div>
+</div></div></section>
+<section class="sec"><div class="wrap">
+<h2>Те же кредиты, <b>что на сайте</b></h2>
+<div class="nums"><div><b>от 2</b><span>кредитов за картинку</span></div><div><b>от 23</b><span>кредитов за видео 5 секунд</span></div><div><b>0</b><span>подписок и платы за подключение</span></div></div>
+</div></section>
+<section class="dark"><div class="wrap">
+<h2>Подключите <b>за минуту</b></h2>
+<div class="addr"><code>https://api.oneflow.art/functions/v1/mcp</code><a class="btn blue">Копировать адрес</a></div>
+<div class="tr"><div><h3>Только ваш аккаунт</h3><p>Claude видит ваши работы и баланс — и ничьи больше.</p></div><div><h3>Без пароля и оплат</h3><p>Сменить пароль или оплатить что-то через Claude нельзя.</p></div><div><h3>Отключается кнопкой</h3><p>В любой момент, сразу.</p></div></div>
+</div></section>
+</main><footer><div class="wrap"><span>© 2026 ONEFLOW</span><span>Политика конфиденциальности · Пользовательское соглашение · Поддержка</span></div></footer></body></html>

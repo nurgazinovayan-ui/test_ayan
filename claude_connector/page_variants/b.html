@@ -1,0 +1,82 @@
+<!doctype html><html lang="ru" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>B</title><link rel="stylesheet" href="fonts.css"><link rel="stylesheet" href="common.css"><style>
+.hero{padding:48px 0 0}
+.hero .g{display:grid;grid-template-columns:1.02fr .98fr;gap:64px;align-items:center}
+.eyebrow{font:400 17px/1 var(--m);color:#6aa8ff;margin-bottom:26px}
+.hero h1{font-size:clamp(40px,4.7vw,70px)}
+.hero .sub{margin-top:24px;max-width:520px}
+.addr{margin-top:36px;background:var(--s1);border-radius:12px;padding:20px 22px 22px}
+.addr span{display:block;color:var(--muted);font-size:16px;margin-bottom:8px}
+.addr code{display:block;font:400 19px/1.35 var(--m);overflow-wrap:anywhere;margin-bottom:18px}
+.addr .row{display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+.talk{background:linear-gradient(160deg,#16161a,#101013);border-radius:22px;padding:28px 28px 30px;position:relative}
+.talk:before{content:"";position:absolute;inset:-60px -40px auto auto;width:360px;height:360px;background:radial-gradient(circle,rgba(10,108,255,.45),transparent 65%);filter:blur(30px);z-index:-1}
+.band{margin-top:120px;background:var(--s1);padding:96px 0 104px}
+.band h2,.sec h2{font-size:clamp(36px,4.6vw,62px)}
+.pairs{display:grid;grid-template-columns:repeat(4,1fr);gap:34px;margin-top:56px}
+.pairs img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px}
+.pairs .say{font:400 17px/1.4 var(--m);color:#6aa8ff;margin:20px 0 8px}
+.pairs .get{font-size:21px;font-weight:500;letter-spacing:-.02em;line-height:1.25}
+.pairs .cost{color:var(--muted);margin-top:6px}
+.sec{padding:120px 0 0}
+.how{display:grid;grid-template-columns:.9fr 1.1fr;gap:72px;margin-top:56px;align-items:start}
+.how ol{list-style:none;display:grid;gap:40px;counter-reset:s}
+.how li{counter-increment:s;display:grid;grid-template-columns:64px 1fr;gap:6px 18px}
+.how li:before{content:"0" counter(s);font:400 20px/1.5 var(--m);color:#6aa8ff;grid-row:span 2}
+.how h3{font-size:26px;font-weight:500;letter-spacing:-.02em;line-height:1.2}
+.how p{color:var(--ink2)}
+.how .shot{background:var(--s1);border-radius:18px;padding:26px}
+.price{margin-top:120px;background:var(--blue);color:#fff;padding:84px 0}
+.price .g{display:grid;grid-template-columns:1.1fr 1fr 1fr 1fr;gap:44px;align-items:end}
+.price .btn{background:#fff;color:#0a3fb8}
+.price h2{font-size:clamp(34px,4vw,54px)}
+.price b.n{display:block;font:200 clamp(56px,6vw,88px)/1 var(--d);letter-spacing:-.06em}
+.price span{display:block;margin-top:10px;font-size:19px;opacity:.92}
+.faq{display:grid;grid-template-columns:1fr 1fr;gap:44px 72px;margin-top:52px}
+.faq h3{font-size:24px;font-weight:500;letter-spacing:-.02em;line-height:1.25;margin-bottom:10px}
+.faq p{color:var(--ink2)}
+.end{padding:120px 0 96px;display:flex;justify-content:space-between;align-items:center;gap:30px;flex-wrap:wrap}
+.end h2{font-size:clamp(38px,5vw,68px)}
+@media (max-width:760px){.hero{padding-top:20px}.hero .g,.how{grid-template-columns:1fr;gap:36px}.talk{padding:18px 16px 22px}.band{margin-top:72px;padding:64px 0}.pairs{grid-template-columns:1fr 1fr;gap:28px 16px;margin-top:36px}.pairs .get{font-size:19px}.sec{padding-top:80px}.how li{grid-template-columns:48px 1fr}.price{margin-top:80px;padding:60px 0}.price .g{grid-template-columns:1fr;gap:34px}.faq{grid-template-columns:1fr;gap:34px}.end{padding:80px 0 60px}}
+</style></head><body>
+<header class="nav"><div class="wrap in"><a class="logo" href="#"><svg viewBox="0 0 76 52" aria-hidden="true"><path fill="currentColor" d="M17 0C18.66 0 20 1.34 20 3V14C20 15.1 20.9 16 22 16H32C33.66 16 35 17.34 35 19V30C35 31.1 35.9 32 37 32H38C39.1 32 40 31.1 40 30V19C40 17.34 41.34 16 43 16H57C58.66 16 60 17.34 60 19V30C60 31.1 60.9 32 62 32H73C74.66 32 76 33.34 76 35V49C76 50.66 74.66 52 73 52H59C57.34 52 56 50.66 56 49V38C56 36.9 55.1 36 54 36H51C49.9 36 49 36.9 49 38V49C49 50.66 47.66 52 46 52H32C30.34 52 29 50.66 29 49V38C29 36.9 28.1 36 27 36H24C22.9 36 22 36.9 22 38V49C22 50.66 20.66 52 19 52H5C3.34 52 2 50.66 2 49V35C2 33.34 3.34 32 5 32H13C14.1 32 15 31.1 15 30V22C15 20.9 14.1 20 13 20H3C1.34 20 0 18.66 0 17V3C0 1.34 1.34 0 3 0H17Z"/></svg> ONEFLOW</a><nav><a>Почему ONEFLOW</a><a>Цены</a><a><b style="font-weight:600;color:var(--ink)">Claude</b></a><a>Вопросы</a></nav><span class="sp"></span><a class="lg">Войти</a><a class="btn sm ink">Регистрация</a></div></header>
+<main>
+<section class="hero"><div class="wrap g">
+<div><div class="eyebrow">коннектор для Claude</div>
+<h1>Скажите Claude.<br><b>ONEFLOW сделает.</b></h1>
+<p class="sub">Картинки и видео для рекламы — по одной фразе в чате, без переключения между сервисами.</p>
+<div class="addr"><span>Адрес коннектора — вставьте его в настройках Claude</span><code>https://api.oneflow.art/functions/v1/mcp</code><div class="row"><a class="btn blue">Копировать адрес</a><a class="link">Как подключить</a></div></div></div>
+<div class="talk"><div class="chat">
+<div class="me">Сделай картинку: кулон в жидком серебре, голубой свет</div>
+<div class="tool"><i></i>ONEFLOW · картинка</div>
+<img class="w" src="img/w-image-dark.png" alt="">
+</div></div>
+</div></section>
+<section class="band"><div class="wrap">
+<h2>Скажите — <b>получите</b></h2>
+<div class="pairs">
+<div><img src="img/pendant.webp" alt=""><p class="say">«Сделай картинку…»</p><p class="get">Картинка в чате</p><p class="cost">от 2 кредитов</p></div>
+<div><img src="img/pop-off.webp" alt=""><p class="say">«Сними из неё видео»</p><p class="get">Видео из вашей картинки</p><p class="cost">от 23 кредитов за 5 с</p></div>
+<div><img src="img/feel-the-sound.webp" alt=""><p class="say">«Покажи мои работы»</p><p class="get">Галерея аккаунта</p><p class="cost">бесплатно</p></div>
+<div><img src="img/hot-vision.webp" alt=""><p class="say">«Сколько кредитов?»</p><p class="get">Баланс и цены</p><p class="cost">бесплатно</p></div>
+</div></div></section>
+<section class="sec"><div class="wrap">
+<h2>Три шага, <b>один раз</b></h2>
+<div class="how"><ol>
+<li><h3>Скопируйте адрес</h3><p>Кнопка вверху страницы. Адрес один для всех.</p></li>
+<li><h3>Добавьте коннектор в Claude</h3><p>Настройки → Коннекторы → Добавить свой коннектор → вставьте адрес.</p></li>
+<li><h3>Войдите и нажмите «Разрешить»</h3><p>Обычный вход ONEFLOW. Пароль Claude не видит, доступ отключается одной кнопкой.</p></li>
+</ol>
+<div class="shot"><div class="chat"><div class="me">Сними из неё видео на 5 секунд</div><div class="tool"><i></i>ONEFLOW · видео</div><img class="w" src="img/w-working-dark.png" alt=""><p class="ai">Видео запущено — около 23 кредитов. Окно покажет результат само.</p></div></div>
+</div></div></section>
+<section class="price"><div class="wrap g"><h2>Те же кредиты, <b>что на сайте</b></h2><div><b class="n">от 2</b><span>кредитов за картинку</span></div><div><b class="n">от 23</b><span>кредитов за видео 5 с</span></div><div><b class="n">0</b><span>подписок</span></div></div></section>
+<section class="sec"><div class="wrap">
+<h2>Частые <b>вопросы</b></h2>
+<div class="faq">
+<div><h3>Что видит Claude?</h3><p>Только ваш аккаунт: работы и баланс. Пароль, почту и оплату — нет.</p></div>
+<div><h3>Как отключить?</h3><p>На странице подключений ONEFLOW — кнопка «Отключить». Срабатывает сразу.</p></div>
+<div><h3>Нужна ли подписка ONEFLOW?</h3><p>Нет. Тратятся обычные кредиты с вашего баланса.</p></div>
+<div><h3>Где это работает?</h3><p>В Claude — в браузере, на компьютере и в телефоне — и в Claude Code.</p></div>
+</div>
+<div class="end"><h2>Подключите <b>за минуту</b></h2><a class="btn blue">Копировать адрес</a></div>
+</div></section>
+</main><footer><div class="wrap"><span>© 2026 ONEFLOW</span><span>Политика конфиденциальности · Пользовательское соглашение · Поддержка</span></div></footer></body></html>
